@@ -23,8 +23,6 @@
  */
 package coordinate.model;
 
-import coordinate.Vector3f;
-
 /**
  *
  * @author user

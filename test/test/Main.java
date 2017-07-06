@@ -5,8 +5,6 @@
  */
 package test;
 
-import coordinate.Point3f;
-import coordinate.Vector3f;
 import coordinate.model.Camera;
 import coordinate.model.Transform;
 
