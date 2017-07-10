@@ -5,9 +5,6 @@
  */
 package coordinate.generic;
 
-import coordinate.generic.AbstractCoordinate;
-import coordinate.generic.VCoord;
-
 /**
  *
  * @author user
@@ -29,7 +26,15 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
         return v;
     }
     
-   
+    public S add(V v) 
+    {
+        S s = getSCoordInstance();
+        s.set('x', get('x') + v.get('x'));
+        s.set('y', get('y') + v.get('y'));
+        s.set('z', get('z') + v.get('z'));
+        return s;
+    }       
+    
     public final float distanceTo(S p) {
         float dx = get('x') - p.get('x');
         float dy = get('y') - p.get('y');

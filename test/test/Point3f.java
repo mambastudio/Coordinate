@@ -68,16 +68,6 @@ public class Point3f extends SCoord<Point3f, Vector3f>
         return dest;
     }
     
-    
-    public Point3f add(Vector3f v) 
-    {
-        Point3f s = getSCoordInstance();
-        s.set('x', get('x') + v.get('x'));
-        s.set('y', get('y') + v.get('y'));
-        s.set('z', get('z') + v.get('z'));
-        return s;
-    }       
-    
 
     @Override
     public int getSize() {
