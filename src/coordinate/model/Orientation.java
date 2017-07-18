@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * @param <R>
  * @param <B>
  */
-public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound<S, V, B>> 
+public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound<S, V, R, B>> 
 {    
     Class<S> classS = null;
     Class<V> classV = null;
@@ -37,7 +37,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         this.classV = classV;
     }
     
-    public void repositionLocation(Camera<S, V, R> camera, B bound)
+    public void repositionLocation(CameraModel<S, V, R> camera, B bound)
     {
         S center = bound.getCenter();
         float hypotenuseDist = center.distanceTo(camera.position);
@@ -58,7 +58,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         translate.transformAssign(camera.position);        
     }
     
-    public void reposition(Camera<S, V, R> camera, B bound)
+    public void reposition(CameraModel<S, V, R> camera, B bound)
     {
         S center = bound.getCenter();
         float distance = bound.getMinimum().distanceTo(bound.getMaximum());
@@ -78,7 +78,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         distance(camera, distance);
     }
     
-    public void rotateY(Camera<S, V, R> camera, float angle)
+    public void rotateY(CameraModel<S, V, R> camera, float angle)
     {
         Transform toOrigin = Transform.translate(camera.lookat.neg());
         
@@ -98,7 +98,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         toOrigin.inverse().transformAssign(camera.position);
     }
     
-    public void rotateX(Camera<S, V, R> camera, float angle)
+    public void rotateX(CameraModel<S, V, R> camera, float angle)
     {
         Transform toOrigin = Transform.translate(camera.lookat.neg()); 
                 
@@ -113,7 +113,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         toOrigin.inverse().transformAssign(camera.position);        
     }
     
-    public void distance(Camera<S, V, R> camera, float distance)
+    public void distance(CameraModel<S, V, R> camera, float distance)
     {
         Transform toOrigin = Transform.translate(camera.lookat.neg());        
         
@@ -147,7 +147,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         toOrigin.inverse().transformAssign(camera.position);    
     }
     
-    public void translateDistance(Camera<S, V, R> camera, float distance)
+    public void translateDistance(CameraModel<S, V, R> camera, float distance)
     {
         float jump = maxExt * 0.01f;
         jump = Math.copySign(jump, distance);

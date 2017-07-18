@@ -5,23 +5,52 @@
  */
 package coordinate.generic;
 
-
-import coordinate.generic.VCoord;
-
 /**
  *
  * @author user
  * @param <S>
  * @param <V>
+ * @param <R>
  * @param <B>
  */
-public interface AbstractBound<S extends SCoord, V extends VCoord, B extends AbstractBound> {
+public interface AbstractBound<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound> {
     public void include(S s);
     public S getCenter(); 
     public float getCenter(int dim);
     public S getMinimum();
     public S getMaximum();
     public B getInstance();
+    
+    default boolean intersectP(R ray, float[] hitt)
+    {
+        float t0 = ray.getMin(), t1 = ray.getMax();
+        for (int i = 0; i < 3; ++i) 
+        {
+            // Update interval for _i_th bounding box slab, page 180           
+            float tNear = (getMinimum().get(i) - ray.getOrigin().get(i)) * ray.getInverseDirection().get(i);
+            float tFar = (getMaximum().get(i) - ray.getOrigin().get(i)) * ray.getInverseDirection().get(i);
+
+            // Update parametric interval from slab intersection $t$s
+            if (tNear > tFar) 
+            {
+                float swap = tNear;
+                tNear = tFar;
+                tFar = swap;
+            }
+            if (tNear > t0) t0=tNear;
+            if (tFar < t1) t1=tFar;
+            if (t0 > t1) 
+            {
+                return false;
+            }
+        }
+        if (hitt != null) 
+        {
+            hitt[0] = t0;
+            hitt[1] = t1;
+        }
+        return true;
+    }
     
     default void include(B b)
     {

@@ -8,13 +8,11 @@ package coordinate.generic.raytrace;
 import coordinate.generic.AbstractBound;
 import coordinate.generic.AbstractRay;
 import coordinate.generic.SCoord;
-import coordinate.generic.VCoord;
 
 /**
  *
  * @author user
  * @param <P>
- * @param <V>
  * @param <R>
  * @param <I>
  * @param <A>

@@ -5,7 +5,7 @@
  */
 package test;
 
-import coordinate.model.Camera;
+import coordinate.model.CameraModel;
 import coordinate.model.Transform;
 
 /**
@@ -17,7 +17,7 @@ public class Main {
     {
         Transform<Point3f, Vector3f> transform = new Transform<>();
         transform.transformAssign(new Point3f());
-        Camera<Point3f, Vector3f, Ray> camera = new Camera<>(new Point3f(0, 0, 4), new Point3f(), new Vector3f(0, 1, 0), 45);
+        CameraModel<Point3f, Vector3f, Ray> camera = new CameraModel<>(new Point3f(0, 0, 4), new Point3f(), new Vector3f(0, 1, 0), 45);
         System.out.println(camera.getFastRay(50, 50, 100, 100, new Ray()));
     }
 }

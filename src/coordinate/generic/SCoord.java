@@ -16,7 +16,7 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
     public abstract S getSCoordInstance();  
     public abstract V getVCoordInstance();
     public abstract S copy();
-    
+            
     public V sub(S b)
     {
         V v = getVCoordInstance();        

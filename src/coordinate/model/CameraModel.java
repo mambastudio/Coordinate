@@ -17,7 +17,7 @@ import coordinate.generic.AbstractRay;
  * @param <V>
  * @param <R>
  */
-public class Camera <S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>>
+public class CameraModel <S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>>
 {
     public S position;
     public S lookat;
@@ -26,7 +26,7 @@ public class Camera <S extends SCoord, V extends VCoord, R extends AbstractRay<S
     public Transform<S, V> cameraTransform;
     public float mImagePlaneDist;
     
-    public Camera(S position, S lookat, V up, float horizontalFOV)
+    public CameraModel(S position, S lookat, V up, float horizontalFOV)
     {
         this.position = position;
         this.lookat = lookat;
@@ -156,9 +156,9 @@ public class Camera <S extends SCoord, V extends VCoord, R extends AbstractRay<S
     }
     
     
-    public Camera<S, V, R> copy()
+    public CameraModel<S, V, R> copy()
     {
-        Camera<S, V, R> camera = new Camera(position, lookat, up, fov);
+        CameraModel<S, V, R> camera = new CameraModel(position, lookat, up, fov);
         camera.setUp();
         return camera;
     }

@@ -11,7 +11,7 @@ import coordinate.generic.AbstractBound;
  *
  * @author user
  */
-public class BoundingBox implements AbstractBound<Point3f, Vector3f, BoundingBox>
+public class BoundingBox implements AbstractBound<Point3f, Vector3f, Ray, BoundingBox>
 {
 
     @Override

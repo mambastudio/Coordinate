@@ -5,8 +5,6 @@
  */
 package coordinate.generic;
 
-import coordinate.generic.VCoord;
-
 /**
  *
  * @author user
@@ -19,5 +17,10 @@ public interface AbstractRay<S extends SCoord, V extends VCoord>
     public void set(S o, V d);
     public S getPoint();
     public S getPoint(float t);
-    public V getDirection();
+    public V getDirection(); 
+    public V getInverseDirection();
+    public S getOrigin(); 
+    public float getMin();     
+    public float getMax();   
+      
 }
