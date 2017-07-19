@@ -30,7 +30,8 @@ package coordinate.generic;
 public abstract class AbstractCoordinate {        
     public abstract float get(char axis);
     public abstract void set(char axis, float value);
-    public abstract void set(float... values);    
+    public abstract void set(float... values);  
+    public abstract void setIndex(int index, float value);
     public abstract int getSize();    
     public abstract float[] getArray();
         

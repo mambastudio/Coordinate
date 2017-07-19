@@ -1,4 +1,4 @@
-package test;
+package example;
 
                                                                          /*
  * The MIT License
@@ -131,5 +131,20 @@ public class Point3f extends SCoord<Point3f, Vector3f>
     public Vector3f getVCoordInstance() {
         return new Vector3f();
     }
-
+    
+    @Override
+    public void setIndex(int index, float value) {
+        switch (index)
+        {
+            case 0:
+                x = value;
+                break;
+            case 1:
+                y = value;
+                break;    
+            case 2:
+                z = value;
+                break;
+        }
+    }
 }

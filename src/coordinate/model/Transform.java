@@ -40,6 +40,7 @@ public class Transform <S extends SCoord, V extends VCoord>{
         mInv = matInv.clone();
     }
     
+    
     public static Transform translate(AbstractCoordinate v)
     {
         return translate(v.get('x'), v.get('y'), v.get('z'));
@@ -136,11 +137,11 @@ public class Transform <S extends SCoord, V extends VCoord>{
     }
        
     public void transformAssign(V aVec)
-    {         
-        float x = aVec.get('x'), y = aVec.get('y'), z = aVec.get('z');
+    {          
+        float x = aVec.get('x'), y = aVec.get('y'), z = aVec.get('z');        
         aVec.set('x', m.get(0,0) * x + m.get(0,1) * y + m.get(0,2) * z);
         aVec.set('y', m.get(1,0) * x + m.get(1,1) * y + m.get(1,2) * z);
-        aVec.set('y', m.get(2,0) * x + m.get(2,1) * y + m.get(2,2) * z);   
+        aVec.set('z', m.get(2,0) * x + m.get(2,1) * y + m.get(2,2) * z);       
     }    
     
     public void transformAssign(S aVec)

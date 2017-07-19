@@ -16,7 +16,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
     
     public float dot(V b) 
     {
-        return get('x') *b.get('x') + get('y')*get('y') + get('z')*b.get('z');
+        return get('x') *b.get('x') + get('y')*b.get('y') + get('z')*b.get('z');
     }
     
     public V cross(V t)

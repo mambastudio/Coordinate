@@ -17,7 +17,7 @@ import coordinate.generic.AbstractRay;
  * @param <V>
  * @param <R>
  */
-public class CameraModel <S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>>
+public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>>
 {
     public S position;
     public S lookat;
@@ -154,15 +154,8 @@ public class CameraModel <S extends SCoord, V extends VCoord, R extends Abstract
         return x >= 0 && y >= 0 &&
             x < xResolution && y < yResolution;
     }
-    
-    
-    public CameraModel<S, V, R> copy()
-    {
-        CameraModel<S, V, R> camera = new CameraModel(position, lookat, up, fov);
-        camera.setUp();
-        return camera;
-    }
-    
+        
+    public abstract CameraModel<S, V, R> copy();
     
     public float[] worldToRaster(S aHitpoint, float xResolution, float yResolution)            
     {

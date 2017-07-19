@@ -3,60 +3,55 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test;
+package example;
 
-import coordinate.generic.AbstractRay;
+import coordinate.generic.AbstractBound;
 
 /**
  *
  * @author user
  */
-public class Ray implements AbstractRay<Point3f, Vector3f>
+public class BoundingBox implements AbstractBound<Point3f, Vector3f, Ray, BoundingBox>
 {
 
     @Override
-    public void set(float ox, float oy, float oz, float dx, float dy, float dz) {
+    public void include(Point3f s) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void set(Point3f o, Vector3f d) {
+    public Point3f getCenter() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Point3f getPoint() {
+    public float getCenter(int dim) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Point3f getPoint(float t) {
+    public Point3f getMinimum() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Vector3f getDirection() {
+    public Point3f getMaximum() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Vector3f getInverseDirection() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void include(BoundingBox b) {
+        AbstractBound.super.include(b); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Point3f getOrigin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int maximumExtent() {
+        return AbstractBound.super.maximumExtent(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public float getMin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public float getMax() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public BoundingBox getInstance() {
+        return new BoundingBox();
     }
     
 }

@@ -1,4 +1,4 @@
-package test;
+package example;
 
 /*
  * The MIT License
@@ -195,6 +195,22 @@ public class Vector3f extends VCoord<Vector3f>
     @Override
     public Vector3f copy() {
         return new Vector3f(x, y, z);
+    }
+
+    @Override
+    public void setIndex(int index, float value) {
+        switch (index)
+        {
+            case 0:
+                x = value;
+                break;
+            case 1:
+                y = value;
+                break;    
+            case 2:
+                z = value;
+                break;
+        }
     }
 
 }

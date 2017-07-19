@@ -24,14 +24,14 @@ import java.util.logging.Logger;
  * @param <R>
  * @param <B>
  */
-public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound<S, V, R, B>> 
+public class OrientationModel<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound<S, V, R, B>> 
 {    
     Class<S> classS = null;
     Class<V> classV = null;
     
     private static float maxExt;
     
-    public Orientation(Class<S> classS, Class<V> classV)
+    public OrientationModel(Class<S> classS, Class<V> classV)
     {
         this.classS = classS;
         this.classV = classV;
@@ -83,6 +83,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         Transform toOrigin = Transform.translate(camera.lookat.neg());
         
         //Transform camera to origin for proper tranform (i.e. rotation, translation)
+        
         toOrigin.transformAssign(camera.up);
         toOrigin.transformAssign(camera.position);
         
@@ -93,9 +94,11 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         transform.transformAssign(camera.up);
         transform.transformAssign(camera.position);
         
+        
         //Untransform camera
         toOrigin.inverse().transformAssign(camera.up);
         toOrigin.inverse().transformAssign(camera.position);
+        
     }
     
     public void rotateX(CameraModel<S, V, R> camera, float angle)
@@ -110,10 +113,10 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         transform.transformAssign(camera.position);
         
         //Untransform camera        
-        toOrigin.inverse().transformAssign(camera.position);        
+        toOrigin.inverse().transformAssign(camera.position);       
     }
     
-    public void distance(CameraModel<S, V, R> camera, float distance)
+    public  void distance(CameraModel<S, V, R> camera, float distance)
     {
         Transform toOrigin = Transform.translate(camera.lookat.neg());        
         
@@ -199,7 +202,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         try {
             return classS.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(Orientation.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrientationModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -216,7 +219,7 @@ public class Orientation<S extends SCoord, V extends VCoord, R extends AbstractR
         try {
             return classV.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(Orientation.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrientationModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
