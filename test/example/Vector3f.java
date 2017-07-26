@@ -71,11 +71,7 @@ public class Vector3f extends VCoord<Vector3f>
         dest.z = a.z/len;
         return dest;        
     }
-    
-    public float lenSqr() { return Vector3f.dot(this, this);   }
-    public float length() { return (float) java.lang.Math.sqrt(lenSqr());}
-
-    
+        
     @Override
     public float get(int i)
     {
@@ -113,6 +109,7 @@ public class Vector3f extends VCoord<Vector3f>
         x = y = z = value;
     }
     
+    @Override
     public void set(Vector3f v)
     {
         x = v.x; y = v.y; z = v.z;

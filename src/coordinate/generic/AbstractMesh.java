@@ -132,6 +132,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         triangleFaces.add(vert1, vert2, vert3,  uv1, uv2, uv3, norm1, norm2, norm3, material);
     }
     
+    
     private int getArrayIndexFromPrimID(int index)
     {
         return index*10;
@@ -180,6 +181,16 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     public N getNormal3(int primID)
     {
         return normals.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 8));
+    }
+    
+    public boolean hasNormal(int primID)
+    {
+        return triangleFaces.get(getArrayIndexFromPrimID(primID) + 6) != -1;
+    }
+    
+    public boolean hasUV(int primID)
+    {
+        return triangleFaces.get(getArrayIndexFromPrimID(primID) + 3) != -1;
     }
     
     public int triangleSize()

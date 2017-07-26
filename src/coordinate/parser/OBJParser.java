@@ -6,6 +6,7 @@
 package coordinate.parser;
 
 import coordinate.generic.AbstractMesh;
+import coordinate.generic.AbstractMesh.MeshType;
 import static coordinate.generic.AbstractMesh.MeshType.FACE;
 import static coordinate.generic.AbstractMesh.MeshType.FACE_NORMAL;
 import static coordinate.generic.AbstractMesh.MeshType.FACE_UV;
@@ -46,6 +47,9 @@ public class OBJParser implements AbstractParser{
                 case "vt":
                     readUV(parser);
                     break;
+                case "vn":
+                    readNormal(parser);
+                    break;
                 case "f":
                     readFaces(parser);
                     break;
@@ -62,8 +66,8 @@ public class OBJParser implements AbstractParser{
     }   
     
     private void readNormal(StringReader reader) {
-        //if(parser.getNextToken().equals("vn"))        
-            //data.add(new Normal3f(parser.getNextFloat(), parser.getNextFloat(), parser.getNextFloat()));
+        if(reader.getNextToken().equals("vn"))        
+            mesh.addNormal(reader.getNextFloat(), reader.getNextFloat(), reader.getNextFloat());
     }
     
     private void readUV(StringReader reader) {
@@ -77,65 +81,92 @@ public class OBJParser implements AbstractParser{
         
         reader.skipTokens(1); //parser.skip("f")
         
-        while(reader.hasNext() && reader.peekNextTokenIsNumber())  
+        while(reader.hasNext() && reader.peekNextTokenIsNumber())             
             intArray.add(reader.getNextInt());
+        int[] array = intArray.trim();  
         
-        if(intArray.size() == 3)
-        {
-            int[] array = intArray.trim();            
-            mesh.add(FACE, array[0]-1, array[1]-1, array[2]-1);       
+        //handle various type of face types
+        if(array.length == 3)
+        {                   
+            modifyAdd(FACE, array[0], array[1], array[2]);       
         }
-        else if(intArray.size() == 4)
-        {
-            int[] array = intArray.trim();        
-            mesh.add(FACE, array[0]-1, array[1]-1, array[2]-1); //p1 p2 p3
-            mesh.add(FACE, array[0]-1, array[2]-1, array[3]-1); //p1 p3 p4        
+        else if(array.length == 4)
+        {                  
+            modifyAdd(FACE, array[0], array[1], array[2]); //p1 p2 p3
+            modifyAdd(FACE, array[0], array[2], array[3]); //p1 p3 p4        
         }
-        else if(intArray.size() == 6 && doubleBackSlash)
-        {
-            int[] array = intArray.trim();        
-            mesh.add(FACE_NORMAL, array[0]-1, array[2]-1, array[4]-1,
-                                          array[1]-1, array[3]-1, array[5]-1);
+        else if(array.length == 6 && doubleBackSlash)
+        {                 
+            modifyAdd(FACE_NORMAL, array[0], array[2], array[4],
+                                          array[1], array[3], array[5]);
         }
-        else if(intArray.size() == 6)
-        {
-            int[] array = intArray.trim();        
-            mesh.add(FACE_UV, array[0]-1, array[2]-1, array[4]-1,
-                                      array[1]-1, array[3]-1, array[5]-1);
+        else if(array.length == 6)
+        {                    
+            modifyAdd(FACE_UV, array[0], array[2], array[4],
+                                      array[1], array[3], array[5]);
         }       
-        else if(intArray.size() == 8 && doubleBackSlash)
-        {           
-            int[] array = intArray.trim();        
-            mesh.add(FACE_NORMAL, array[0]-1, array[2]-1, array[4]-1,
-                                          array[1]-1, array[3]-1, array[5]-1);
-            mesh.add(FACE_NORMAL, array[0]-1, array[4]-1, array[6]-1,
-                                          array[1]-1, array[5]-1, array[7]-1);     
+        else if(array.length == 8 && doubleBackSlash)
+        {                       
+            modifyAdd(FACE_NORMAL, array[0], array[2], array[4],
+                                          array[1], array[3], array[5]);
+            modifyAdd(FACE_NORMAL, array[0], array[4], array[6],
+                                          array[1], array[5], array[7]);     
         }
-         else if(intArray.size() == 8)
-        {                        
-            int[] array = intArray.trim();        
-            mesh.add(FACE_UV, array[0]-1, array[2]-1, array[4]-1,
-                                      array[1]-1, array[3]-1, array[5]-1);        
-            mesh.add(FACE_UV, array[0]-1, array[4]-1, array[6]-1,
-                                      array[1]-1, array[5]-1, array[7]-1); 
+         else if(array.length == 8)
+        {                                      
+            modifyAdd(FACE_UV, array[0], array[2], array[4],
+                                      array[1], array[3], array[5]);        
+            modifyAdd(FACE_UV, array[0], array[4], array[6],
+                                      array[1], array[5], array[7]); 
         }
-        else if(intArray.size() == 9)
-        {
-            int[] array = intArray.trim();        
-            mesh.add(FACE_UV_NORMAL, array[0]-1, array[3]-1, array[6]-1,                             
-                                             array[1]-1, array[4]-1, array[7]-1,
-                                             array[2]-1, array[5]-1, array[8]-1); 
+        else if(array.length == 9)
+        {             
+            modifyAdd(FACE_UV_NORMAL, array[0], array[3], array[6],                             
+                                             array[1], array[4], array[7],
+                                             array[2], array[5], array[8]); 
         }
-        else if(intArray.size() == 12)
-        {
-            int[] array = intArray.trim();        
-            mesh.add(FACE_UV_NORMAL, array[0]-1, array[3]-1, array[6]-1,                             
-                                             array[1]-1, array[4]-1, array[7]-1,
-                                             array[2]-1, array[5]-1, array[8]-1);   
+        else if(array.length == 12)
+        {            
+            modifyAdd(FACE_UV_NORMAL, array[0], array[3], array[6],                             
+                                             array[1], array[4], array[7],
+                                             array[2], array[5], array[8]);   
 
-            mesh.add(FACE_UV_NORMAL, array[0]-1, array[6]-1, array[9]-1,                             
-                                             array[1]-1, array[7]-1, array[10]-1,
-                                             array[2]-1, array[8]-1, array[11]-1); 
+            modifyAdd(FACE_UV_NORMAL, array[0], array[6], array[9],                             
+                                             array[1], array[7], array[10],
+                                             array[2], array[8], array[11]); 
         }    
+    }   
+    
+    //this modifies the read obj parser to friendly array read (also handles negative indices)
+    private void modifyAdd(MeshType type, int... indices)
+    {
+        if(indices[0] >= 0)
+            for(int i = 0; i<indices.length; i++)
+                indices[i] = indices[i]-1;
+        else
+        {
+            for(int i = 0; i<indices.length; i++)
+                switch (i) {
+                    case 0:
+                    case 1:
+                    case 2:
+                        indices[i] = indices[i] + mesh.pointSize();
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        indices[i] = indices[i] + mesh.texCoordsSize();
+                        break;
+                    case 6:
+                    case 7:
+                    case 8:
+                        indices[i] = indices[i] + mesh.normalSize();
+                        break;
+                    default:
+                        break;
+                }
+        }
+        
+        mesh.add(type, indices);
     }    
 }
