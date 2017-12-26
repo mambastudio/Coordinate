@@ -23,7 +23,9 @@
  */
 package coordinate.list;
 
+import coordinate.function.TriFunction;
 import java.util.Arrays;
+import java.util.function.BiFunction;
 
 /**
  *
@@ -187,6 +189,22 @@ public class IntList
         return (minCapacity > MAX_ARRAY_SIZE) ?
             Integer.MAX_VALUE :
             MAX_ARRAY_SIZE;
+    }
+    
+    //(oldValue, index, size) return value;
+    public void forEachSet(TriFunction<Integer, Integer, Integer, Integer> function)
+    {
+        for(int i = 0; i<size(); i++)
+            set(i, function.apply(get(i), i, size()));
+    }
+    
+    //(index, size) return value;
+    public static IntList forEachAdd(int size, BiFunction<Integer, Integer, Integer> function)
+    {
+        IntList list = new IntList();
+        for(int i = 0; i<size; i++)
+            list.add(function.apply(i, size));
+        return list;
     }
     
     @Override

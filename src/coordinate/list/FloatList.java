@@ -23,7 +23,10 @@
  */
 package coordinate.list;
 
+import coordinate.function.TriFunction;
 import java.util.Arrays;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  *
@@ -187,6 +190,22 @@ public class FloatList {
         return (minCapacity > MAX_ARRAY_SIZE) ?
             Integer.MAX_VALUE :
             MAX_ARRAY_SIZE;
+    }
+    
+    //(oldValue, index, size) return value;
+    public void forEachSet(TriFunction<Float, Integer, Integer, Float> function)
+    {
+        for(int i = 0; i<size(); i++)
+            set(i, function.apply(get(i), i, size()));
+    }
+    
+    //(index, size) return value;
+    public static FloatList forEachAdd(int size, BiFunction<Integer, Integer, Float> function)
+    {
+        FloatList list = new FloatList();
+        for(int i = 0; i<size; i++)
+            list.add(function.apply(i, size));
+        return list;
     }
     
     @Override

@@ -53,7 +53,7 @@ public abstract class AbstractCoordinate {
         
         switch (getSize()) {
             case 4:
-                return String.format("(%.2f, %.2f, %.2f, %.2f)", array[0], array[1], array[2], array[3]);
+                return String.format("(%8.2f, %8.2f, %8.2f, %8.2f)", array[0], array[1], array[2], array[3]);
             case 3:
                 return String.format("(%.2f, %.2f, %.2f)", array[0], array[1], array[2]);
             default:

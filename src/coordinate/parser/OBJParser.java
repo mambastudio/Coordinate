@@ -14,7 +14,11 @@ import static coordinate.generic.AbstractMesh.MeshType.FACE_UV_NORMAL;
 import coordinate.generic.AbstractParser;
 import coordinate.generic.StringReader;
 import coordinate.list.IntList;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 
 /**
@@ -33,10 +37,19 @@ public class OBJParser implements AbstractParser{
     @Override
     public void read(URI uri, AbstractMesh data)
     {
-        this.mesh = data;
-                
-        StringReader parser = new StringReader(uri);
-        
+        read(new StringReader(uri), data);
+    }
+    
+    @Override
+    public void readString(String string, AbstractMesh mesh) {
+        InputStream is = new ByteArrayInputStream(string.getBytes());
+	BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        read(new StringReader(br), mesh);
+    }
+    
+    private void read(StringReader parser, AbstractMesh data)
+    {
+        this.mesh = data;                
         while(parser.hasNext())
         {
             String peekToken = parser.peekNextToken();            

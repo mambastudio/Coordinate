@@ -5,6 +5,9 @@
  */
 package coordinate.generic;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  *
  * @author user
@@ -21,41 +24,51 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
     public S getMaximum();
     public B getInstance();
     
-    default boolean intersectP(R ray, float[] hitt)
+    default S get(int index)
     {
-        float t0 = ray.getMin(), t1 = ray.getMax();
-        for (int i = 0; i < 3; ++i) 
+        switch (index) {
+            case 0:
+                return getMinimum();
+            case 1:
+                return getMaximum();
+            default:
+                return null;
+        }
+    }
+    
+    default boolean intersectP(R ray)
+    {
+        //Ray box intersection 
+        //It's branchless
+        //https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/        
+        float t1 = (getMinimum().get(0) - ray.getOrigin().get(0)) * ray.getInverseDirection().get(0);
+        float t2 = (getMaximum().get(0) - ray.getOrigin().get(0)) * ray.getInverseDirection().get(0);
+        
+        float tmin = min(t1, t2);
+        float tmax = max(t1, t2);
+        
+        for (int i = 1; i < 3; ++i) 
         {
-            // Update interval for _i_th bounding box slab, page 180           
-            float tNear = (getMinimum().get(i) - ray.getOrigin().get(i)) * ray.getInverseDirection().get(i);
-            float tFar = (getMaximum().get(i) - ray.getOrigin().get(i)) * ray.getInverseDirection().get(i);
+            t1 = (getMinimum().get(i) - ray.getOrigin().get(i)) * ray.getInverseDirection().get(i);
+            t2 = (getMaximum().get(i) - ray.getOrigin().get(i)) * ray.getInverseDirection().get(i);
 
-            // Update parametric interval from slab intersection $t$s
-            if (tNear > tFar) 
-            {
-                float swap = tNear;
-                tNear = tFar;
-                tFar = swap;
-            }
-            if (tNear > t0) t0=tNear;
-            if (tFar < t1) t1=tFar;
-            if (t0 > t1) 
-            {
-                return false;
-            }
+            tmin = max(tmin, min(min(t1, t2), tmax));
+            tmax = min(tmax, max(max(t1, t2), tmin));
         }
-        if (hitt != null) 
-        {
-            hitt[0] = t0;
-            hitt[1] = t1;
-        }
-        return true;
+        
+        return tmax > max(tmin, 0.0f);        
     }
     
     default void include(B b)
     {
         include((S) b.getMaximum());
         include((S) b.getMinimum());
+    }
+    
+    default void include(B... bArray)
+    {
+        for(B b : bArray)
+            include(b);
     }
     
     default int maximumExtent() {

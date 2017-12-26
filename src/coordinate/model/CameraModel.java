@@ -26,6 +26,10 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
     public Transform<S, V> cameraTransform;
     public float mImagePlaneDist;
     
+    private V Du;
+    private V Dv;
+    private V vp;
+    
     public CameraModel(S position, S lookat, V up, float horizontalFOV)
     {
         this.position = position;
@@ -34,7 +38,7 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         this.fov = horizontalFOV;
         this.cameraTransform = new Transform<>();
     }  
-    
+       
     public void setUp()
     {
         V d = (V) lookat.sub(position).normalize();
@@ -65,25 +69,25 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
     }
     
     public R getFastRay(float x, float y, float xRes, float yRes, R ray)
-    {
+    {     
         float fv = (float)Math.toRadians(this.fov);
         
         V look  = (V) lookat.sub(position);        
-        V Du    = (V) look.cross(up).normalize();
-        V Dv    = (V) look.cross(Du).normalize();
+        Du    = (V) look.cross(up).normalize();
+        Dv    = (V) look.cross(Du).normalize();
         
         float fl = xRes / (2.0F * (float)Math.tan(0.5F * fv));
         
-        V vp = (V) look.normalize();
+        vp = (V) look.normalize();
         vp.set('x', (vp.get('x') * fl - 0.5F * (xRes * Du.get('x') + yRes * Dv.get('x'))));
         vp.set('y', (vp.get('y') * fl - 0.5F * (xRes * Du.get('y') + yRes * Dv.get('y'))));
         vp.set('z', (vp.get('z') * fl - 0.5F * (xRes * Du.get('z') + yRes * Dv.get('z'))));
         
         V dir = (V) vp.getCoordInstance();
         dir.set(x * Du.get('x') + y * Dv.get('x') + vp.get('x'), x * Du.get('y') + y * Dv.get('y') + vp.get('y'), x * Du.get('z') + y * Dv.get('z') + vp.get('z'));
-        dir.normalizeAssign();
-                
+        dir.normalizeAssign();                
         ray.set(position, dir);
+        
         return ray;        
     }
     

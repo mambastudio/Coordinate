@@ -5,14 +5,10 @@
  */
 package coordinate.generic;
 
-import java.net.URI;
-
 /**
  *
  * @author user
  */
-public interface AbstractParser {
-    public void read(String uri, AbstractMesh mesh);
-    public void read(URI uri, AbstractMesh mesh);
-    public void readString(String string, AbstractMesh mesh);
+public class AbstractNode {
+    
 }

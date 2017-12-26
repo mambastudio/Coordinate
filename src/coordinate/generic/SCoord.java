@@ -63,6 +63,15 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
         return (dx * dx) + (dy * dy) + (dz * dz);
     }
     
+    public final S middle(S p)
+    {
+        S s = getSCoordInstance();
+        s.set('x', (get('x') + p.get('x')) * 0.5f);
+        s.set('y', (get('y') + p.get('y')) * 0.5f);
+        s.set('z', (get('z') + p.get('z')) * 0.5f);
+        return s;
+    }
+    
     public final S set(float x, float y, float z) {
         this.set('x', x);
         this.set('y', y);
