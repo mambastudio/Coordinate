@@ -29,7 +29,7 @@ package coordinate.model;
  */
 public final class Matrix {
      // m_row_col; stored column major
-    float[] m = new float[16];
+    public float[] m = new float[16];
 
     public Matrix()
     {

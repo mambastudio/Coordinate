@@ -27,14 +27,14 @@ public abstract class IntStruct {
     protected void refreshGlobalArray()
     {
         if(globalArray == null || globalArrayIndex == -1) return;
-        float [] array = getArray();
+        int [] array = getArray();
         
         System.arraycopy(array, 0, globalArray, globalArrayIndex, getSize());
         
     }
      
     public abstract void  initFromGlobalArray();
-    public abstract float[] getArray();
+    public abstract int [] getArray();
     public abstract int getSize();  
     
     public int[] getGlobalArray()

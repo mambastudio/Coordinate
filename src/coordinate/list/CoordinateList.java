@@ -46,6 +46,13 @@ public class CoordinateList <T extends AbstractCoordinate>
         coordinateSize = getCoordinateInstance().getSize();
     }
     
+    public CoordinateList(Class<T> clazz, int capacity)
+    {
+        arrayList = new FloatList(capacity);
+        instance = clazz;
+        coordinateSize = getCoordinateInstance().getSize();
+    }
+    
     public void add(CoordinateList<T> list)
     {
         for(int i = 0; i<list.size(); i++)

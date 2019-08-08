@@ -158,4 +158,11 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         set('y', v.get('y')); 
         set('z', v.get('z'));
     }
+    
+    
+    public static VCoord getFromCoordinate(VCoord v, float x, float y, float z)
+    {
+        v.set(x, y, z);
+        return v;
+    }
 }

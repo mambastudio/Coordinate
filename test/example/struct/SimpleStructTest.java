@@ -6,7 +6,7 @@
 package example.struct;
 
 import coordinate.struct.FloatStruct;
-import coordinate.struct.FloatStructArray;
+import coordinate.struct.StructFloatArray;
 import java.util.Arrays;
 
 /**
@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class SimpleStructTest {
     public static void main(String... args)
     {
-        FloatStructArray<Box> arrayBox = new FloatStructArray<>(Box.class, 2);
+        StructFloatArray<Box> arrayBox = new StructFloatArray<>(Box.class, 2);
         
         Box box = arrayBox.get(1);        
         box.setMax(100, 0.7f, 1);

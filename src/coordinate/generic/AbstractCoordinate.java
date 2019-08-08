@@ -23,11 +23,13 @@
  */
 package coordinate.generic;
 
+import java.io.Serializable;
+
 /**
  *
  * @author user
  */
-public abstract class AbstractCoordinate {        
+public abstract class AbstractCoordinate implements Serializable{        
     public abstract float get(char axis);
     public abstract void set(char axis, float value);
     public abstract void set(float... values);  

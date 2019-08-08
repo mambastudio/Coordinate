@@ -45,8 +45,8 @@ public class BoundingBox implements AbstractBound<Point3f, Vector3f, Ray, Boundi
     }
 
     @Override
-    public int maximumExtent() {
-        return AbstractBound.super.maximumExtent(); //To change body of generated methods, choose Tools | Templates.
+    public int maximumExtentAxis() {
+        return AbstractBound.super.maximumExtentAxis(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

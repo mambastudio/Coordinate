@@ -5,6 +5,9 @@
  */
 package coordinate.utility;
 
+import java.util.Random;
+import java.util.stream.IntStream;
+
 /**
  *
  * @author user
@@ -150,6 +153,11 @@ public class Utility {
     public static float powf(float a, float b)
     {
         return (float)Math.pow(a, b);
+    }
+    
+    public static int[] generateRandomIntegers(int size)
+    {
+        return new Random().ints(size, 0, size).toArray();
     }
     
 }

@@ -5,11 +5,13 @@
  */
 package coordinate.struct;
 
+import java.io.Serializable;
+
 /**
  *
  * @author user
  */
-public abstract class FloatStruct {
+public abstract class FloatStruct implements Serializable {
     private float[] globalArray = null;
     private int globalArrayIndex = -1;
         

@@ -5,9 +5,11 @@
  */
 package coordinate.generic;
 
-import coordinate.generic.VCoord;
 import coordinate.list.CoordinateList;
 import coordinate.list.IntList;
+import coordinate.parser.attribute.GroupT;
+import coordinate.parser.attribute.MaterialT;
+import java.util.ArrayList;
 
 
 /**
@@ -27,12 +29,47 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     protected CoordinateList<N> normals = null;
     protected CoordinateList<T> texcoords = null;
     
+    protected ArrayList<MaterialT> materials;
+    protected ArrayList<GroupT> groups;
+    
+    protected ArrayList<MaterialT> uniqueMaterials;
+    
     public abstract void addPoint(P p);
     public abstract void addPoint(float... values);
     public abstract void addNormal(N n);
     public abstract void addNormal(float... values);
     public abstract void addTexCoord(T t);
     public abstract void addTexCoord(float... values);
+    
+    public void setMaterialList(ArrayList<MaterialT> materialList)
+    {
+        this.materials = materialList;
+    }
+    
+    public void setUniqueMaterialList(ArrayList<MaterialT> uniqueMaterials)
+    {
+        this.uniqueMaterials = uniqueMaterials;
+    }
+    
+    public ArrayList<MaterialT> getMaterialList()
+    {
+        return materials;
+    }
+    
+    public ArrayList<MaterialT> getUniqueMaterialList()
+    {
+        return uniqueMaterials;
+    }
+    
+    public void setGroupList(ArrayList<GroupT> groupList)
+    {
+        this.groups = groupList;
+    }
+    
+    public ArrayList<GroupT> getGroupList()
+    {
+        return groups;
+    }
     
     public int[] getTriangleFacesArray()
     {
@@ -76,7 +113,10 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     
     public float[] getNormalArray()
     {
-        return normals.getFloatArray();
+        if(normals.getFloatArray().length > 0)
+            return normals.getFloatArray();
+        else
+            return new float[]{0};
     }
     
     public int texCoordsSize()
@@ -100,36 +140,46 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     }
     
     //Mesh face handling section        
-    public void add(MeshType type, int... values)
+    public void add(MeshType type, int group, int material, int... values)
     {
+        int data = 0;
+        data = data | material;
+        data = data | (group << 16);       
+                
+        
         switch(type)
         {
             case FACE:
             {
-                addTriangle(values[0], values[1], values[2], -1, -1, -1, -1, -1, -1, -1);
+                addTriangle(values[0], values[1], values[2], -1, -1, -1, -1, -1, -1, data);
                 break;
             }
             case FACE_UV_NORMAL:
             {
-                addTriangle(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], -1);
+                addTriangle(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], data);
                 break;
             }
             case FACE_UV:
             {
-                addTriangle(values[0], values[1], values[2], values[3], values[4], values[5], -1, -1, -1, -1);
+                addTriangle(values[0], values[1], values[2], values[3], values[4], values[5], -1, -1, -1, data);
                 break;
             }
             case FACE_NORMAL:
             {
-                addTriangle(values[0], values[1], values[2], -1, -1, -1, values[3], values[4], values[5], -1);
+                addTriangle(values[0], values[1], values[2], -1, -1, -1, values[3], values[4], values[5], data);
                 break;
             }
         }
     }
     
-    private void addTriangle(int vert1, int vert2, int vert3, int uv1, int uv2, int uv3, int norm1, int norm2, int norm3, int material)
+    public void printGroupAndMaterial(int data)
+    {        
+        System.out.println("Group " +((data >> 16) & 0xFFFF)+ " Material " + (data & 0xFFFF));        
+    }
+    
+    private void addTriangle(int vert1, int vert2, int vert3, int uv1, int uv2, int uv3, int norm1, int norm2, int norm3, int data)
     {
-        triangleFaces.add(vert1, vert2, vert3,  uv1, uv2, uv3, norm1, norm2, norm3, material);
+        triangleFaces.add(vert1, vert2, vert3,  uv1, uv2, uv3, norm1, norm2, norm3, data);
     }
     
     

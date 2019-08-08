@@ -44,12 +44,11 @@ public class IntList
         size = 0;
     }
     
-    public IntList(int... array)
+    public IntList(int capacity)
     {
-        this();
-        for(int i : array)
-            add(i);
-    }
+        array = new int[capacity];
+        size = 0;
+    }   
     
     public void setArrayDirectly(int... array)
     {

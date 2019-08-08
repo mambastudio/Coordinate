@@ -71,7 +71,7 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
             include(b);
     }
     
-    default int maximumExtent() {
+    default int maximumExtentAxis() {
         V diag = (V) getMaximum().sub(getMinimum());
         
         if (diag.get('x') > diag.get('y') && diag.get('x') > diag.get('z')) {
@@ -81,6 +81,17 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
         } else {
             return 2;
         }
+    }
+    
+    default V getExtents()
+    {
+        return (V) getMaximum().sub(getMinimum());
+    }
+    
+    default float getMaximumExtent()
+    {
+        V v = getExtents();
+        return v.get(maximumExtentAxis());
     }
     
 }

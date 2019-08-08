@@ -44,11 +44,9 @@ public class FloatList {
         size = 0;
     }
     
-    public FloatList(int... array)
+    public FloatList(int capacity)
     {
-        this();
-        for(int i : array)
-            add(i);
+        array = new float[10];
     }
 
     public void clear()

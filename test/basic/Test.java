@@ -5,7 +5,9 @@
  */
 package basic;
 
-import coordinate.list.FloatList;
+import coordinate.parser.obj.OBJMappedParser;
+import coordinate.parser.obj.OBJParser;
+import java.util.Arrays;
 
 /**
  *
@@ -14,9 +16,8 @@ import coordinate.list.FloatList;
 public class Test {
     public static void main(String... args)
     {
-        FloatList list = FloatList.forEachAdd(10, (index, size) -> (float)(size * Math.random()));
-        System.out.println(list);
-        list.forEachSet((value, index, size) -> (value > 4f) ? 3f : 1f);
-        System.out.println(list);
+        OBJMappedParser parser = new OBJMappedParser();
+        parser.readAttributes("C:\\Users\\user\\Documents\\Scene3d\\simplebox\\powerplant.obj");
+        
     }
 }

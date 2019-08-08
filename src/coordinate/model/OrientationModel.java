@@ -40,22 +40,11 @@ public class OrientationModel<S extends SCoord, V extends VCoord, R extends Abst
     public void repositionLocation(CameraModel<S, V, R> camera, B bound)
     {
         S center = bound.getCenter();
-        float hypotenuseDist = center.distanceTo(camera.position);
-        V toCenter = (V) center.sub(camera.position).normalize();
+        float distance = bound.getMinimum().distanceTo(bound.getMaximum()); //maximum distance from one side of bound to the other
+        V direction = (V) center.sub(camera.position()).normalize();        //direction
+        camera.position = (S) center.add(direction.neg().mul(distance*2));  //r - td
+        camera.lookat = center;
         
-        float cosTheta = toCenter.dot(camera.forward());
-        float adjacent = cosTheta * hypotenuseDist;
-                
-        S newPoint = (S) center.getSCoordInstance();
-        newPoint.set('x', camera.forward().get('x') * adjacent + camera.position.get('x'));
-        newPoint.set('y', camera.forward().get('y') * adjacent + camera.position.get('y'));
-        newPoint.set('z', camera.forward().get('z') * adjacent + camera.position.get('z'));
-        
-        V translation = (V) center.sub(newPoint);
-        
-        Transform translate = Transform.translate(translation);
-        translate.transformAssign(camera.lookat);
-        translate.transformAssign(camera.position);        
     }
     
     public void reposition(CameraModel<S, V, R> camera, B bound)
@@ -82,20 +71,21 @@ public class OrientationModel<S extends SCoord, V extends VCoord, R extends Abst
     {
         Transform toOrigin = Transform.translate(camera.lookat.neg());
         
-        //Transform camera to origin for proper tranform (i.e. rotation, translation)
-        
+        //Transform camera to origin for proper tranform (i.e. rotation, translation)       
         toOrigin.transformAssign(camera.up);
         toOrigin.transformAssign(camera.position);
-        
-        //TODO : transform camera
+        toOrigin.transformAssign(camera.lookat);
+              
         V look = (V) camera.lookat.sub(camera.position);       
-        V Du   = (V) look.cross(camera.up).normalize();
+        V Du   = (V) look.cross(camera.up).normalize();   //get x-axis     
+         
+        //do proper transforms, and no point of transforming lookat since it's the origin in this context
         Transform transform = Transform.rotate(angle, Du);
         transform.transformAssign(camera.up);
         transform.transformAssign(camera.position);
-        
-        
+                         
         //Untransform camera
+        toOrigin.inverse().transformAssign(camera.lookat);
         toOrigin.inverse().transformAssign(camera.up);
         toOrigin.inverse().transformAssign(camera.position);
         
@@ -106,14 +96,19 @@ public class OrientationModel<S extends SCoord, V extends VCoord, R extends Abst
         Transform toOrigin = Transform.translate(camera.lookat.neg()); 
                 
         //Transform camera to origin for proper tranform (i.e. rotation, translation)               
+        toOrigin.transformAssign(camera.up);
         toOrigin.transformAssign(camera.position);
+        toOrigin.transformAssign(camera.lookat);
         
-        //TODO : transform camera        
+       //do proper transforms, and no point of transforming lookat since it's the origin in this context
         Transform transform = Transform.rotate(angle, camera.up);  
+        transform.transformAssign(camera.up);
         transform.transformAssign(camera.position);
         
         //Untransform camera        
-        toOrigin.inverse().transformAssign(camera.position);       
+        toOrigin.inverse().transformAssign(camera.lookat);
+        toOrigin.inverse().transformAssign(camera.up);
+        toOrigin.inverse().transformAssign(camera.position);
     }
     
     public  void distance(CameraModel<S, V, R> camera, float distance)
@@ -135,7 +130,7 @@ public class OrientationModel<S extends SCoord, V extends VCoord, R extends Abst
        
         if(t < 0.0f)
         {
-            t = 0.00001f;
+            t = 0.01f;
         }
         p = t;      
         
@@ -151,10 +146,8 @@ public class OrientationModel<S extends SCoord, V extends VCoord, R extends Abst
     }
     
     public void translateDistance(CameraModel<S, V, R> camera, float distance)
-    {
-        float jump = maxExt * 0.01f;
-        jump = Math.copySign(jump, distance);
-        distance(camera, distance + jump);
+    {              
+        distance(camera, distance);
     }
     
     public V sphericalCoordinates(float x, float y, float z)
