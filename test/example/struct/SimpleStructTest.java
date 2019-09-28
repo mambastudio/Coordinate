@@ -7,7 +7,6 @@ package example.struct;
 
 import coordinate.struct.FloatStruct;
 import coordinate.struct.StructFloatArray;
-import java.util.Arrays;
 
 /**
  *
@@ -16,12 +15,16 @@ import java.util.Arrays;
 public class SimpleStructTest {
     public static void main(String... args)
     {
-        StructFloatArray<Box> arrayBox = new StructFloatArray<>(Box.class, 2);
+        StructFloatArray<Box> arrayBox = new StructFloatArray<>(Box.class, 6);
         
-        Box box = arrayBox.get(1);        
-        box.setMax(100, 0.7f, 1);
+        for(Box box: arrayBox)
+        {
+            box.setMin(2, 4, 4);
+            box.setMax(100, 0.7f, 1);
+        }
         
-        System.out.println(Arrays.toString(arrayBox.get(1).getArray()));
+        for(Box box: arrayBox)
+            System.out.println(box);        
     }
     
     public static class Box extends FloatStruct
@@ -65,6 +68,15 @@ public class SimpleStructTest {
             ymax = globalArray[globalArrayIndex + 4];
             zmax = globalArray[globalArrayIndex + 5];
             
+        }
+        
+        @Override
+        public String toString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.append("min ").append(xmin).append(" ").append(ymin).append(" ").append(zmin).append("\n");
+            builder.append("max ").append(xmax).append(" ").append(ymax).append(" ").append(zmax).append("\n");
+            return builder.toString();
         }
         
     }

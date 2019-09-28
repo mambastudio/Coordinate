@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @param <N>
  * @param <T>
  */
-public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extends AbstractCoordinate>
+public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extends AbstractCoordinateFloat>
 {    
     public enum MeshType{FACE, FACE_NORMAL, FACE_UV_NORMAL, FACE_UV};
     

@@ -10,16 +10,16 @@ package coordinate.generic;
  * @author user
  * @param <V>
  */
-public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
+public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
     public abstract V getCoordInstance();
     public abstract V copy();
     
-    public float dot(V b) 
+    public default float dot(V b) 
     {
         return get('x') *b.get('x') + get('y')*b.get('y') + get('z')*b.get('z');
     }
     
-    public V cross(V t)
+    public default V cross(V t)
     {
         V dest = (V) t.copy();
         dest.set('x', get('y') * t.get('z') - get('z') * t.get('y'));
@@ -28,14 +28,14 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return dest;
     }
     
-    public final V addAssign(V v) {
+    public default V addAssign(V v) {
         set('x', get('x')+v.get('x'));
         set('y', get('y')+v.get('y'));
         set('z', get('z')+v.get('z'));
         return (V) this;
     }
     
-    public final V addAssign(float f) 
+    public default V addAssign(float f) 
     {
         set('x', get('x')+f);
         set('y', get('y')+f);
@@ -43,7 +43,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return  (V) this;
     }
     
-    public V add(float a)
+    public default V add(float a)
     {
         V v = getCoordInstance();
         v.set('x', get('x') + a);
@@ -52,7 +52,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return v;
     }
     
-    public V add(V a) 
+    public default V add(V a) 
     {
         V dest = copy();
         dest.set('x', get('x') + a.get('x'));
@@ -61,7 +61,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return dest;
     }  
     
-    public V mul(V a) 
+    public default V mul(V a) 
     {
         V dest = copy();
         dest.set('x', get('x') * a.get('x'));
@@ -69,7 +69,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         dest.set('z', get('z') * a.get('z'));
         return dest;
     }
-    public V div(V a) 
+    public default V div(V a) 
     {
         V dest = copy();
         dest.set('x', get('x') / a.get('x'));
@@ -78,7 +78,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return dest;
     }
     
-    public V mul(float a) 
+    public default V mul(float a) 
     {
         V v = this.copy();
         v.set('x', v.get('x') * a);
@@ -87,21 +87,21 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return v;
     }
     
-    public void mulAssign(V a)
+    public default void mulAssign(V a)
     {
         set('x', get('x') * a.get('x'));
         set('y', get('y') * a.get('y'));
         set('z', get('z') * a.get('z'));
     }
     
-    public void mulAssign(float a) 
+    public default void mulAssign(float a) 
     {        
         set('x', get('x') * a);
         set('y', get('y') * a);
         set('z', get('z') * a);     
     }
     
-    public V div(float a) 
+    public default V div(float a) 
     {
         V v = this.copy();
         v.set('x', v.get('x') / a);
@@ -109,7 +109,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         v.set('z', v.get('z') / a);
         return v;
     }    
-    public V neg()        
+    public default V neg()        
     {
         V v = this.copy();
         v.set('x', v.get('x')* -1);
@@ -118,7 +118,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return v;        
     }
     
-    public V normalize()
+    public default V normalize()
     {
         
         V dest = copy();
@@ -131,7 +131,7 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
         return dest;   
     }
     
-    public void normalizeAssign()
+    public default void normalizeAssign()
     {        
         float lenSqr = this.dot((V) this);
         float len    = (float) java.lang.Math.sqrt(lenSqr);
@@ -142,17 +142,17 @@ public abstract class VCoord<V extends VCoord> extends AbstractCoordinate{
     }
     
     
-    public float lenSqr() 
+    public default float lenSqr() 
     { 
         return this.dot((V) this);   
     }
     
-    public float length() 
+    public default float length() 
     { 
         return (float) java.lang.Math.sqrt(lenSqr());
     }
     
-    public void set(V v)
+    public default void set(V v)
     {
         set('x', v.get('x')); 
         set('y', v.get('y')); 

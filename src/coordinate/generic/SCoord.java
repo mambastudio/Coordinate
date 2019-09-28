@@ -11,13 +11,13 @@ package coordinate.generic;
  * @param <S>
  * @param <V>
  */
-public abstract class SCoord<S extends SCoord, V extends VCoord> extends AbstractCoordinate {
+public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoordinateFloat {
     
     public abstract S getSCoordInstance();  
     public abstract V getVCoordInstance();
     public abstract S copy();
             
-    public V sub(S b)
+    public default V sub(S b)
     {
         V v = getVCoordInstance();        
         v.set('x', get('x') - b.get('x'));
@@ -26,7 +26,7 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
         return v;
     }
     
-    public S add(V v) 
+    public default S add(V v) 
     {
         S s = getSCoordInstance();
         s.set('x', get('x') + v.get('x'));
@@ -35,35 +35,35 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
         return s;
     }       
     
-    public final float distanceTo(S p) {
+    public default float distanceTo(S p) {
         float dx = get('x') - p.get('x');
         float dy = get('y') - p.get('y');
         float dz = get('z') - p.get('z');
         return (float) Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
 
-    public final float distanceTo(float px, float py, float pz) {
+    public default float distanceTo(float px, float py, float pz) {
         float dx = get('x') - px;
         float dy = get('y') - py;
         float dz = get('z') - pz;
         return (float) Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
 
-    public final float distanceToSquared(S p) {
+    public default float distanceToSquared(S p) {
         float dx = get('x') - p.get('x');
         float dy = get('y') - p.get('y');
         float dz = get('z') - p.get('z');
         return (dx * dx) + (dy * dy) + (dz * dz);
     }
 
-    public final float distanceToSquared(float px, float py, float pz) {
+    public default float distanceToSquared(float px, float py, float pz) {
         float dx = get('x') - px;
         float dy = get('y') - py;
         float dz = get('z') - pz;
         return (dx * dx) + (dy * dy) + (dz * dz);
     }
     
-    public final S middle(S p)
+    public default S middle(S p)
     {
         S s = getSCoordInstance();
         s.set('x', (get('x') + p.get('x')) * 0.5f);
@@ -72,21 +72,21 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
         return s;
     }
     
-    public final S set(float x, float y, float z) {
+    public default S set(float x, float y, float z) {
         this.set('x', x);
         this.set('y', y);
         this.set('z', z);
         return (S) this;
     }
 
-    public final S set(S p) {
+    public default S set(S p) {
         this.set('x', p.get('x'));
         this.set('y', p.get('y'));
         this.set('z', p.get('z'));
         return (S) this;
     }
     
-    public S mul(float a) 
+    public default S mul(float a) 
     {
         S s = getSCoordInstance();
         s.set('x', get('x') * a);
@@ -95,7 +95,7 @@ public abstract class SCoord<S extends SCoord, V extends VCoord> extends Abstrac
         return s;
     }  
         
-    public S neg()        
+    public default S neg()        
     {
         S s = this.copy();
         s.set('x', s.get('x')* -1);

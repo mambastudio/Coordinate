@@ -5,6 +5,7 @@
  */
 package coordinate.struct;
 
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
  * @author user
  * @param <T>
  */
-public class StructFloatArray<T extends FloatStruct> 
+public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
 {
     Class<T> clazz;
     float[] array;
@@ -60,5 +61,29 @@ public class StructFloatArray<T extends FloatStruct>
     {
         return array;
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new StructFloatArrayIterator(this);
+    }
     
+    private class StructFloatArrayIterator<T> implements Iterator<T>
+    {
+        int i = 0;
+        StructFloatArray array;
+        private StructFloatArrayIterator(StructFloatArray array)
+        {
+            this.array = array;
+        }
+        @Override
+        public boolean hasNext() {
+            return i < size;
+        }
+
+        @Override
+        public T next() {
+            T t = (T) array.get(i); i++;
+            return t;
+        }        
+    }    
 }

@@ -5,13 +5,13 @@
  */
 package coordinate.parser.attribute;
 
-import coordinate.generic.AbstractCoordinate;
+import coordinate.generic.AbstractCoordinateFloat;
 
 /**
  *
  * @author user
  */
-public class Color4T extends AbstractCoordinate 
+public class Color4T implements AbstractCoordinateFloat 
 {
     public float r, g, b, w;
     
@@ -108,5 +108,10 @@ public class Color4T extends AbstractCoordinate
     public Color4T copy()
     {
         return new Color4T(r, g, b, w);
+    }
+
+    @Override
+    public int getByteSize() {
+        return 4;
     }
 }

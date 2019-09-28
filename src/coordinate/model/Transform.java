@@ -5,12 +5,12 @@
  */
 package coordinate.model;
 
-import coordinate.generic.AbstractCoordinate;
 import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
+import coordinate.generic.AbstractCoordinateFloat;
 
 /**
  *
@@ -41,7 +41,7 @@ public class Transform <S extends SCoord, V extends VCoord>{
     }
     
     
-    public static Transform translate(AbstractCoordinate v)
+    public static Transform translate(AbstractCoordinateFloat v)
     {
         return translate(v.get('x'), v.get('y'), v.get('z'));
     }

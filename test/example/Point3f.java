@@ -31,7 +31,7 @@ import coordinate.generic.SCoord;
  *
  * @author user
  */
-public class Point3f extends SCoord<Point3f, Vector3f>
+public class Point3f implements SCoord<Point3f, Vector3f>
 {    
     public float x, y, z;
     public Point3f() {
@@ -146,5 +146,10 @@ public class Point3f extends SCoord<Point3f, Vector3f>
                 z = value;
                 break;
         }
+    }
+
+    @Override
+    public int getByteSize() {
+        return 4;
     }
 }

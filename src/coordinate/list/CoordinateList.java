@@ -25,7 +25,7 @@ package coordinate.list;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import coordinate.generic.AbstractCoordinate;
+import coordinate.generic.AbstractCoordinateFloat;
 
 
 /**
@@ -33,7 +33,7 @@ import coordinate.generic.AbstractCoordinate;
  * @author user
  * @param <T>
  */
-public class CoordinateList <T extends AbstractCoordinate>
+public class CoordinateList <T extends AbstractCoordinateFloat>
 {
     private final FloatList arrayList;
     private final Class<T> instance;   

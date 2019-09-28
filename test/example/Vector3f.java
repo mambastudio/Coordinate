@@ -31,7 +31,7 @@ import coordinate.generic.VCoord;
  *
  * @author user
  */
-public class Vector3f extends VCoord<Vector3f>
+public class Vector3f implements VCoord<Vector3f>
 {    
     public float x, y, z;
     
@@ -208,6 +208,11 @@ public class Vector3f extends VCoord<Vector3f>
                 z = value;
                 break;
         }
+    }
+
+    @Override
+    public int getByteSize() {
+        return 4;
     }
 
 }
