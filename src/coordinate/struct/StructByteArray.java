@@ -5,6 +5,7 @@
  */
 package coordinate.struct;
 
+import coordinate.list.ByteList;
 import coordinate.utility.StructInfo;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     Class<T> clazz;
-    byte[] array;
+    ByteList array;
     int size;
     int[] offsets;
     
@@ -27,7 +28,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
         
         this.clazz = clazz;
         this.offsets = info.offsets();
-        this.array = new byte[offsets[offsets.length - 1] * size];
+        this.array = new ByteList(offsets[offsets.length - 1] * size);
         this.size = size;        
     }
     
@@ -37,10 +38,17 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
         
         this.clazz = clazz;
         this.offsets = info.offsets();
-        this.array = array;
+        this.array = new ByteList(array);
         this.size = array.length/offsets[offsets.length - 1];
+    }
+    public StructByteArray(Class<T> clazz, ByteList array)
+    {
+         StructInfo info = new StructInfo(clazz);
         
-        
+        this.clazz = clazz;
+        this.offsets = info.offsets();
+        this.array = array;
+        this.size = array.size()/offsets[offsets.length - 1];
     }
     
     public int size()
@@ -50,22 +58,22 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     
     public int getByteArraySize()
     {
-        return array.length;
+        return array.size();
     }
     
     public T get(int index)
     {
         T t = getInstance();
         t.setOffsets(offsets);
-        t.setGlobalArray(array, index);
+        t.setGlobalArray(array.trim(), index);
         t.initFromGlobalArray();          
         return t;
     }
     
     public void set(T t, int index)
     {
-        t.setGlobalArray(array, index);
-        System.arraycopy(t.getArray(), 0, array, t.getGlobalArrayIndex(), t.getSize());
+        t.setGlobalArray(array.trim(), index);
+        System.arraycopy(t.getArray(), 0, array.trim(), t.getGlobalArrayIndex(), t.getSize());
     }
     
     private T getInstance()
@@ -80,7 +88,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     
     public byte[] getArray()
     {
-        return array;
+        return array.trim();
     }
 
     @Override
@@ -102,7 +110,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
         }
 
         @Override
-        public T next() {
+        public T next() {            
             T t = (T) array.get(i); i++;
             t.setOffsets(offsets);
             return t;

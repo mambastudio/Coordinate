@@ -1,25 +1,7 @@
-/* 
- * The MIT License
- *
- * Copyright 2016 user.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package coordinate.list;
 
@@ -31,44 +13,50 @@ import java.util.function.BiFunction;
  *
  * @author user
  */
-public class FloatList {
-    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+public class ByteList {
+     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     
-    private float[] array;
+    private byte[] array;
     private int size;
 
-    public FloatList()
+    public ByteList()
     {
-        array = new float[10];
+        array = new byte[10];
         size = 0;
     }
     
-    public FloatList(int capacity)
+    public ByteList(int capacity)
     {
-        array = new float[capacity];
+        array = new byte[capacity];
         size = capacity;
+    }
+    
+    public ByteList(byte[] array)
+    {
+        this.array = array;
+        this.size = array.length;
     }
 
     public void clear()
     {
-        array = new float[10];
+        array = new byte[10];
         size = 0;
     }
     
-    public final void add(float i)
+    public final void add(byte i)
     {
         ensureCapacity(size + 1);
         array[size++] = i;
         
     }
     
-    public final void add(float... value)
+    public final void add(byte... value)
     {
-        for(float i : value)
+        for(byte i : value)
             add(i);
     }
     
-    public final void insert(int index, float value)
+    public final void insert(int index, byte value)
     {
         rangeCheckForAdd(index);
         ensureCapacity(size + 1);  
@@ -78,17 +66,17 @@ public class FloatList {
         size++;
     }
     
-    public final void insert(int index, float... value)
+    public final void insert(int index, byte... value)
     {
         for(int i = 0; i<value.length; i++)
             insert(index+i, value[i]);
     }
     
     //actual array size still remains same (efficiency purpose perhaps)
-    public final float remove(int index)
+    public final byte remove(int index)
     {
         rangeCheck(index);
-        float oldValue = array[index];
+        byte oldValue = array[index];
         
         int numMoved = size - index - 1;
         if (numMoved > 0)
@@ -98,10 +86,10 @@ public class FloatList {
         return oldValue;
     }
     
-    public final float[] remove(int fromIndex, int toIndex)
+    public final byte[] remove(int fromIndex, int toIndex)
     {        
         int removeSize = toIndex - fromIndex;
-        float[] arr = new float[removeSize];
+        byte[] arr = new byte[removeSize];
         
         for(int i = 0; i<removeSize; i++)
             arr[i] = remove(fromIndex);
@@ -109,23 +97,23 @@ public class FloatList {
         return arr;
     }
 
-    public final void set(int index, float value)
+    public final void set(int index, byte value)
     {
         array[index] = value;
     }
     
-    public final void set(int index, float... values)
+    public final void set(int index, byte... values)
     {
         for(int i = 0; i<values.length; i++)
             set(index + i, values[i]);
     }
 
-    public final float get(int index)
+    public final byte get(int index)
     {
         return array[index];
     }
    
-    public final float[] subArray(int fromIndex, int toIndex)
+    public final byte[] subArray(int fromIndex, int toIndex)
     {
         subListRangeCheck(fromIndex, toIndex, size);        
         return Arrays.copyOfRange(array, fromIndex, toIndex);        
@@ -136,7 +124,7 @@ public class FloatList {
         return size;
     }
 
-    public final float[] trim()
+    public final byte[] trim()
     {
         if(size < array.length)
             array = Arrays.copyOf(array, size);        
@@ -191,16 +179,16 @@ public class FloatList {
     }
     
     //(oldValue, index, size) return value;
-    public void forEachSet(TriFunction<Float, Integer, Integer, Float> function)
+    public void forEachSet(TriFunction<Byte, Integer, Integer, Byte> function)
     {
         for(int i = 0; i<size(); i++)
             set(i, function.apply(get(i), i, size()));
     }
     
     //(index, size) return value;
-    public static FloatList forEachAdd(int size, BiFunction<Integer, Integer, Float> function)
+    public static ByteList forEachAdd(int size, BiFunction<Integer, Integer, Byte> function)
     {
-        FloatList list = new FloatList();
+        ByteList list = new ByteList();
         for(int i = 0; i<size; i++)
             list.add(function.apply(i, size));
         return list;
