@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/list/FloatList.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/StructInfo.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/list/ByteList.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/ByteStruct.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/struct/ByteStructTest.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/StructByteArray.java</file>
+        </group>
     </open-files>
 </project-private>
