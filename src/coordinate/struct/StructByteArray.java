@@ -22,6 +22,16 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     int size;
     int[] offsets;
     
+    public StructByteArray(Class<T> clazz)
+    {
+        StructInfo info = new StructInfo(clazz);
+        
+        this.clazz = clazz;
+        this.offsets = info.offsets();
+        this.array = new ByteList();
+        this.size = 0;
+    }
+    
     public StructByteArray(Class<T> clazz, int size)
     {
         StructInfo info = new StructInfo(clazz);
@@ -49,6 +59,23 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
         this.offsets = info.offsets();
         this.array = array;
         this.size = array.size()/offsets[offsets.length - 1];
+    }
+    
+    public void add(T t)
+    {
+        //know the offset first
+        t.setOffsets(offsets);
+        
+        //current index is now size of struct array
+        int currentIndex = size;
+        array.add(t.getArray());
+        
+        //increment size
+        size++;
+        
+        //just in case you operate the object outside here
+        t.setGlobalArray(array.trim(), currentIndex);
+      
     }
     
     public int size()
@@ -99,10 +126,10 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     private class StructFloatArrayIterator<T extends ByteStruct> implements Iterator<T>
     {
         int i = 0;
-        StructByteArray array;
+        StructByteArray structArray;
         private StructFloatArrayIterator(StructByteArray array)
         {
-            this.array = array;
+            this.structArray = array;
         }
         @Override
         public boolean hasNext() {
@@ -111,8 +138,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
 
         @Override
         public T next() {            
-            T t = (T) array.get(i); i++;
-            t.setOffsets(offsets);
+            T t = (T) structArray.get(i); i++;
             return t;
         }        
     }    

@@ -18,6 +18,7 @@ import java.nio.ByteOrder;
 public class ByteStructTest {
     public static void main(String... args)
     {
+        /*
         StructByteArray<Intersection> arrayBox = new StructByteArray<>(Intersection.class, 3);
         
         for(Intersection isect : arrayBox)
@@ -28,7 +29,26 @@ public class ByteStructTest {
         
         for(Intersection isect : arrayBox)
             System.out.println(isect);
-
+       
+        */
+        
+        StructByteArray<Intersection> arrayBox = new StructByteArray<>(Intersection.class);
+        
+        for(int i = 0; i<3; i++)
+        {
+            Intersection isect = new Intersection();
+            isect.setP(3, 14, 77);
+            isect.setUV(1, 9);
+            
+            arrayBox.add(isect);
+            
+            isect.setP(2, 14, 70);
+            isect.setUV(3, 9);
+        }
+        
+        for(Intersection isect : arrayBox)
+            System.out.println(isect);
+        
     }
     
     public static class Intersection extends ByteStruct
