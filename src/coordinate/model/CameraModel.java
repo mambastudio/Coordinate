@@ -38,7 +38,7 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         this.fov = horizontalFOV;
         this.cameraTransform = new Transform<>();
     }  
-       
+    
     public void setUp()
     {
         V d = (V) lookat.sub(position).normalize();

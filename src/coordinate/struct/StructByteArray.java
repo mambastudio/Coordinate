@@ -6,7 +6,7 @@
 package coordinate.struct;
 
 import coordinate.list.ByteList;
-import coordinate.utility.StructInfo;
+import coordinate.struct.refl.ByteStructInfo;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +24,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     
     public StructByteArray(Class<T> clazz)
     {
-        StructInfo info = new StructInfo(clazz);
+        ByteStructInfo info = new ByteStructInfo(clazz);
         
         this.clazz = clazz;
         this.offsets = info.offsets();
@@ -34,7 +34,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     
     public StructByteArray(Class<T> clazz, int size)
     {
-        StructInfo info = new StructInfo(clazz);
+        ByteStructInfo info = new ByteStructInfo(clazz);
         
         this.clazz = clazz;
         this.offsets = info.offsets();
@@ -44,7 +44,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     
     public StructByteArray(Class<T> clazz, byte[] array)
     {
-        StructInfo info = new StructInfo(clazz);
+        ByteStructInfo info = new ByteStructInfo(clazz);
         
         this.clazz = clazz;
         this.offsets = info.offsets();
@@ -53,7 +53,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     }
     public StructByteArray(Class<T> clazz, ByteList array)
     {
-         StructInfo info = new StructInfo(clazz);
+         ByteStructInfo info = new ByteStructInfo(clazz);
         
         this.clazz = clazz;
         this.offsets = info.offsets();
@@ -93,7 +93,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
         T t = getInstance();
         t.setOffsets(offsets);
         t.setGlobalArray(array.trim(), index);
-        t.initFromGlobalArray();          
+        t.initFromGlobalArray();    
         return t;
     }
     

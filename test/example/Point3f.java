@@ -100,7 +100,6 @@ public class Point3f implements SCoord<Point3f, Vector3f>
         }
     }
 
-    @Override
     public void set(char axis, float value) {
         switch (axis) {
             case 'x':

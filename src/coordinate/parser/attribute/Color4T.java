@@ -58,7 +58,6 @@ public class Color4T implements AbstractCoordinateFloat
         }
     }
 
-    @Override
     public void set(char axis, float value) {
         switch (axis) {
             case 'r':
@@ -113,5 +112,12 @@ public class Color4T implements AbstractCoordinateFloat
     @Override
     public int getByteSize() {
         return 4;
+    }
+    
+    @Override
+    public String toString()
+    {
+        float[] array = getArray();
+        return String.format("(%3.2f, %3.2f, %3.2f)", array[0], array[1], array[2]);
     }
 }

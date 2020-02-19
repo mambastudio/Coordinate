@@ -29,8 +29,8 @@ public class SimpleStructTest {
     
     public static class Box extends FloatStruct
     {
-        private float xmin, ymin, zmin;
-        private float xmax, ymax, zmax;
+        public float xmin, ymin, zmin;
+        public float xmax, ymax, zmax;
         
         public void setMin(float x, float y, float z)
         {
@@ -43,33 +43,7 @@ public class SimpleStructTest {
             this.xmax = x; this.ymax = y; this.zmax = z;
             this.refreshGlobalArray();
         }
-        
-        @Override
-        public float[] getArray() {
-            return new float[]{xmin, ymin, zmin, xmax, ymax, zmax};
-        }
-
-        @Override
-        public int getSize() {
-            return 6;
-        }
-
-        @Override
-        public void initFromGlobalArray() {
-            float[] globalArray = getGlobalArray();
-            if(globalArray == null)
-                return;
-            int globalArrayIndex = getGlobalArrayIndex();
-            
-            xmin = globalArray[globalArrayIndex + 0];
-            ymin = globalArray[globalArrayIndex + 1];
-            zmin = globalArray[globalArrayIndex + 2];
-            xmax = globalArray[globalArrayIndex + 3];
-            ymax = globalArray[globalArrayIndex + 4];
-            zmax = globalArray[globalArrayIndex + 5];
-            
-        }
-        
+       
         @Override
         public String toString()
         {

@@ -30,10 +30,22 @@ import java.io.Serializable;
  * @author user
  */
 public interface AbstractCoordinateFloat extends AbstractCoordinate, Serializable{        
-    public float get(char axis);
-    public void set(char axis, float value);
-    public void set(float... values);  
-    public void setIndex(int index, float value);
+    public default float get(char axis)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    } 
+    
+    public default void set(char axis, float value)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public default void setIndex(int index, float value)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public void set(float... values);
     public float[] getArray();
         
     public default float get(int i) {

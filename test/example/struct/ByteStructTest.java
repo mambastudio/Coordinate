@@ -5,11 +5,9 @@
  */
 package example.struct;
 
-import coordinate.generic.AbstractCoordinate;
+import coordinate.generic.AbstractCoordinateFloat;
 import coordinate.struct.ByteStruct;
 import coordinate.struct.StructByteArray;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  *
@@ -18,44 +16,43 @@ import java.nio.ByteOrder;
 public class ByteStructTest {
     public static void main(String... args)
     {
-        /*
-        StructByteArray<Intersection> arrayBox = new StructByteArray<>(Intersection.class, 3);
-        
-        for(Intersection isect : arrayBox)
-        {
-            isect.setP(3, 14, 77);
-            isect.setUV(1, 9);
-        }
-        
-        for(Intersection isect : arrayBox)
-            System.out.println(isect);
-       
-        */
-        
         StructByteArray<Intersection> arrayBox = new StructByteArray<>(Intersection.class);
+        arrayBox.add(new Intersection());
+        Intersection isect = arrayBox.get(0);
         
-        for(int i = 0; i<3; i++)
+        
+        isect.setP(2, 14, 70);
+        isect.setUV(3, 9);
+        
+       
+        for(Intersection intersection : arrayBox)
+            System.out.println(intersection);
+         
+        isect.setUV(3, 14);
+
+        for(Intersection intersection : arrayBox)
+            System.out.println(intersection);
+    }
+    
+    public static class Isect extends ByteStruct
+    {  
+        public final Float2 dummy;
+        public final int w;
+        public final int x;
+        
+        public Isect()
         {
-            Intersection isect = new Intersection();
-            isect.setP(3, 14, 77);
-            isect.setUV(1, 9);
-            
-            arrayBox.add(isect);
-            
-            isect.setP(2, 14, 70);
-            isect.setUV(3, 9);
-        }
-        
-        for(Intersection isect : arrayBox)
-            System.out.println(isect);
-        
+            dummy = new Float2();
+            w = 0;
+            x = 3;
+        }      
     }
     
     public static class Intersection extends ByteStruct
     {   
         public Float4 p;       //16 bytes
         public final Float2 uv;      //8 bytes
-        
+      
         public Intersection()
         {
             p   = new Float4();
@@ -75,41 +72,6 @@ public class ByteStructTest {
         }
         
         @Override
-        public void initFromGlobalArray() {            
-            ByteBuffer buffer = this.getLocalByteBuffer(ByteOrder.nativeOrder());
-            
-            int[] offsets = this.getOffsets();
-            
-            buffer.position(offsets[0]);            
-            p.x     = buffer.getFloat();
-            p.y     = buffer.getFloat();
-            p.z     = buffer.getFloat();
-            
-            buffer.position(offsets[1]);    
-            uv.x    = buffer.getFloat();
-            uv.y    = buffer.getFloat();           
-        }
-
-        @Override
-        public byte[] getArray() {
-            
-            ByteBuffer buffer = this.getEmptyLocalByteBuffer(ByteOrder.nativeOrder());
-           
-            int[] offsets = this.getOffsets();
-            
-            buffer.position(offsets[0]);            
-            buffer.putFloat(p.x);
-            buffer.putFloat(p.y);
-            buffer.putFloat(p.z);
-            
-            buffer.position(offsets[1]);            
-            buffer.putFloat(uv.x);
-            buffer.putFloat(uv.y);
-            
-            return buffer.array();
-        }
-
-        @Override
         public String toString()
         {
             StringBuilder builder = new StringBuilder();
@@ -121,7 +83,7 @@ public class ByteStructTest {
         
     }
     
-    public static class Float4 implements AbstractCoordinate
+    public static class Float4 implements AbstractCoordinateFloat
     {
         public float x, y, z, w;
         
@@ -140,9 +102,36 @@ public class ByteStructTest {
         public int getByteSize() {
             return 4;
         }
+
+        @Override
+        public float[] getArray() {
+            return new float[]{x, y, z, 0};
+        }
+
+        @Override
+        public float get(char axis) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        public void set(char axis, float value) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void set(float... values) {
+            x = values[0];
+            y = values[1];
+            z = values[2];
+            w = values[3];
+        }
+
+        @Override
+        public void setIndex(int index, float value) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
-    public static class Float2 implements AbstractCoordinate
+    public static class Float2 implements AbstractCoordinateFloat
     {
         public float x, y;
         
@@ -161,6 +150,31 @@ public class ByteStructTest {
         @Override
         public int getByteSize() {
             return 4;
+        }
+
+        @Override
+        public float get(char axis) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        public void set(char axis, float value) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void set(float... values) {
+            x = values[0];
+            y = values[1];
+        }
+
+        @Override
+        public void setIndex(int index, float value) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public float[] getArray() {
+            return new float[]{x, y};
         }
     }
 }
