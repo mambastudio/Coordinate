@@ -5,6 +5,11 @@
  */
 package coordinate.struct;
 
+import coordinate.list.IntList;
+import coordinate.struct.refl.IntStructField;
+import java.nio.IntBuffer;
+import java.util.List;
+
 /**
  *
  * @author user
@@ -33,9 +38,47 @@ public abstract class IntStruct {
         
     }
      
-    public abstract void  initFromGlobalArray();
-    public abstract int [] getArray();
-    public abstract int getSize();  
+    public void initFromGlobalArray()
+    {
+        List<IntStructField> fields = IntStructField.getAllStructFields(this);
+        IntBuffer buffer = IntBuffer.wrap(globalArray, globalArrayIndex, getSize());
+        
+        for(int i = 0; i<fields.size(); i++)
+        {
+            IntStructField field = fields.get(i);
+            if(field.isInt())
+                field.setInt(buffer.get());
+            else if(field.isAbstractCoordinateInt())
+            {
+                int[] array = new int[field.getNumberOfInts()];
+                buffer.get(array);
+                field.setCoordinateInt(array);
+            }
+        }
+    }
+    public int[] getArray()
+    {
+        List<IntStructField> fields = IntStructField.getAllStructFields(this);
+        IntList arrayList = new IntList();
+        
+        for(int i = 0; i<fields.size(); i++)
+        {
+            IntStructField field = fields.get(i);
+            if(field.isInt())
+                arrayList.add(field.getInt());
+            else if(field.isAbstractCoordinateInt())
+                arrayList.add(field.getCoordinateInt());
+        }
+        
+        return arrayList.trim();
+    }
+    public int getSize()
+    {
+        List<IntStructField> fields = IntStructField.getAllStructFields(this);
+        int i = 0;
+        i = fields.stream().map((field) -> field.getNumberOfInts()).reduce(i, Integer::sum);
+        return i;
+    }
     
     public int[] getGlobalArray()
     {

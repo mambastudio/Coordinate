@@ -5,7 +5,11 @@
  */
 package coordinate.struct;
 
+import coordinate.list.FloatList;
+import coordinate.struct.refl.FloatStructField;
 import java.io.Serializable;
+import java.nio.FloatBuffer;
+import java.util.List;
 
 /**
  *
@@ -34,10 +38,48 @@ public abstract class FloatStruct implements Serializable {
         System.arraycopy(array, 0, globalArray, globalArrayIndex, getSize());
         
     }
-     
-    public abstract void  initFromGlobalArray();
-    public abstract float[] getArray();
-    public abstract int getSize();  
+    
+    public void initFromGlobalArray()
+    {
+        List<FloatStructField> fields = FloatStructField.getAllStructFields(this);
+        FloatBuffer buffer = FloatBuffer.wrap(globalArray, globalArrayIndex, getSize());
+        
+        for(int i = 0; i<fields.size(); i++)
+        {
+            FloatStructField field = fields.get(i);
+            if(field.isFloat())
+                field.setFloat(buffer.get());
+            else if(field.isAbstractCoordinateFloat())
+            {
+                float[] array = new float[field.getNumberOfFloats()];
+                buffer.get(array);
+                field.setCoordinateFloat(array);
+            }
+        }
+    }
+    public float[] getArray()
+    {
+        List<FloatStructField> fields = FloatStructField.getAllStructFields(this);
+        FloatList arrayList = new FloatList();
+        
+        for(int i = 0; i<fields.size(); i++)
+        {
+            FloatStructField field = fields.get(i);
+            if(field.isFloat())
+                arrayList.add(field.getFloat());
+            else if(field.isAbstractCoordinateFloat())
+                arrayList.add(field.getCoordinateFloat());
+        }
+        
+        return arrayList.trim();
+    }
+    public int getSize()
+    {
+        List<FloatStructField> fields = FloatStructField.getAllStructFields(this);
+        int i = 0;
+        i = fields.stream().map((field) -> field.getNumberOfFloats()).reduce(i, Integer::sum);
+        return i;
+    }
     
     public float[] getGlobalArray()
     {

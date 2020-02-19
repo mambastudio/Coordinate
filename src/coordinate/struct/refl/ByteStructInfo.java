@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.utility;
+package coordinate.struct.refl;
 
 import coordinate.generic.AbstractCoordinate;
 import coordinate.list.IntList;
@@ -26,11 +26,11 @@ import java.util.logging.Logger;
 *
 */
 
-public class StructInfo {
+public class ByteStructInfo {
     
     Field structFields[] = null;
     
-    public StructInfo(Class<? extends ByteStruct> c)
+    public ByteStructInfo(Class<? extends ByteStruct> c)
     {
         Field fields[] = c.getDeclaredFields();
         List<Field> structFieldList = new ArrayList<>();
@@ -63,7 +63,7 @@ public class StructInfo {
         }
     }
     
-    public int getByteValue(Class clazz)
+    public int getByteSize(Class clazz)
     {
         if(clazz.isPrimitive())
             return getByteSizeofPrimitive((Class<? extends Number>) clazz);
@@ -92,10 +92,16 @@ public class StructInfo {
     
     public int getByteSizeofPrimitive(Class<? extends Number> number)
     {         
-        if(number.getName().equals("int") || number.getName().equals("float") || number.getName().equals("boolean"))
-            return 4;
-        else
-            return -1;
+        switch (number.getName()) {
+            case "int":
+            case "float":
+            case "boolean":
+                return 4;
+            case "long":
+                return 8;
+            default:
+                return -1;
+        }
     }
     
     public int getByteSizeofAbstractCoordinate(Class<? extends AbstractCoordinate> clazz)
@@ -109,27 +115,30 @@ public class StructInfo {
     
     public int[] offsets()
     {
-        IntList values = new IntList();
-        IntList offsets = new IntList();
+        IntList byteSizeValues = new IntList();     //byte size
+        IntList offsets = new IntList();            //offset position of value
         
-        for(Field field : structFields)
+        //get byte size of field
+        for(Field field : structFields)        
+            byteSizeValues.add(getByteSize(field.getType()));
+        
+        //maximum byte size
+        int maxByteSize = Arrays.stream(byteSizeValues.trim()).max().getAsInt(); 
+        
+        int currentOffset = 0; //lets start with offset of 0 
+        
+        //iterate the struct fields
+        for (Field field : structFields) 
         {
-            values.add(getByteValue(field.getType()));
-        }
-        int max = Arrays.stream(values.trim()).max().getAsInt(); 
-        
-        int offset = 0;
-        for (Field field : structFields) {
-             
-            int byteValue = getByteValue(field.getType());           
-            
+            //is it a struct
             if(isInstanceOf(field.getType(), ByteStruct.class))
             {
-                StructInfo info = new StructInfo((Class<? extends ByteStruct>) field.getType());
+                //all the section here is recursive if encounter inner struct
+                ByteStructInfo info = new ByteStructInfo((Class<? extends ByteStruct>) field.getType());
                 int deepOffset[] = info.offsets();
                 int deepValues[] = info.getByteValues();
                 int deepMax      = Arrays.stream(deepValues).max().getAsInt();                 
-                int deepOffsetStart = computeAlignmentOffset(offset, deepMax);  //get new deep offset
+                int deepOffsetStart = computeAlignmentOffset(currentOffset, deepMax);  //get new deep offset based on max size of field
                 
                 //transform local offset to global offset
                 for(int i = 0; i<deepOffset.length; i++)
@@ -140,22 +149,25 @@ public class StructInfo {
                     offsets.add(deepOffset[i]);
                 
                 //update offset to the size of deep struct size
-                offset = deepOffset[deepOffset.length-1];
+                currentOffset = deepOffset[deepOffset.length-1];               
             }
+            //deal with normal primitives
             else
             {
-                offsets.add(computeAlignmentOffset(offset, byteValue)); //where to put value into array to accomodate index 0          
-                offset += byteValue;
+                int byteSize = getByteSize(field.getType());
+                int newOffset = computeAlignmentOffset(currentOffset, byteSize);               
+                offsets.add(newOffset); //where to put value into array                 
+                currentOffset = newOffset + byteSize;
             }
         }
-        offsets.add(computeAlignmentOffset(offset, max)); 
-        
+        offsets.add(computeAlignmentOffset(currentOffset, maxByteSize)); //last position of offset = size of struct       
         return offsets.trim();
     }
     
-    public int computeAlignmentOffset(int offset, int alignment)
+    //new offset based on previous offset
+    public int computeAlignmentOffset(int offset, int byteSize)
     {
-        return (offset + alignment - 1) & ~(alignment - 1);
+        return (offset + byteSize - 1) & ~(byteSize - 1);
     }
     
     private Object getObject(Class clazz)
@@ -163,7 +175,7 @@ public class StructInfo {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(StructInfo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ByteStructInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -175,13 +187,13 @@ public class StructInfo {
   
     public static int[] offsets(Class<? extends ByteStruct> c)
     {
-        StructInfo info = new StructInfo(c);
+        ByteStructInfo info = new ByteStructInfo(c);
         return info.offsets();
     }
     
     public static int getByteArraySize(Class<? extends ByteStruct> c, int size)
     {
-        StructInfo info = new StructInfo(c);
+        ByteStructInfo info = new ByteStructInfo(c);
         int[] offsets = info.offsets();
         return offsets[offsets.length-1] * size;
     }

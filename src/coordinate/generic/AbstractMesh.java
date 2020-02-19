@@ -264,7 +264,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
                 (float)triangleFaces.get(index * 10 + 0), (float)triangleFaces.get(index * 10 + 1), (float)triangleFaces.get(index * 10 + 2),
                 (float)triangleFaces.get(index * 10 + 3), (float)triangleFaces.get(index * 10 + 4), (float)triangleFaces.get(index * 10 + 5),
                 (float)triangleFaces.get(index * 10 + 6), (float)triangleFaces.get(index * 10 + 7), (float)triangleFaces.get(index * 10 + 8),
-                (float)triangleFaces.get(index * 10 + 9));
+                (float)(triangleFaces.get(index * 10 + 9) & 0xFFFF));
     }
     
     
