@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author user
  */
 public class MaterialT implements Serializable {
-    public String name;    
+    public char[] name;    
     
     public Color4T diffuse;         //diffuse    - r, g, b, w (pad)
     public float diffuseWeight;     //diffuse    - diffuse weight
@@ -26,7 +26,7 @@ public class MaterialT implements Serializable {
     
     public MaterialT() 
     {
-        this.name = "m_default";
+        this.name = "m_default".toCharArray();
         this.diffuse = new Color4T(0.9f, 0.9f, 0.9f);
         this.diffuseWeight = 1;
         
@@ -39,7 +39,7 @@ public class MaterialT implements Serializable {
     }
     public MaterialT(float dr, float dg, float db)
     {
-        this.name = "m_default"; 
+        this.name = "m_default".toCharArray(); 
         this.diffuse = new Color4T(dr, dg, db);
         this.diffuseWeight = 1;
         
@@ -53,7 +53,7 @@ public class MaterialT implements Serializable {
         
     public MaterialT(String name)
     {
-        this.name = name;
+        this.name = name.toCharArray();
         this.diffuse = new Color4T(0.9f, 0.9f, 0.9f);
         this.diffuseWeight = 1;
         
@@ -66,7 +66,7 @@ public class MaterialT implements Serializable {
     }
     public MaterialT(String name, float dr, float dg, float db)
     {
-        this.name = name; 
+        this.name = name.toCharArray(); 
         this.diffuse = new Color4T(dr, dg, db);
         this.diffuseWeight = 1;
         
@@ -80,7 +80,7 @@ public class MaterialT implements Serializable {
     
     public MaterialT(float dr, float dg, float db, float er, float eg, float eb)
     {
-        this.name = "m_default"; 
+        this.name = "m_default".toCharArray(); 
         this.diffuse = new Color4T(dr, dg, db);
         this.diffuseWeight = 1;
         
@@ -95,7 +95,7 @@ public class MaterialT implements Serializable {
      public MaterialT(String name, float dr, float dg, float db, float er, float eg, float eb)
     {
         this(dr, dg, db, er, eg, eb);
-        this.name = name;
+        this.name = name.toCharArray();
     } 
      
     public MaterialT(MaterialT mat)
@@ -117,6 +117,8 @@ public class MaterialT implements Serializable {
     {
         return emitterEnabled;
     }    
+    
+    
     
     //non binding set
     public void set(MaterialT mat)
@@ -170,5 +172,9 @@ public class MaterialT implements Serializable {
         builder.append("emitter        ").append(emitter).append("\n");
         builder.append("is emitter:    ").append(isEmitter()).append("\n");
         return builder.toString();
+    }
+
+    public String getNameString() {
+        return new String(name);
     }
 }
