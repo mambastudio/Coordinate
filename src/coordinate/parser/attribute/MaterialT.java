@@ -34,7 +34,7 @@ public class MaterialT implements Serializable {
         this.eu = 60; this.ev = 30; this.ior = 1;
         this.iorEnabled = false;
                 
-        this.emitter = new Color4T(1, 1, 1, 5);
+        this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
     }
     public MaterialT(float dr, float dg, float db)

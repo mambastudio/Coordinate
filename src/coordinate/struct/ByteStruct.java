@@ -5,22 +5,29 @@
  */
 package coordinate.struct;
 
-import coordinate.struct.refl.ByteStructField;
+import coordinate.struct.field.ByteStructField;
 import coordinate.struct.refl.ByteStructInfo;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 
 /**
  *
- * @author user
+ * Aligned Data
+ * - Each primitive data type of an element in a struct requires K bytes
+ * - Address of each element in a struct must be a multiple of K
+ * 
+ * - Kmax is the largest alignment of any element
+ * - Address of structure & structure length must be multiples of Kmax
+ * 
  */
-public abstract class ByteStruct {
+public abstract class ByteStruct implements AbstractStruct {
     
     private byte[] globalArray = null;
     private int globalArrayIndex = -1;
     private int[] offsets;
-    
+        
     protected final int getGlobalArrayIndex()
     {
         return globalArrayIndex;
@@ -165,6 +172,10 @@ public abstract class ByteStruct {
             {
                 field.setInt(buffer.getInt());
             }
+            else if(field.isArray())
+            {
+                
+            }
         }
     }
     
@@ -200,5 +211,10 @@ public abstract class ByteStruct {
     public final byte[] getGlobalArray()
     {
         return globalArray;
+    }
+    
+    public Field[] getAllFields()
+    {
+        return null;
     }
 }

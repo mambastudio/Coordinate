@@ -26,6 +26,7 @@ package coordinate.list;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import coordinate.generic.AbstractCoordinateFloat;
+import java.util.Iterator;
 
 
 /**
@@ -33,27 +34,27 @@ import coordinate.generic.AbstractCoordinateFloat;
  * @author user
  * @param <T>
  */
-public class CoordinateList <T extends AbstractCoordinateFloat>
+public class CoordinateFloatList <T extends AbstractCoordinateFloat> 
 {
     private final FloatList arrayList;
     private final Class<T> instance;   
     private final int coordinateSize;
         
-    public CoordinateList(Class<T> clazz)
+    public CoordinateFloatList(Class<T> clazz)
     {
-        arrayList = new FloatList();
         instance = clazz;
+        arrayList = new FloatList();        
         coordinateSize = getCoordinateInstance().getSize();
     }
     
-    public CoordinateList(Class<T> clazz, int capacity)
+    public CoordinateFloatList(Class<T> clazz, int size)
     {
-        arrayList = new FloatList(capacity);
         instance = clazz;
+        arrayList = new FloatList(getCoordinateInstance().getSize() * size);        
         coordinateSize = getCoordinateInstance().getSize();
     }
     
-    public void add(CoordinateList<T> list)
+    public void add(CoordinateFloatList<T> list)
     {
         for(int i = 0; i<list.size(); i++)
             add(list.get(i));
@@ -66,7 +67,7 @@ public class CoordinateList <T extends AbstractCoordinateFloat>
     
     public T get(int index)
     {        
-        T t = getCoordinateInstance();
+        T t = getCoordinateInstance();        
         t.set(arrayList.subArray(getArrayIndex(index), getArrayIndex(index) + coordinateSize));
         return t;
     }
@@ -81,7 +82,7 @@ public class CoordinateList <T extends AbstractCoordinateFloat>
         try {
             return instance.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(CoordinateList.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CoordinateFloatList.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -93,7 +94,7 @@ public class CoordinateList <T extends AbstractCoordinateFloat>
     
     public int size()
     {
-        return arrayList.size()/getCoordinateInstance().getSize();
+        return arrayList.size()/coordinateSize;
     }
     
     public int arraySize()
@@ -104,5 +105,5 @@ public class CoordinateList <T extends AbstractCoordinateFloat>
     public float[] getFloatArray()
     {
         return arrayList.trim();
-    }    
+    }      
 }

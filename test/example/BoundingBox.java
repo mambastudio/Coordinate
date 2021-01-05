@@ -16,7 +16,7 @@ public class BoundingBox implements AbstractBound<Point3f, Vector3f, Ray, Boundi
 
     @Override
     public void include(Point3f s) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override

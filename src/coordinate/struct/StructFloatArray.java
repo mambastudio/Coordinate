@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  *
  * @author user
  * @param <T>
+ * @param <Frame>
  */
 public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
 {
@@ -28,6 +29,14 @@ public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
         this.size = size;
     }
     
+    public StructFloatArray(Class<T> clazz, float[] array)
+    {
+        this.clazz = clazz;
+        T t = getInstance();        
+        this.array = array;
+        this.size = array.length/t.getSize();
+    }
+    
     public int size()
     {
         return size;
@@ -39,6 +48,12 @@ public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
         t.setGlobalArray(array, index);
         t.initFromGlobalArray();
         return t;
+    }
+    
+    public void initFromIndex(int index, T t)
+    {
+        t.setGlobalArray(array, index);
+        t.initFromGlobalArray();
     }
     
     public void set(T t, int index)
@@ -57,6 +72,11 @@ public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
         return null;
     }
     
+    public int getArraySize()
+    {
+        return array.length;
+    }
+    
     public float[] getArray()
     {
         return array;
@@ -64,15 +84,17 @@ public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
 
     @Override
     public Iterator<T> iterator() {
-        return new StructFloatArrayIterator(this);
+        return new StructFloatArrayIterator<>(this);
     }
     
-    private class StructFloatArrayIterator<T> implements Iterator<T>
+    private class StructFloatArrayIterator<T extends FloatStruct> implements Iterator<T>
     {
         int i = 0;
         StructFloatArray array;
-        private StructFloatArrayIterator(StructFloatArray array)
+        T t = null;
+        private StructFloatArrayIterator(StructFloatArray<T> array)
         {
+            t = array.getInstance();
             this.array = array;
         }
         @Override
@@ -82,7 +104,8 @@ public class StructFloatArray<T extends FloatStruct> implements Iterable<T>
 
         @Override
         public T next() {
-            T t = (T) array.get(i); i++;
+            array.initFromIndex(i, t);
+            i++;
             return t;
         }        
     }    

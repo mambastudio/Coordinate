@@ -110,7 +110,7 @@ public class Vector3f implements VCoord<Vector3f>
     }
     
     @Override
-    public void set(Vector3f v)
+    public void setValue(Vector3f v)
     {
         x = v.x; y = v.y; z = v.z;
     }

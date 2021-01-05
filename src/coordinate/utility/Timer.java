@@ -47,7 +47,7 @@ public class Timer {
     @Override
     public String toString() {
         long millis = nanos() / (1000 * 1000);
-        if (millis < 10000)
+        if (millis < 1000)
             return String.format("%dms", millis);
         long hours = millis / (60 * 60 * 1000);
         millis -= hours * 60 * 60 * 1000;

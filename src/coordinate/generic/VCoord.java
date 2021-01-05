@@ -152,7 +152,7 @@ public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
         return (float) java.lang.Math.sqrt(lenSqr());
     }
     
-    public default void set(V v)
+    public default void setValue(V v)
     {
         set('x', v.get('x')); 
         set('y', v.get('y')); 

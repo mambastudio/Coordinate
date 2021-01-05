@@ -5,9 +5,12 @@
  */
 package coordinate.struct.refl;
 
+import coordinate.struct.field.ByteStructField;
 import coordinate.generic.AbstractCoordinate;
 import coordinate.list.IntList;
 import coordinate.struct.ByteStruct;
+import coordinate.struct.annotation.ByteStructAnnotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ public class ByteStructInfo {
     public ByteStructInfo(Class<? extends ByteStruct> c)
     {
         Field fields[] = c.getDeclaredFields();
+        
         List<Field> structFieldList = new ArrayList<>();
         for (Field field : fields) {
             int modifier = field.getModifiers();
@@ -49,7 +53,7 @@ public class ByteStructInfo {
         return structFields.length;
     }
     
-    public void addByteValue(IntList byteValues, Class clazz)
+    public void addByteSizeValue(IntList byteValues, Class clazz)
     {
         if(clazz.isPrimitive())
             byteValues.add(getByteSizeofPrimitive((Class<? extends Number>) clazz));
@@ -63,10 +67,20 @@ public class ByteStructInfo {
         }
     }
     
-    public int getByteSize(Class clazz)
+    public int getByteSize(Field field)
     {
+        Class clazz = field.getType();
+        
         if(clazz.isPrimitive())
             return getByteSizeofPrimitive((Class<? extends Number>) clazz);
+        if(clazz.isArray())
+        {
+            Class arrayType = clazz.getComponentType();
+            int length = 0;
+            
+            System.out.println(length);
+            return getByteSize(arrayType) * length;
+        }
         else
         {
             Object o = getObject(clazz);
@@ -78,13 +92,33 @@ public class ByteStructInfo {
         return -1;
     }
     
-    public int[] getByteValues()
+    public int getByteSize(Class clazz)
+    {
+        if(clazz.isPrimitive())
+            return getByteSizeofPrimitive((Class<? extends Number>) clazz);
+        if(clazz.isArray())
+        {
+            Class arrayType = clazz.getComponentType();            
+            return getByteSize(arrayType);
+        }
+        else
+        {
+            Object o = getObject(clazz);
+            if(o instanceof AbstractCoordinate)
+            {
+                return this.getByteSizeofAbstractCoordinate(clazz);
+            }
+        }
+        return -1;
+    }
+        
+    public int[] getByteSizeValues()
     {
         IntList offsets = new IntList();
         
         for(Field field: structFields)
         {
-            addByteValue(offsets, field.getType());
+            addByteSizeValue(offsets, field.getType());
         }
         
         return offsets.trim();
@@ -113,15 +147,91 @@ public class ByteStructInfo {
         return -1;
     }
     
+    public static ByteStructLayout offsets(Class<? extends ByteStruct> clazz)
+    {
+        //for traversing layout in the struct (regular fields, inner structs and arrays)
+        ByteStructLayout layout = new ByteStructLayout();       
+        
+        //get all fields of this struct
+        List<ByteStructField> listFields = ByteStructField.getAllStructFields(clazz);
+        
+        //get byte size of field
+        listFields.forEach(field -> {
+            layout.byteSizeValues.add(field.getByteSize());
+        });
+        
+        //calculate maximum byte size
+        layout.calculateMaxByteSize();
+                
+        //iterate the struct fields
+        listFields.forEach(field -> {
+            updateOffsetAndSize(field, layout);
+        });
+        
+        //last position of offset = size of struct
+        layout.fieldOffsets.add(computeAlignmentOffset(layout.currentOffset, layout.maxByteSize));        
+        return layout;
+    }
+    
+    private static void updateOffsetAndSize(ByteStructField field, ByteStructLayout layout)
+    {
+        if(field.isAbstractCoordinate() || field.isPrimitive())
+        {
+            int byteSize = field.getByteSize();
+            int currentFieldOffset = computeAlignmentOffset(layout.currentOffset, byteSize);                  
+            layout.currentOffset = currentFieldOffset + byteSize;
+            layout.fieldOffsets.add(currentFieldOffset);
+        }
+        else if(field.isByteStruct())
+        {
+            //get inner struct layout
+            ByteStructLayout layoutInnerStruct =  offsets(field.getActualClass());
+            
+            //get new inner offset of struct based on max size of field 
+            int innerOffsetStart = computeAlignmentOffset(layout.currentOffset, layoutInnerStruct.maxByteSize);
+            
+            //translate local offset to global offset
+            layoutInnerStruct.translateOffset(innerOffsetStart);
+            
+            //update offset to the size of deep struct size (which
+            layout.currentOffset = layoutInnerStruct.getLastOffset();
+            
+            //update outer offset arrays with local offset arrays which were translated to global
+            layout.fieldOffsets.add(layoutInnerStruct.getArrayFieldOffsets());
+        }
+        else if(field.isArray())
+        {
+            if(field.isArrayClassPrimitive()|| field.isAbstractCoordinate())
+            {
+                int byteSize = field.getByteSize();                
+                int currentFieldOffset = computeAlignmentOffset(layout.currentOffset, byteSize);
+                
+                int arraysize = field.getArraySize();
+                for(int i = 0; i<arraysize; i++)
+                {
+                    //layout.currentOffset = currentFieldOffset + byteSize;
+                    layout.fieldOffsets.add(currentFieldOffset);
+                    currentFieldOffset += byteSize;
+                }
+                layout.currentOffset = currentFieldOffset;
+            }
+        }
+    }
+    
+    
+    
     public int[] offsets()
     {
         IntList byteSizeValues = new IntList();     //byte size
         IntList offsets = new IntList();            //offset position of value
         
         //get byte size of field
-        for(Field field : structFields)        
+        for(Field field : structFields) 
+        {
             byteSizeValues.add(getByteSize(field.getType()));
-        
+            
+        }
+                
         //maximum byte size
         int maxByteSize = Arrays.stream(byteSizeValues.trim()).max().getAsInt(); 
         
@@ -136,20 +246,28 @@ public class ByteStructInfo {
                 //all the section here is recursive if encounter inner struct
                 ByteStructInfo info = new ByteStructInfo((Class<? extends ByteStruct>) field.getType());
                 int deepOffset[] = info.offsets();
-                int deepValues[] = info.getByteValues();
-                int deepMax      = Arrays.stream(deepValues).max().getAsInt();                 
-                int deepOffsetStart = computeAlignmentOffset(currentOffset, deepMax);  //get new deep offset based on max size of field
+                int deepSizeValues[] = info.getByteSizeValues();
+                int deepSizeMax      = Arrays.stream(deepSizeValues).max().getAsInt();                 
+                int deepOffsetStart = computeAlignmentOffset(currentOffset, deepSizeMax);  //get new deep offset based on max size of field
                 
-                //transform local offset to global offset
+                //translate local offset to global offset
                 for(int i = 0; i<deepOffset.length; i++)
                     deepOffset[i] += deepOffsetStart;
                 
-                //update global offset arrays with local offset arrays
+                //update global offset arrays with local offset arrays which were translated to global
                 for(int i = 0; i<deepOffset.length-1; i++)
                     offsets.add(deepOffset[i]);
                 
-                //update offset to the size of deep struct size
+                //update offset to the size of deep struct size (which
                 currentOffset = deepOffset[deepOffset.length-1];               
+            }            
+            else if(field.getType().isArray())
+            {
+                Class arrayType = field.getType().getComponentType();
+                //all the section here is recursive if encounter inner struct
+                ByteStructInfo info = new ByteStructInfo(arrayType);
+                int deepOffset[] = info.offsets();
+                
             }
             //deal with normal primitives
             else
@@ -165,7 +283,7 @@ public class ByteStructInfo {
     }
     
     //new offset based on previous offset
-    public int computeAlignmentOffset(int offset, int byteSize)
+    public static int computeAlignmentOffset(int offset, int byteSize)
     {
         return (offset + byteSize - 1) & ~(byteSize - 1);
     }
@@ -185,11 +303,7 @@ public class ByteStructInfo {
         return b.isAssignableFrom(a);
     }
   
-    public static int[] offsets(Class<? extends ByteStruct> c)
-    {
-        ByteStructInfo info = new ByteStructInfo(c);
-        return info.offsets();
-    }
+    
     
     public static int getByteArraySize(Class<? extends ByteStruct> c, int size)
     {

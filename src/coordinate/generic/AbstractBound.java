@@ -94,4 +94,12 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
         return v.get(maximumExtentAxis());
     }
     
+    default B getCopy()
+    {
+        B bound = getInstance();        
+        bound.include(this.getMinimum());
+        bound.include(this.getMaximum());
+        return bound;
+    }
+    
 }

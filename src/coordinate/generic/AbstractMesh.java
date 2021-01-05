@@ -5,7 +5,7 @@
  */
 package coordinate.generic;
 
-import coordinate.list.CoordinateList;
+import coordinate.list.CoordinateFloatList;
 import coordinate.list.IntList;
 import coordinate.parser.attribute.GroupT;
 import coordinate.parser.attribute.MaterialT;
@@ -25,9 +25,9 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     
     protected IntList triangleFaces;
     
-    protected CoordinateList<P> points = null;
-    protected CoordinateList<N> normals = null;
-    protected CoordinateList<T> texcoords = null;
+    protected CoordinateFloatList<P> points = null;
+    protected CoordinateFloatList<N> normals = null;
+    protected CoordinateFloatList<T> texcoords = null;
     
     protected ArrayList<MaterialT> materials;
     protected ArrayList<GroupT> groups;
@@ -40,6 +40,34 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     public abstract void addNormal(float... values);
     public abstract void addTexCoord(T t);
     public abstract void addTexCoord(float... values);
+    
+    public void initPointList(Class<P> clazz, int size)
+    {
+        this.points = new CoordinateFloatList(clazz, size);
+    }
+    
+    public void initNormalList(Class<N> clazz, int size)
+    {
+        this.normals = new CoordinateFloatList(clazz, size);
+    }
+    
+    public void initTexCoordList(Class<T> clazz, int size)
+    {
+        this.texcoords = new CoordinateFloatList(clazz, size);
+    }
+    
+    public void initTriangleFacesList(int size)
+    {
+        this.triangleFaces = new IntList(size * 10);
+    }
+    
+    public void initCoordList(Class<P> clazzP, Class<N> clazzN, Class<T> clazzT,
+            int sizeP, int sizeN, int sizeT, int sizeF)
+    {
+        this.initPointList(clazzP, sizeP);
+        this.initNormalList(clazzN, sizeN);
+        this.initTexCoordList(clazzT, sizeT);
+    }
     
     public void setMaterialList(ArrayList<MaterialT> materialList)
     {
@@ -199,7 +227,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     }
 
     public P getVertex3(int primID)
-    {
+    {        
         return points.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 2));
     }
         

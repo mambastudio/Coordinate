@@ -97,6 +97,13 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
         return t;
     }
     
+    public void initFrom(T t, int index)
+    {
+        t.setOffsets(offsets);
+        t.setGlobalArray(array.trim(), index);
+        t.initFromGlobalArray();    
+    }
+    
     public void set(T t, int index)
     {
         t.setGlobalArray(array.trim(), index);
@@ -127,8 +134,10 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
     {
         int i = 0;
         StructByteArray structArray;
-        private StructFloatArrayIterator(StructByteArray array)
+        T t;
+        private StructFloatArrayIterator(StructByteArray<T> array)
         {
+            this.t = array.getInstance();
             this.structArray = array;
         }
         @Override
@@ -138,7 +147,7 @@ public class StructByteArray<T extends ByteStruct> implements Iterable<T> {
 
         @Override
         public T next() {            
-            T t = (T) structArray.get(i); i++;
+            structArray.initFrom(t, i); i++;
             return t;
         }        
     }    

@@ -105,13 +105,13 @@ public class Transform <S extends SCoord, V extends VCoord>{
         if (wp == 1.)
         {            
             S s = (S) sCoord.getSCoordInstance();            
-            s.set(xp, yp, zp);
+            s.setValue(xp, yp, zp);
             return s;
         } 
         else 
         {         
             S s = (S) sCoord.getSCoordInstance();  
-            s.set(xp * wp, yp * wp, zp * wp);
+            s.setValue(xp * wp, yp * wp, zp * wp);
             return s;
         }
     }

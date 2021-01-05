@@ -14,7 +14,6 @@ import static coordinate.generic.AbstractMesh.MeshType.FACE_UV_NORMAL;
 import coordinate.generic.AbstractParser;
 import coordinate.generic.io.StringReader;
 import coordinate.list.IntList;
-import coordinate.parser.attribute.GroupT;
 import coordinate.parser.attribute.MaterialT;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -32,7 +31,6 @@ import java.util.Arrays;
 public class OBJParser implements AbstractParser{
     private AbstractMesh mesh;       
     private ArrayList<MaterialT> groupMaterials;
-    private ArrayList<GroupT> groups;
     
     private ArrayList<MaterialT> sceneMaterials;
     
@@ -54,11 +52,6 @@ public class OBJParser implements AbstractParser{
             return groupMaterials;
     }
     
-    public ArrayList<GroupT> getGroupList()
-    {
-        return groups;
-    }
-        
     @Override
     public void read(String uri, AbstractMesh data)
     {
@@ -139,8 +132,7 @@ public class OBJParser implements AbstractParser{
         this.mesh = data;   
         this.groupMaterials = new ArrayList<>();
         this.sceneMaterials = new ArrayList<>();
-        this.groups = new ArrayList<>();
-       
+        
         while(parser.hasNext())
         {
             String peekToken = parser.peekNextToken();            
@@ -174,19 +166,14 @@ public class OBJParser implements AbstractParser{
         
         if(groupMaterials.isEmpty())
             groupMaterials.add(new MaterialT());
-        if(groups.isEmpty())
-            groups.add(new GroupT());
         
         mesh.setMaterialList(groupMaterials);
-        mesh.setGroupList(groups);        
     }
     private void readGroup(StringReader reader)
     {
         if(reader.getNextToken().equals("g"))
         {
-            groups.add(new GroupT(reader.getNextToken(), groupCount));
-            groupCount++;    
-            
+            groupCount++;       
             if(defaultMatPresent)            
                 groupMaterials.add(new MaterialT());               
             else
@@ -199,7 +186,6 @@ public class OBJParser implements AbstractParser{
     {
         if(reader.getNextToken().equals("o"))
         {
-            groups.add(new GroupT(reader.getNextToken(), groupCount));
             groupCount++;
             if(defaultMatPresent)            
                 groupMaterials.add(new MaterialT());               
@@ -213,8 +199,9 @@ public class OBJParser implements AbstractParser{
     {
         if(reader.getNextToken().equals("usemtl"))
         {
-            if(defaultMatPresent) defaultMatPresent = false;            
+            if(defaultMatPresent) defaultMatPresent = false;        
             sceneMaterials.add(new MaterialT(reader.getNextToken()));
+            groupMaterials.add(sceneMaterials.get(sceneMaterials.size()-1));
             groupMaterialCount++;
         }
     }

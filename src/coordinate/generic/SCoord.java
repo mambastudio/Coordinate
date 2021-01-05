@@ -72,14 +72,14 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return s;
     }
     
-    public default S set(float x, float y, float z) {
+    public default S setValue(float x, float y, float z) {
         this.set('x', x);
         this.set('y', y);
         this.set('z', z);
         return (S) this;
     }
 
-    public default S set(S p) {
+    public default S setValue(S p) {
         this.set('x', p.get('x'));
         this.set('y', p.get('y'));
         this.set('z', p.get('z'));
@@ -92,6 +92,22 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         s.set('x', get('x') * a);
         s.set('y', get('y') * a);
         s.set('z', get('z') * a);
+        return s;
+    }  
+    
+    public default void mulAssign(float a) 
+    {        
+        set('x', get('x') * a);
+        set('y', get('y') * a);
+        set('z', get('z') * a);
+    }
+    
+    public default S mul(S snew) 
+    {
+        S s = getSCoordInstance();
+        s.set('x', get('x') * snew.get('x'));
+        s.set('y', get('y') * snew.get('y'));
+        s.set('z', get('z') * snew.get('z'));
         return s;
     }  
         

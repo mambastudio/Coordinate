@@ -119,6 +119,12 @@ public class IntList
     {
         array[index] = value;
     }
+    
+    public final void set(int index, int... values)
+    {
+        for(int i = 0; i<values.length; i++)
+            set(index + i, values[i]);
+    }
 
     public final int get(int index)
     {

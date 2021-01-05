@@ -45,8 +45,11 @@ public class FloatList {
     
     public FloatList(int capacity)
     {
-        array = new float[capacity];
-        size = capacity;
+        if(capacity <= 0)
+            array = new float[10];
+        else
+            array = new float[capacity];
+        size = 0;
     }
 
     public void clear()

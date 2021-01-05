@@ -7,6 +7,7 @@ package example.struct;
 
 import coordinate.struct.FloatStruct;
 import coordinate.struct.StructFloatArray;
+import example.Point3f;
 
 /**
  *
@@ -15,12 +16,14 @@ import coordinate.struct.StructFloatArray;
 public class SimpleStructTest {
     public static void main(String... args)
     {
+        
+        /*
         StructFloatArray<Box> arrayBox = new StructFloatArray<>(Box.class, 6);
         
         for(Box box: arrayBox)
         {
             box.setMin(2, 4, 4);
-            box.setMax(100, 0.7f, 1);
+            box.setMax(100, 0.7f, (int) (1 * Math.random() * 10));
         }
         
         for(Box box: arrayBox)
@@ -52,7 +55,8 @@ public class SimpleStructTest {
             builder.append("max ").append(xmax).append(" ").append(ymax).append(" ").append(zmax).append("\n");
             return builder.toString();
         }
-        
+*/
+        System.out.println(Float.floatToIntBits(0.002f));
     }
             
 }

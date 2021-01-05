@@ -17,7 +17,7 @@ public class Test {
     public static void main(String... args)
     {
         OBJMappedParser parser = new OBJMappedParser();
-        parser.readAttributes("C:\\Users\\user\\Documents\\Scene3d\\simplebox\\powerplant.obj");
+        parser.readAttributes("C:\\Users\\user\\Documents\\3D Scenes\\CornellBox\\CornellBox-Empty-CO.obj");
         
     }
 }

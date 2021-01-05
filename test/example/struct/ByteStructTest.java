@@ -28,24 +28,10 @@ public class ByteStructTest {
         for(Intersection intersection : arrayBox)
             System.out.println(intersection);
          
-        isect.setUV(3, 14);
+        isect.setUV(3, 1344);
 
         for(Intersection intersection : arrayBox)
             System.out.println(intersection);
-    }
-    
-    public static class Isect extends ByteStruct
-    {  
-        public final Float2 dummy;
-        public final int w;
-        public final int x;
-        
-        public Isect()
-        {
-            dummy = new Float2();
-            w = 0;
-            x = 3;
-        }      
     }
     
     public static class Intersection extends ByteStruct

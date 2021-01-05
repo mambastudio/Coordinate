@@ -11,10 +11,10 @@ import static coordinate.generic.AbstractMesh.MeshType.FACE_NORMAL;
 import static coordinate.generic.AbstractMesh.MeshType.FACE_UV;
 import static coordinate.generic.AbstractMesh.MeshType.FACE_UV_NORMAL;
 import coordinate.generic.AbstractParser;
-import coordinate.generic.io.StringMappedReader;
-import coordinate.parser.attribute.GroupT;
+import coordinate.generic.io.LineMappedReader;
 import coordinate.parser.attribute.MaterialT;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.GROUP;
+import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.NONE;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.OBJECT;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.USEMTL;
 import java.io.File;
@@ -25,25 +25,24 @@ import java.util.Arrays;
 /**
  *
  * @author user
+ * 
+ * //http://paulbourke.net/dataformats/obj/
+ * //https://stackoverflow.com/questions/23723993/converting-quadriladerals-in-an-obj-file-into-triangles
+ * 
+ * 
  */
 public class OBJMappedParser implements AbstractParser{
     
     
-    private AbstractMesh mesh;       
-    private ArrayList<MaterialT> groupMaterials;
-    private ArrayList<GroupT> groups;
-    
+    private AbstractMesh mesh;           
     private ArrayList<MaterialT> sceneMaterials;
     
-    private int groupCount = -1;
-    private int groupMaterialCount = -1;
-    
+    private int idCount;
+    private ArrayList<MaterialT> idMaterials;
+        
     private OBJInfo info;
     
-    public ArrayList<MaterialT> getGroupMaterialList()
-    {
-        return groupMaterials;
-    }
+    int c = 0;
     
     public ArrayList<MaterialT> getSceneMaterialList()
     {
@@ -53,11 +52,11 @@ public class OBJMappedParser implements AbstractParser{
             return sceneMaterials;
     }
     
-    public ArrayList<GroupT> getGroupList()
+    public OBJInfo getInfo()
     {
-        return groups;
+        return info;
     }
-        
+    
     @Override
     public void read(String uri, AbstractMesh data)
     {
@@ -66,8 +65,7 @@ public class OBJMappedParser implements AbstractParser{
     
     @Override
     public void read(URI uri, AbstractMesh data)
-    {
-        readAttributes(uri);
+    {        
         read(data);
     }
     
@@ -84,265 +82,270 @@ public class OBJMappedParser implements AbstractParser{
     public void readAttributes(URI uri)
     {
          info = new OBJInfo(uri);
-         info.read();          
+         info.read();  
     }
     
-    
-    private void read(AbstractMesh data)
-    {        
-        this.mesh = data;   
-        this.groupMaterials = new ArrayList<>();
-        this.sceneMaterials = new ArrayList<>();
-        this.groups = new ArrayList<>();
-        
-        StringMappedReader parser = info.getStringMappedReader();
-       
-        while(parser.hasRemainingToken())
-        {
-            String peekToken = parser.peekNextToken();            
-            switch (peekToken) {
-                case "v":
-                    readVertex(parser);
-                    break;                
-                case "vt":
-                    readUV(parser);
-                    break;
-                case "vn":
-                    readNormal(parser);
-                    break;
-                case "f":
-                    readFaces(parser);
-                    break;
-                case "g":
-                    readGroup(parser);
-                    break;  
-                case "o":
-                    readObject(parser);
-                    break;
-                case "usemtl":                    
-                    readMaterial(parser);
-                    break;
-                default:
-                    parser.getNextToken();
-                    break;
-            }                
-        }        
-        
-        if(groupMaterials.isEmpty())
-            groupMaterials.add(new MaterialT());
-        if(groups.isEmpty())
-            groups.add(new GroupT());
-        
-        mesh.setMaterialList(groupMaterials);
-        mesh.setGroupList(groups);        
-    }
-    private void readGroup(StringMappedReader reader)
-    {   
-        if(reader.getNextToken().equals("g") == (info.splitPolicy() == GROUP))
-        {
-            groups.add(new GroupT(reader.getNextToken(), groupCount));
-            groupCount++;                
-
-            if(info.usemtl() == 0)  
-            {
-                groupMaterials.add(new MaterialT());
-                groupMaterialCount++;
-            } 
-            else
-            {
-                groupMaterials.add(sceneMaterials.get(sceneMaterials.size() - 1));
-                groupMaterialCount++;
-            }
-        }
-        else
-            reader.skipToken(0);        
-    }
-    
-    private void readObject(StringMappedReader reader)
+    private void read(AbstractMesh mesh)
     {
+        this.mesh = mesh;   
+        this.sceneMaterials = new ArrayList<>();
+        this.idMaterials = new ArrayList<>();
+        this.idCount = -1;
         
-        if(reader.getNextToken().equals("o") == (info.splitPolicy() == OBJECT))
-        {                        
-            groups.add(new GroupT(reader.getNextToken(), groupCount)); //get object name
-            groupCount++;
-
-            if(info.usemtl() == 0)  
+        LineMappedReader parser = info.reader;
+        parser.rewind();
+        
+        parser.goToStartChar();
+        while(parser.hasRemaining())
+        {            
+            if(parser.isCurrentIsolated("v"))
+            {               
+                float[] array = parser.readLineFloatArray();                
+                mesh.addPoint(array);
+                
+            }            
+            else if(parser.isCurrentIsolated("vn"))
             {
-                groupMaterials.add(new MaterialT());
-                groupMaterialCount++;
-            }             
-            else
-            {
-                groupMaterials.add(sceneMaterials.get(sceneMaterials.size() - 1));
-                groupMaterialCount++;
+                mesh.addNormal(parser.readLineFloatArray());
             }
-        }
-        else
-            reader.skipToken(0);     
-    }
-    
-    private void readMaterial(StringMappedReader reader)
-    {            
-        if(reader.getNextToken().equals("usemtl"))       
-        {               
-            String mtl = reader.getNextToken();
-            MaterialT mat = new MaterialT(mtl);
-
-            sceneMaterials.add(new MaterialT(mat));
-
-            if(info.splitPolicy() == USEMTL)
+            else if(parser.isCurrentIsolated("vt"))
             {
-                groups.add(new GroupT(mtl, groupCount)); //get object name
-                groupCount++;
-
-                groupMaterials.add(sceneMaterials.get(sceneMaterials.size() - 1));
-                groupMaterialCount++;
+                mesh.addTexCoord(parser.readLineFloatArray());
             }
-        }         
-    }
-    
-    private void readVertex(StringMappedReader reader) {
-        if(reader.getNextToken().equals("v"))        
-        {
-            float x = reader.getNextFloat();
-            float y = reader.getNextFloat();
-            float z = reader.getNextFloat();
-                        
-            mesh.addPoint(x, y, z);
-        }          
-    }   
-    
-    private void readNormal(StringMappedReader reader) {
-        if(reader.getNextToken().equals("vn"))        
-        {
-            float x = reader.getNextFloat();
-            float y = reader.getNextFloat();
-            float z = reader.getNextFloat();
-                  
-            mesh.addNormal(x, y, z);
-        }
-    }
-    
-    private void readUV(StringMappedReader reader) {
-        if(reader.getNextToken().equals("vt"))   
-        {           
-            float x = reader.getNextFloat();
-            float y = reader.getNextFloat();
+            else if(parser.isCurrentIsolated("usemtl"))
+            {
+                String mtl = parser.readLineString().replace("usemtl", "").trim();
+                MaterialT mat = new MaterialT(mtl);
+
+                sceneMaterials.add(new MaterialT(mat));
+
+                if(info.splitPolicy() == USEMTL)
+                {
+                    //id material
+                    idMaterials.add(mat);
+                    idCount++;               
+                }                
+            }
+            else if(parser.isCurrentIsolated("f"))
+            {                                      
+                boolean doubleBackSlash = parser.currentLineContainsIsolated("//");
+                boolean singleBackSlash = parser.currentLineContainsIsolated("/");
+                                 
+                //handle various type of face types
+                if(singleBackSlash)
+                    readSingleSlashFace(parser);
+                else if(doubleBackSlash)
+                    readDoubleSlashFace(parser);
+                else
+                    readRegularFace(parser);
+   
+            }
+            else if(parser.isCurrentIsolated("o"))
+            {
+                if(info.splitPolicy() == OBJECT)
+                {                   
+                    String nameGroup = parser.readLineString().trim();
+                    MaterialT material = new MaterialT(nameGroup);
+
+                    //id material
+                    idMaterials.add(material);
+                    idCount++;               
+                }
+            }
+            else if(parser.isCurrentIsolated("g"))
+            {                
+                if(info.splitPolicy() == GROUP)
+                {
+                    String nameGroup = parser.readLineString().trim();
+                    MaterialT material = new MaterialT(nameGroup);
+                    //id material
+                    idMaterials.add(material);
+                    idCount++;            
+                }
+            }
             
-            mesh.addTexCoord(x, y);
+            parser.goToNextDefinedLine();
         }
+        
+        if(info.splitPolicy() == NONE)
+            idMaterials.add(new MaterialT("default"));
+        mesh.setMaterialList(idMaterials);
+        parser.close();
     }
-    
+        
     private int getMaterialCount()
     {
-        if(groupMaterialCount<0) return 0;
-        else return groupMaterialCount;
+        if(idCount<0) return 0;
+        else return idCount;
     }
     
-    private int[] getIntArray(String str)
-    {    
-        str = str.replaceAll("[^-?0-9]+", " ");
-        String[] s = str.trim().split(" ");
+    public void readRegularFace(LineMappedReader reader)
+    {
         
-        int[] array = new int[s.length];
-        for(int i = 0; i<array.length; i++)
-            array[i] = Integer.parseInt(s[i]);
-        return array;
+        reader.goToStartDigit();                   //get to first digit 
+        int[] array             = reader.readLineIntArray(); 
+        int n                   = array.length;
+        
+        for(int i = 1; i<= n - 2; i++) 
+            modifyAdd(FACE, array[0], array[i], array[i+1]);   
+        
     }
     
-    private void readFaces(StringMappedReader reader) {
-         
-        String face = reader.getNextLine();        
-        boolean doubleBackSlash = face.contains("//");
-               
-        int[] array = getIntArray(face);  
-         
-        //handle various type of face types
-        if(array.length == 3)
-        {                   
-            modifyAdd(FACE, array[0], array[1], array[2]);       
+    public void readSingleSlashFace(LineMappedReader reader)
+    { 
+        reader.goToStartDigit();                   //get to first digit 
+        int ncoordtypes         = reader.readIntArrayUntilSpace().length; 
+        int[] array             = reader.readLineIntArray(); 
+        int n                   = array.length;
+        
+        switch (ncoordtypes) {
+            case 2:
+                for(int i = 1; i<= n - 5; i+=2) 
+                    modifyAdd(FACE_UV,  array[0], array[i+1], array[i+3],
+                                        array[1], array[i+2], array[i+4]);         
+                break;            
+            case 3:
+                for(int i = 1; i<= n - 8; i+=3) 
+                    modifyAdd(FACE_UV_NORMAL,   array[0], array[i+2], array[i+5],
+                                                array[1], array[i+3], array[i+6],
+                                                array[2], array[i+4], array[i+7]);            
+                break;
+            default:
+                break;
         }
-        else if(array.length == 4)
-        {                  
-            modifyAdd(FACE, array[0], array[1], array[2]); //p1 p2 p3
-            modifyAdd(FACE, array[0], array[2], array[3]); //p1 p3 p4        
-        }
-        else if(array.length == 6 && doubleBackSlash)
-        {                 
-            modifyAdd(FACE_NORMAL, array[0], array[2], array[4],
-                                          array[1], array[3], array[5]);
-        }
-        else if(array.length == 6)
-        {                    
-            modifyAdd(FACE_UV, array[0], array[2], array[4],
-                                      array[1], array[3], array[5]);
-        }       
-        else if(array.length == 8 && doubleBackSlash)
-        {                       
-            modifyAdd(FACE_NORMAL, array[0], array[2], array[4],
-                                          array[1], array[3], array[5]);
-            modifyAdd(FACE_NORMAL, array[0], array[4], array[6],
-                                          array[1], array[5], array[7]);     
-        }
-         else if(array.length == 8)
-        {                                      
-            modifyAdd(FACE_UV, array[0], array[2], array[4],
-                                      array[1], array[3], array[5]);        
-            modifyAdd(FACE_UV, array[0], array[4], array[6],
-                                      array[1], array[5], array[7]); 
-        }
-        else if(array.length == 9)
-        {             
-            modifyAdd(FACE_UV_NORMAL, array[0], array[3], array[6],                             
-                                             array[1], array[4], array[7],
-                                             array[2], array[5], array[8]); 
-        }
-        else if(array.length == 12)
-        {            
-            modifyAdd(FACE_UV_NORMAL, array[0], array[3], array[6],                             
-                                             array[1], array[4], array[7],
-                                             array[2], array[5], array[8]);   
-
-            modifyAdd(FACE_UV_NORMAL, array[0], array[6], array[9],                             
-                                             array[1], array[7], array[10],
-                                             array[2], array[8], array[11]); 
-        }    
-    }   
+    }
+    
+    public void readDoubleSlashFace(LineMappedReader reader)
+    {
+        reader.goToStartDigit();                   //get to first digit 
+        int ncoordtypes         = reader.readIntArrayUntilSpace().length;
+        int[] array             = reader.readLineIntArray(); 
+        int n                   = array.length;
+        switch (ncoordtypes) {
+            case 2:
+                for(int i = 1; i<= n - 5; i+=2) 
+                    modifyAdd(FACE_NORMAL,  array[0], array[i+1], array[i+3],
+                                            array[1], array[i+2], array[i+4]);         
+                break;           
+            default:
+                break;
+        }        
+    }
     
     //this modifies the read obj parser to friendly array read (also handles negative indices)
     private void modifyAdd(AbstractMesh.MeshType type, int... indices)
-    {
-        if(indices[0] >= 0)
+    {        
+        
+        if(indices[0] >= 0) //positive face indices
             for(int i = 0; i<indices.length; i++)
                 indices[i] = indices[i]-1;
-        else
-        {
+        else //negative face indices
+        {            
             for(int i = 0; i<indices.length; i++)
-                
-                switch (i) {
-                   
-                    case 0:
-                    case 1:
-                    case 2:
-                        indices[i] = indices[i] + mesh.pointSize();                         
-                        break;
-                    case 3:
-                    case 4:
-                    case 5:
-                        indices[i] = indices[i] + mesh.texCoordsSize();
-                        break;
-                    case 6:
-                    case 7:
-                    case 8:
-                        indices[i] = indices[i] + mesh.normalSize();
-                        break;
+            {    
+                if(null != type)
+                switch (type) {
+                    case FACE:
+                        switch (i) {
+                            case 0:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 1:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 2:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            default:
+                                break;
+                        }   break;
+                    case FACE_UV:
+                        switch (i) {
+                            case 0:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 1:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 2:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 3:
+                                indices[i] = indices[i] + mesh.texCoordsSize();
+                                break;
+                            case 4:
+                                indices[i] = indices[i] + mesh.texCoordsSize();
+                                break;
+                            case 5:
+                                indices[i] = indices[i] + mesh.texCoordsSize();
+                                break;
+                            default:
+                                break;
+                        }   break;
+                    case FACE_UV_NORMAL:
+                        switch (i) {
+                            case 0:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 1:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 2:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 3:
+                                indices[i] = indices[i] + mesh.texCoordsSize();
+                                break;
+                            case 4:
+                                indices[i] = indices[i] + mesh.texCoordsSize();
+                                break;
+                            case 5:
+                                indices[i] = indices[i] + mesh.texCoordsSize();
+                                break;
+                            case 6:
+                                indices[i] = indices[i] + mesh.normalSize();
+                                break;
+                            case 7:
+                                indices[i] = indices[i] + mesh.normalSize();
+                                break;
+                            case 8:
+                                indices[i] = indices[i] + mesh.normalSize();
+                                break;
+                            default:
+                                break;
+                        }   break;
+                    case FACE_NORMAL:
+                        switch (i) {
+                            case 0:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 1:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 2:
+                                indices[i] = indices[i] + mesh.pointSize();
+                                break;
+                            case 3:
+                                indices[i] = indices[i] + mesh.normalSize();
+                                break;
+                            case 4:
+                                indices[i] = indices[i] + mesh.normalSize();
+                                break;
+                            case 5:
+                                indices[i] = indices[i] + mesh.normalSize();
+                                break;
+                            default:
+                                break;
+                        }   break;
                     default:
                         break;
-                }
+                }               
+            }
+            
         }
-        
-        mesh.add(type, groupCount, getMaterialCount(), indices);
-    }    
+        //System.out.println(Arrays.toString(indices));
+        mesh.add(type, idCount, getMaterialCount(), indices);
+    }   
     
     @Override
     public String toString()

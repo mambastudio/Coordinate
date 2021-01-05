@@ -6,7 +6,7 @@
 package coordinate.struct;
 
 import coordinate.list.FloatList;
-import coordinate.struct.refl.FloatStructField;
+import coordinate.struct.field.FloatStructField;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author user
  */
-public abstract class FloatStruct implements Serializable {
+public abstract class FloatStruct implements AbstractStruct, Serializable {
     private float[] globalArray = null;
     private int globalArrayIndex = -1;
         

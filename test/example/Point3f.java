@@ -26,12 +26,13 @@ package example;
 
 
 import coordinate.generic.SCoord;
+import coordinate.struct.FloatStruct;
 
 /**
  *
  * @author user
  */
-public class Point3f implements SCoord<Point3f, Vector3f>
+public class Point3f extends FloatStruct implements SCoord<Point3f, Vector3f> 
 {    
     public float x, y, z;
     public Point3f() {
@@ -81,11 +82,10 @@ public class Point3f implements SCoord<Point3f, Vector3f>
 
     @Override
     public void set(float... values) {
-        x = values[0];
-        y = values[1];
-        z = values[2];
+        this.setValue(values[0], values[1], values[2]);
+        this.refreshGlobalArray();
     }
-
+    
     @Override
     public float get(char axis) {
         switch (axis) {
@@ -100,6 +100,7 @@ public class Point3f implements SCoord<Point3f, Vector3f>
         }
     }
 
+    @Override
     public void set(char axis, float value) {
         switch (axis) {
             case 'x':
@@ -150,5 +151,12 @@ public class Point3f implements SCoord<Point3f, Vector3f>
     @Override
     public int getByteSize() {
         return 4;
+    }
+    
+    @Override
+    public String toString()
+    {
+        float[] array = getArray();
+        return String.format("(%3.2f, %3.2f, %3.2f)", array[0], array[1], array[2]);
     }
 }

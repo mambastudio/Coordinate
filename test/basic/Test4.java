@@ -14,8 +14,12 @@ import coordinate.parser.obj.OBJInfo;
 public class Test4 {
     public static void main(String... args)
     {
-         //C:\\Users\\user\\Documents\\Scene3d\\roadBike\\roadBike.obj
-        OBJInfo objInfo = new OBJInfo("C:\\Users\\user\\Documents\\Scene3d\\roadBike\\roadBike.obj");
+        //String file = "C:\\Users\\user\\Documents\\3D Scenes\\CornellBox\\CornellBox-Empty-CO.obj";
+        String file = "C:\\Users\\user\\Documents\\3D Scenes\\hair\\hair.obj";
+        //String file = "C:\\Users\\user\\Documents\\3D Scenes\\San_Miguel\\san-miguel.obj";
+        //String file = "C:\\Users\\user\\Desktop\\violin_case_2.obj";
+        
+        OBJInfo objInfo = new OBJInfo(file);
         System.out.println(objInfo.readAndClose());
         
     }

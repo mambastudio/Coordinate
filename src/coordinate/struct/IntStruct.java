@@ -6,7 +6,7 @@
 package coordinate.struct;
 
 import coordinate.list.IntList;
-import coordinate.struct.refl.IntStructField;
+import coordinate.struct.field.IntStructField;
 import java.nio.IntBuffer;
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author user
  */
-public abstract class IntStruct {
+public abstract class IntStruct implements AbstractStruct {
     private int[] globalArray = null;
     private int globalArrayIndex = -1;
         

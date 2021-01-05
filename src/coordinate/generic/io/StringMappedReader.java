@@ -129,14 +129,138 @@ public class StringMappedReader {
         }            
     }
     
+    //TODO
+    //add out of range detection
+    //http://stackoverflow.com/questions/5710091/how-does-atoi-function-in-c-work
+    public int atoi()
+    {
+        int value = 0;
+        int sign = 1;
+        
+        boolean started = false;
+        
+        char c;
+              
+        outer:
+        while(true)
+        {            
+            if(buffer.hasRemaining())
+                c = (char) buffer.get();
+            else
+                break;
+            
+            //check if number is negative
+            if( c == '+' || c == '-' )             
+                if( c == '-' ) 
+                {
+                    sign = -1;
+                    if(buffer.hasRemaining())
+                        c = (char) buffer.get(); 
+                    else
+                        break;
+                } 
+            
+            if(Character.isDigit(c))
+                started = true;
+            
+            while(Character.isDigit(c)) 
+            {
+                value *= 10;
+                value += (int) (c-'0'); //finished updating, read next
+                if(buffer.hasRemaining())
+                    c = (char) buffer.get();
+                else 
+                    break outer;
+            }
+            
+            if(started)
+            {
+                goBack(buffer, 1); //go back one step
+                break;
+            }
+        }
+                
+        return value * sign;       
+        
+    }
+    
+    public float atof()
+    {
+        return (float)atod();
+    }
+    //TODO
+    //implement tinyobjloader complete implementation
+    //https://stackoverflow.com/questions/34927307/whats-wrong-with-this-implementation-of-atof-from-kr
+    public double atod()
+    {
+        int sign;
+        double number = 0.0, power = 1.0;
+               
+        char c;
+        
+        if(buffer.hasRemaining())
+            c = (char)buffer.get();
+        else
+            return 0;
+                
+        while(Character.isWhitespace(c))
+        {            
+            if(buffer.hasRemaining())
+                c = (char)buffer.get();
+            else
+                return 0;
+        }
+           
+        sign = (c == '-') ? -1 : 1; // Save the sign
+
+        if(c == '-' || c == '+') // Skip the sign
+        {
+            if(buffer.hasRemaining())
+                c = (char)buffer.get();
+            else
+                return 0;
+        }
+        
+        while(Character.isDigit(c)) // Digits before the decimal point
+        {                
+            number = 10.0 * number + (c - '0');
+            if(buffer.hasRemaining())
+                c = (char)buffer.get();
+            else 
+                break;
+        }
+        
+        if(c == '.') // Skip the decimal point
+            if(buffer.hasRemaining())
+                c = (char)buffer.get();
+            else
+                return sign * number / power;
+        
+        while(Character.isDigit(c)) // Digits after the decimal point
+        {            
+            number = 10.0 * number + (c - '0');
+            power *= 10.0;
+            if(buffer.hasRemaining())
+                c = (char)buffer.get();
+            else
+                break;
+        }
+        return sign * number / power;
+    }
+    
+    
+    
     public int getNextInt() 
     {
         return Integer.parseInt(getNextToken());
     }
 
     public float getNextFloat() 
-    {
-        return Float.parseFloat(getNextToken());
+    {        
+        if(peekNextTokenIsNumber())
+           return Float.parseFloat(getNextToken());
+        else
+           return 0;
     }
     
     public char getNextChar()
@@ -223,5 +347,10 @@ public class StringMappedReader {
         } catch (IOException ex) {
             Logger.getLogger(StringMappedReader.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private double ldexp(double x, double e)
+    {
+        return x * Math.pow(e, Math.pow(2, e));
     }
 }

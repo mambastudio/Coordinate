@@ -5,6 +5,7 @@
  */
 package coordinate.parser.obj;
 
+import coordinate.generic.io.LineMappedReader;
 import coordinate.generic.io.StringMappedReader;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.GROUP;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.NONE;
@@ -13,6 +14,9 @@ import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.USEMTL;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +42,7 @@ public class OBJInfo {
     private int o = 0;
     private int g = 0;
     
-    private StringMappedReader reader = null;    
+    public LineMappedReader reader = null;
     private SplitOBJPolicy splitPolicy = NONE;
     
     public OBJInfo(String stringFile) 
@@ -51,7 +55,7 @@ public class OBJInfo {
             Logger.getLogger(OBJInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        reader = new StringMappedReader(file.toURI());
+        reader = new LineMappedReader(file.toURI());
     }
     
     public OBJInfo(URI uri)
@@ -64,65 +68,33 @@ public class OBJInfo {
             Logger.getLogger(OBJInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        reader = new StringMappedReader(file.toURI());
+        reader = new LineMappedReader(file.toURI());
     }
-       
+    
     //super fast read of file (memory mapped)
     public OBJInfo read()
     {
-        while(reader.hasRemaining())
-        {    
-            char c = reader.getNextChar();
-            switch (c) {
-                case 'v':
-                    {
-                        char c1 = reader.peekNextChar(0);
-                        if(c1 == 't')
-                            vt++;
-                        else if(c1 == 'n')
-                            vn++;
-                        else if(Character.isWhitespace(c1))
-                            v++;break;
-                    }
-                case 'f':
-                    {
-                        char c1 = reader.peekNextChar(0);
-                        char c2 = reader.peekNextChar(1);
-                        if(Character.isWhitespace(c1) && Character.isDigit(c2))
-                            f++;break;
-                    }
-                case 'o':
-                    {
-                        char c1 = reader.peekNextChar(0);
-                        if(Character.isWhitespace(c1))
-                            o++;break;
-                    }
-                case 'g':
-                    {
-                        char c1 = reader.peekNextChar(0);
-                        if(c1 == '\r' || c1 == '\n') {
-                            //do nothing
-                        } else if (Character.isWhitespace(c1))
-                            g++;break;
-                    }
-                case 'u':
-                    {
-                        char c1 = reader.peekNextChar(0);
-                        char c2 = reader.peekNextChar(1);
-                        char c3 = reader.peekNextChar(2);
-                        char c4 = reader.peekNextChar(3);
-                        char c5 = reader.peekNextChar(4);
-                        if(c1 == 's' && c2 == 'e' &&
-                           c3 == 'm' && c4 == 't' &&
-                           c5 == 'l')
-                            usemtl++;
-                        break;
-                    }                    
-                default:
-                    break;
-            }
-        }
+        reader.goToStartChar();
         
+        while(reader.hasRemaining())
+        {            
+            if(reader.isCurrentIsolated("v"))
+                v++;
+            else if(reader.isCurrentIsolated("vn"))
+                vn++;
+            else if(reader.isCurrentIsolated("vt"))
+                vt++;
+            else if(reader.isCurrentIsolated("usemtl"))
+                usemtl++;
+            else if(reader.isCurrentIsolated("f"))
+                f++;
+            else if(reader.isCurrentIsolated("o"))
+                o++;
+            else if(reader.isCurrentIsolated("g"))
+                g++;
+            reader.goToNextDefinedLine();            
+        }
+               
         if(o>g && o>usemtl)
             splitPolicy = OBJECT;
         else if(g>o && g>usemtl)
@@ -147,15 +119,22 @@ public class OBJInfo {
     
     public OBJInfo readAndClose()
     {
-        read();
-        reader.close();                
+        read();            
         return this;
     }
     
-    public StringMappedReader getStringMappedReader()
+    public List<SplitOBJPolicy> getAvailableSplitPolicy()
     {
-        reader.rewind();
-        return reader;
+        ArrayList<SplitOBJPolicy> list = new ArrayList();
+        
+        if(usemtl > 0)
+            list.add(USEMTL);
+        if(o > 0)
+            list.add(OBJECT);
+        if(g > 0)
+            list.add(GROUP);
+        
+        return list;
     }
     
     @Override
@@ -182,4 +161,19 @@ public class OBJInfo {
     public int o(){return o;}
     public int g(){return g;}
     public SplitOBJPolicy splitPolicy(){return splitPolicy;}
+    public void setSplitPolicy(SplitOBJPolicy splitPolicy){this.splitPolicy = splitPolicy;}
+    
+    
+    public HashMap<String, String> getInfoString()
+    {
+        HashMap<String, String> map = new HashMap();
+        map.put("vertices:", Integer.toString(v));
+        map.put("normals:", Integer.toString(vn));
+        map.put("uv vertices:", Integer.toString(vt));
+        map.put("usemtl:", Integer.toString(usemtl));
+        map.put("faces:", Integer.toString(f));
+        map.put("objects:", Integer.toString(o));
+        map.put("groups:", Integer.toString(g));
+        return map;
+    }
 }
