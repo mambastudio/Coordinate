@@ -5,7 +5,7 @@
  */
 package basic;
 
-import coordinate.struct.StructFloatArray;
+import coordinate.struct.structfloat.StructFloatArray;
 import example.Point3f;
 
 /**

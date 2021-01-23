@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.struct;
+package coordinate.struct.structint;
 
 import coordinate.list.IntList;
-import coordinate.struct.field.IntStructField;
+import coordinate.struct.AbstractStruct;
+import coordinate.struct.structint.IntStructField;
 import java.nio.IntBuffer;
 import java.util.List;
 

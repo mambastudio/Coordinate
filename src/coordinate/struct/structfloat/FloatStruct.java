@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.struct;
+package coordinate.struct.structfloat;
 
 import coordinate.list.FloatList;
-import coordinate.struct.field.FloatStructField;
+import coordinate.struct.AbstractStruct;
+import coordinate.struct.structfloat.FloatStructField;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.util.List;

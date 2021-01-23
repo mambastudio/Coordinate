@@ -5,10 +5,6 @@
  */
 package example.struct;
 
-import coordinate.struct.FloatStruct;
-import coordinate.struct.StructFloatArray;
-import example.Point3f;
-
 /**
  *
  * @author user

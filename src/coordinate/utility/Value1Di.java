@@ -10,5 +10,5 @@ package coordinate.utility;
  * @author user
  */
 public class Value1Di {
-    int x;
+    public int x;
 }

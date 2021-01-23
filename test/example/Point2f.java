@@ -74,6 +74,6 @@ public class Point2f implements AbstractCoordinateFloat{
 
     @Override
     public int getByteSize() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 4;
     }
 }

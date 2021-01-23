@@ -3,48 +3,84 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package example.newstruct;
+package example.struct;
 
+import coordinate.struct.structbyte.StructureArray;
+import coordinate.struct.structbyte.Structure;
+import coordinate.struct.annotation.arraysize;
 import coordinate.generic.AbstractCoordinateFloat;
-import coordinate.struct.ByteStruct;
 import java.util.Arrays;
-import java.util.stream.IntStream;
-
 /**
  *
  * @author user
  */
-public class Test {
+public class StructureArrayTest {
     public static void main(String... args)
     {
-        Alignment align = StructUtility.getAlignment(Intersection.class);
-        System.out.println(Arrays.toString(align.getOffsets()) + " size " +align.getSize());
+        StructureArray<Intersection> arrayBox = new StructureArray<>(Intersection.class, 4);
+        Intersection isect = new Intersection();     
+        isect.value = 8;
+        isect.atom.charge = 3;
+        isect.atom2.charge = 67;
         
-        Integer[] intArr= {1,2,6,2,234,3,54,6,4564,456};
+       // System.out.println(isect.getLayout());
+       
+        arrayBox.set(isect, 1);
+        
+        System.out.println(arrayBox.get(1).atom.charge);
+        System.out.println(arrayBox.get(1).atom2.charge);
+        
+        
+        
+        /*
+        arrayBox.add(new Intersection());
+        Intersection isect = arrayBox.get(0);
+        
+        
+        isect.setP(2, 14, 70);
+        isect.setUV(3, 9);
+        
+       
+        for(Intersection intersection : arrayBox)
+            System.out.println(intersection);
+         
+        isect.setUV(3, 1344);
+        isect.setP(3, 0, 0);
+        isect.setData(2, 34);
 
-        IntStream.range(0, intArr.length-1).parallel().
-                        reduce((a,b)->intArr[a]<intArr[b]? b: a).
-                        ifPresent(ix -> System.out.println("Index: " + ix + ", value: " + intArr[ix]));
+        for(Intersection intersection : arrayBox)
+            System.out.println(intersection);
+*/
     }
     
-    public static class Intersection extends ByteStruct
+    public static class Intersection extends Structure
     {   
-        public int i;
-        public int j;
-        public Float4 p;       //16 bytes
-        public InnerStruct inner1;
-        public Float2 uv;      //8 bytes      
-        public Float4 p1;       //16 bytes
-        public InnerStruct inner2;
+       
+        public int value;
+        public Atom atom;
+        public Atom atom2;
+        
+        public void setCharge(int charge)
+        {
+            this.atom.charge = charge;
+            this.refreshGlobalArray();
+        }
         
         
+        
+        @Override
+        public String toString()
+        {
+            StringBuilder builder = new StringBuilder();
+            return builder.toString();
+        }
+
         
     }
     
-    public static class InnerStruct extends ByteStruct
+    public static class Atom extends Structure
     {
-        public Float4 p1;       //16 bytes
-        public int i;
+        public int charge;
     }
     
     public static class Float4 implements AbstractCoordinateFloat
@@ -77,6 +113,7 @@ public class Test {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
+        @Override
         public void set(char axis, float value) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
@@ -121,6 +158,7 @@ public class Test {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
+        @Override
         public void set(char axis, float value) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }

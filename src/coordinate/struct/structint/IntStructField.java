@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.struct.field;
+package coordinate.struct.structint;
 
+import coordinate.struct.structfloat.FloatStructField;
 import coordinate.generic.AbstractCoordinateInteger;
-import coordinate.struct.IntStruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class IntStructField {
         try {
             return field.get(runtimeParent);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(ByteStructField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IntStructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
