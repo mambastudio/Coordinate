@@ -47,7 +47,7 @@ public class MaterialT implements Serializable {
         this.eu = 60; this.ev = 30; this.ior = 1;
         this.iorEnabled = false;
                 
-        this.emitter = new Color4T(1, 1, 1, 5);
+        this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
     }   
         
@@ -61,7 +61,7 @@ public class MaterialT implements Serializable {
         this.eu = 60; this.ev = 30; this.ior = 1;
         this.iorEnabled = false;
                 
-        this.emitter = new Color4T(1, 1, 1, 5);
+        this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
     }
     public MaterialT(String name, float dr, float dg, float db)
@@ -74,7 +74,7 @@ public class MaterialT implements Serializable {
         this.eu = 60; this.ev = 30; this.ior = 1;
         this.iorEnabled = false;
                 
-        this.emitter = new Color4T(1, 1, 1, 5);
+        this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
     }   
     
@@ -88,7 +88,7 @@ public class MaterialT implements Serializable {
         this.eu = 60; this.ev = 30; this.ior = 1;
         this.iorEnabled = false;
                 
-        this.emitter = new Color4T(er, eg, eb, 5);
+        this.emitter = new Color4T(er, eg, eb, 1);
         this.emitterEnabled = true;
     } 
     

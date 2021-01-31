@@ -164,7 +164,10 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     
     public float[] getTexCoordsArray()
     {
-        return texcoords.getFloatArray();
+        if(texcoords.getFloatArray().length > 0)
+            return texcoords.getFloatArray();
+        else
+            return new float[]{0};
     }
     
     //Mesh face handling section        
