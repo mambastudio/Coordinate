@@ -298,5 +298,11 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
                 (float)(triangleFaces.get(index * 10 + 9) & 0xFFFF));
     }
     
-    
+    protected static class Face
+    {
+        public int vx,  vy,  vz;
+        public int uvx, uvy, uvz;
+        public int nx,  ny,  nz;
+        public int mat;
+    }
 }

@@ -7,6 +7,7 @@ package coordinate.generic.io;
 
 import coordinate.list.FloatList;
 import coordinate.list.IntList;
+import java.io.File;
 import java.net.URI;
 
 /**
@@ -22,6 +23,11 @@ public class LineMappedReader extends CharMappedReader {
     public LineMappedReader(URI uri)
     {
         super(uri);
+    }
+    
+    public LineMappedReader(File file)
+    {
+        super(file.toURI());
     }
     
     public String readLineString()
@@ -156,7 +162,7 @@ public class LineMappedReader extends CharMappedReader {
     public boolean currentLineContainsIsolated(String target)
     {
         int length = length_until_newline();
-        int previousPos = buffer.position(); //store position
+        int previousPos = buffer.position(); //store current position
         
         //read in the line 
         StringBuilder builder = new StringBuilder(length);
@@ -171,12 +177,19 @@ public class LineMappedReader extends CharMappedReader {
             return false;
         }
         
-        //are subsequent characters matching?
-        int newIndex = index + target.length();         
-        int nextIndex = builder.indexOf(target, newIndex);
+        //last index exclusive of the target string characters
+        int lastIndex = index + target.length();         
+                
+        //hope next char at new index
+        if(!isSpace(builder.charAt(lastIndex)))
+        {
+            buffer.position(previousPos);
+            return false;
+        }
+        
         
         buffer.position(previousPos); //reset position
-        return nextIndex != newIndex;
+        return true;
     }
     
     public void goToNextDefinedLine()
@@ -184,4 +197,7 @@ public class LineMappedReader extends CharMappedReader {
         goToEndLine();            
         goToStartChar();
     }
+    
+        
+    
 }

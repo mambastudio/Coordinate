@@ -72,13 +72,13 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return s;
     }
     
-    public default S setValue(float x, float y, float z) {
-        this.set('x', x);
-        this.set('y', y);
-        this.set('z', z);
+    public default S setValue(float... values) {
+        if(values == null)
+             return null;                
+        this.set(values);       
         return (S) this;
     }
-
+    
     public default S setValue(S p) {
         this.set('x', p.get('x'));
         this.set('y', p.get('y'));

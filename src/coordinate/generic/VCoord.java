@@ -14,6 +14,8 @@ public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
     public abstract V getCoordInstance();
     public abstract V copy();
     
+   
+    
     public default float dot(V b) 
     {
         return get('x') *b.get('x') + get('y')*b.get('y') + get('z')*b.get('z');

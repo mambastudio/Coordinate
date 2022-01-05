@@ -16,6 +16,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.nio.ch.DirectBuffer;
 
 /**
  *
@@ -28,12 +29,13 @@ import java.util.logging.Logger;
 public class CharMappedReader {
     private FileChannel channel;
     protected MappedByteBuffer buffer;
+    private RandomAccessFile rfile;
        
     public CharMappedReader(String directoryPath, String fileName)
     {
         Path path = FileSystems.getDefault().getPath(directoryPath, fileName);
         try {
-            RandomAccessFile rfile = new RandomAccessFile(path.toFile(), "rw");  
+            rfile = new RandomAccessFile(path.toFile(), "rw");  
             channel = rfile.getChannel();
             buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, rfile.length());
         } catch (FileNotFoundException ex) {
@@ -49,7 +51,7 @@ public class CharMappedReader {
         Path path = file.toPath();
         
         try {
-            RandomAccessFile rfile = new RandomAccessFile(path.toFile(), "rw");  
+            rfile = new RandomAccessFile(path.toFile(), "rw");  
             channel = rfile.getChannel();
             buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
         } catch (FileNotFoundException ex) {
@@ -60,16 +62,47 @@ public class CharMappedReader {
         
     }
     
+    public CharMappedReader(File file)
+    {
+        this(file.toURI());
+    }
+    
     public void rewind(){
         buffer.rewind();
+    }
+    
+    public long length()
+    {
+        try {
+            return rfile.length();
+        } catch (IOException ex) {
+            Logger.getLogger(CharMappedReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return -1;
+    }
+    
+    //DANGEROUS - ONLY WORKS IN JDK 1.8
+    //https://stackoverflow.com/questions/2972986/how-to-unmap-a-file-from-memory-mapped-using-filechannel-in-java
+    //Other solutions exist in JDK 1.9 and above
+    private void unmap()
+    {
+       sun.misc.Cleaner cleaner = ((DirectBuffer) buffer).cleaner();
+       cleaner.clean();
     }
     
     public void close()
     {
         try {
-            channel.close();
+          
+            
+            channel.force(false);  // doesn't help
+            channel.close();       // doesn't help            
+            rfile.close();           // try to make sure that this thing is closed!!!!!
+            unmap();
+            
         } catch (IOException ex) {
-            Logger.getLogger(StringMappedReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CharMappedReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -81,6 +114,34 @@ public class CharMappedReader {
                 return 0;
     }
     
+    public String getToken()
+    {
+        StringBuilder builder = new StringBuilder();
+        if(goToStartChar())
+            while(hasRemaining() && !isSpace(peekChar()))
+                builder.append(getChar());
+        if(builder.length()>0)
+            return builder.toString();
+        else 
+            return null;
+    }
+    
+    public String peekToken()
+    {
+        int previousPos = buffer.position();
+        String string = getToken();        
+        buffer.position(previousPos);
+        return string;
+    }
+    
+    public void skipTokens(int size)
+    {
+        if(size > 0)
+            for(int i = 0; i<size; i++)
+                getToken();
+    }
+    
+   
     public boolean isCurrent(String string)
     {        
         int previousPos = buffer.position();        
@@ -196,23 +257,24 @@ public class CharMappedReader {
         goBack(1);
     }
     
-    public void goToStartChar()
+    public boolean goToStartChar()
     {
         while(true)
         {            
             if(buffer.hasRemaining())
             {
-                char c = getChar();
+                char c = peekChar();
                 if(!Character.isWhitespace(c) || c == 0)
                 {                    
-                    //go back one step
-                    goBack(1);
-                    break;
+                    //go back one step                   
+                    return true;
                 }  
             }
             else
-                break;
+                return false;
             
+            //proceed to next
+            goNextPosition();
         }  
          
     }
@@ -223,6 +285,12 @@ public class CharMappedReader {
             return;
         int position = buffer.position();
         buffer.position(position - step);
+    }
+    
+    public void goNextPosition()
+    {
+        if(hasRemaining())
+            buffer.position(buffer.position()+1);
     }
                 
     public boolean hasRemaining()
@@ -264,7 +332,10 @@ public class CharMappedReader {
                 return;            
             if (c == '\r') 
                 if (pc != '\n')   // detect only \r case
+                {
+                    getChar(); //read away \n
                     return;
+                }
             
         }
         

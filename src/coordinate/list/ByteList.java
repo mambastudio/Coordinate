@@ -27,7 +27,7 @@ public class ByteList {
     
     public ByteList(int capacity)
     {
-        array = new byte[capacity];
+        array = new byte[capacity]; 
         size = capacity;
     }
     

@@ -58,6 +58,7 @@ public class Color4T implements AbstractCoordinateFloat
         }
     }
 
+    @Override
     public void set(char axis, float value) {
         switch (axis) {
             case 'r':

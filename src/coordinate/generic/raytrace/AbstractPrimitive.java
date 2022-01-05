@@ -25,7 +25,7 @@ public interface AbstractPrimitive
          A extends AbstractAccelerator, 
          B extends AbstractBound>
 {
-    public int getCount();
+    public int getSize();
     public B getBound(int primID);
     public P getCentroid(int primID);    
     public B getBound();

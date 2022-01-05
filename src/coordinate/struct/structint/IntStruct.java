@@ -7,7 +7,6 @@ package coordinate.struct.structint;
 
 import coordinate.list.IntList;
 import coordinate.struct.AbstractStruct;
-import coordinate.struct.structint.IntStructField;
 import java.nio.IntBuffer;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import java.util.List;
 public abstract class IntStruct implements AbstractStruct {
     private int[] globalArray = null;
     private int globalArrayIndex = -1;
+    
         
     protected int getGlobalArrayIndex()
     {
@@ -29,7 +29,7 @@ public abstract class IntStruct implements AbstractStruct {
         this.globalArray = globalArray;
         this.globalArrayIndex = index * getSize();
     }
-    
+        
     protected void refreshGlobalArray()
     {
         if(globalArray == null || globalArrayIndex == -1) return;
@@ -74,7 +74,7 @@ public abstract class IntStruct implements AbstractStruct {
         return arrayList.trim();
     }
     public int getSize()
-    {
+    {        
         List<IntStructField> fields = IntStructField.getAllStructFields(this);
         int i = 0;
         i = fields.stream().map((field) -> field.getNumberOfInts()).reduce(i, Integer::sum);

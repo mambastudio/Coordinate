@@ -128,8 +128,8 @@ public class OBJMappedParser implements AbstractParser{
             }
             else if(parser.isCurrentIsolated("f"))
             {                                      
-                boolean doubleBackSlash = parser.currentLineContainsIsolated("//");
-                boolean singleBackSlash = parser.currentLineContainsIsolated("/");
+                boolean doubleBackSlash = parser.currentLineContains("//");
+                boolean singleBackSlash = parser.currentLineContains("/");
                                  
                 //handle various type of face types
                 if(singleBackSlash)

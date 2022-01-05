@@ -51,15 +51,16 @@ public class Distribution2D{
     public void sampleContinuous(float u0, float u1, Value2Df uv, Value1Df pdf)
     {
         float[] uvTemp = new float[2];
-        
-        sampleContinuous(u0, u1, uvTemp, pdf);
+        float[] pdfTemp = new float[1];
+        sampleContinuous(u0, u1, uvTemp, pdfTemp);
         
         uv.x = uvTemp[0];
         uv.x = uvTemp[1];
+        pdf.x = pdfTemp[1];
     }
     
     public void sampleContinuous(float u0, float u1, float[] uv,
-            Value1Df pdf) 
+            float[] pdf) 
     {        
         Value1Df pdfTemp = new Value1Df();        
         float[] pdfs = new float[2];
@@ -68,10 +69,10 @@ public class Distribution2D{
         uv[1] = pMarginal.sampleContinuous(u1, pdfTemp, v);
         pdfs[1] = pdfTemp.x;
         uv[0] = pConditionalV.get(v[0]).sampleContinuous(u0, pdfTemp);
-        pdfs[0] = pdfTemp.x;
-        
+        pdfs[0] = pdfTemp.x; 
+                
         if(pdf != null)
-            pdf.x = pdfs[0] * pdfs[1];
+            pdf[0] = pdfs[0] * pdfs[1];
     }
     
     public Value2Di sampleDiscrete(float u0, float u1)
@@ -170,8 +171,9 @@ public class Distribution2D{
     {
         StringBuilder builder = new StringBuilder();
         
-        for(Distribution1D dist : pConditionalV)        
+        pConditionalV.forEach(dist -> {        
             builder.append(dist.cdfString()).append("\n");
+        });
                     
         return builder.toString();
     }

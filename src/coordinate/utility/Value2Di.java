@@ -5,6 +5,8 @@
  */
 package coordinate.utility;
 
+import java.util.Arrays;
+
 /**
  *
  * @author user
@@ -25,5 +27,12 @@ public class Value2Di {
     public void set(int x, int y)
     {
         this.x = x; this.y = y;
+    }
+    
+    @Override
+    public String toString()
+    {
+        int[] array = new int[]{x, y};
+        return Arrays.toString(array);
     }
 }

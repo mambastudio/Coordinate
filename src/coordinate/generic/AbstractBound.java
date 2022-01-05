@@ -36,6 +36,20 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
         }
     }
     
+    /*
+    //https://jcgt.org/published/0007/03/04/paper.pdf
+    default boolean intersect(R ray, V normal)
+    {
+        // Move to the box's reference frame. This is unavoidable and un-optimizable.
+        R r = (R) ray.copy();
+        V v = (V) r.getOrigin().sub(getCenter());
+        r.getOrigin().setValue(v.get('x'), v.get('y'), v.get('z'));
+        
+        
+        return false;
+    }
+    */
+    
     default boolean intersectP(R ray)
     {
         //Ray box intersection 

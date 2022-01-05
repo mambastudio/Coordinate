@@ -5,8 +5,8 @@
  */
 package coordinate.utility;
 
+import coordinate.generic.VCoord;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -160,4 +160,63 @@ public class Utility {
         return new Random().ints(size, 0, size).toArray();
     }
     
+    // get index from pixel
+    public static int getIndex(Value2Di pixel, int width, int height)
+    {
+        return pixel.x + pixel.y * width;
+    }
+    
+    public static Value2Di getSphericalGridXY(int width, int height, VCoord d)
+    {
+        float xf, yf;
+        int xi, yi;
+        float phi, theta;
+
+        //do conversion of vector direction to u v - [0 to env map size] coordinates
+        phi = acosf(d.get('y'));
+        theta = atan2f(d.get('z'), d.get('x'));
+        xf = 0.5f - 0.5f * theta / PI_F;
+        yf = phi / PI_F;
+        
+        xf = xf - (int) xf;
+        yf = yf - (int) yf;
+        
+        if (xf < 0)
+            xf++;
+        if (yf < 0)
+            yf++;
+        
+        float dx = (float) xf * (width - 1);
+        float dy = (float) yf * (height - 1);
+        
+        xi = (int) dx;
+        yi = (int) dy;
+
+        return new Value2Di(xi, yi);
+    }
+
+    //sunflow renderer
+    public static int getSphericalGridIndex(int width, int height, VCoord d)   
+    {
+        Value2Di xy = getSphericalGridXY(width, height, d);     
+        return getIndex(xy, width, height);
+    }
+
+    //u = [0, 1] v = [0, 1]
+    //phi is z axis which up
+    //theta is plane x,y
+    //sunflow renderer
+    public static VCoord getSphericalDirection(float u, float v, VCoord newD)
+    {
+        float phi = PI_F * v;
+        float theta = u * 2 * PI_F;
+
+        float x     = -sinf(phi) * cosf(theta);
+        float y     = cosf(phi);
+        float z     = sinf(phi) * sinf(theta);
+
+        newD.set(x, y, z, 0);        
+        return newD;
+
+    }
 }

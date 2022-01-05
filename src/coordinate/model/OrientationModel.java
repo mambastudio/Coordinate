@@ -42,7 +42,7 @@ public class OrientationModel<S extends SCoord, V extends VCoord, R extends Abst
         S center = bound.getCenter();
         float distance = bound.getMinimum().distanceTo(bound.getMaximum()); //maximum distance from one side of bound to the other
         V direction = (V) center.sub(camera.position()).normalize();        //direction
-        camera.position = (S) center.add(direction.neg().mul(distance*2));  //r - td
+        camera.position = (S) center.add(direction.neg().mul(distance*1.5f));  //r - td
         camera.lookat = center;
         
     }

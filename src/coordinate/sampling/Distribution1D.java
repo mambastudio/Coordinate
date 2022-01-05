@@ -17,8 +17,13 @@ import java.util.Arrays;
  */
 public class Distribution1D {
     float [] func, cdf;
-    float funcInt;
+    public float funcInt;
     int count;
+    
+    public Distribution1D(float... f)
+    {
+        this(f, 0, f.length);
+    }
     
     public Distribution1D(float [] f, int offset, int n)
     {
@@ -27,14 +32,14 @@ public class Distribution1D {
         System.arraycopy(f, offset, func, 0, n);
         cdf = new float[n + 1];
         
+        
         //Compute integral of step function at xi
         cdf[0] = 0;
         for(int i = 1; i < count+1; ++i)
             cdf[i] = cdf[i-1] + func[i-1] / n;
-        
+              
         //Transform step function integral into CDF
         funcInt = cdf[count];
-        
         if(funcInt > 0)
         {
             for (int i = 1; i < n+1; ++i)
@@ -52,14 +57,15 @@ public class Distribution1D {
         if (off != null) {
             off[0] = offset;
         }
-        
+                
         // Compute offset along CDF segment
         float du = (u - cdf[offset]) / (cdf[offset + 1] - cdf[offset]);
         
         // Compute PDF for sampled offset
         if (pdf != null) {
-            pdf.x = func[offset] / funcInt;
+            pdf.x = func[offset] / funcInt;       
         }
+        
 
         // Return $x\in{}[0,1)$ corresponding to sample
         return (offset + du) / count;        
@@ -105,6 +111,15 @@ public class Distribution1D {
         return offset;        
     }
     
+    public int sampleDiscrete(float u, float[] pdf)
+    {
+        Value1Df pdfV = new Value1Df();
+        int index = sampleDiscrete(u, pdfV);
+        if(pdf != null)
+            pdf[0] = pdfV.x;
+        return index;
+    }
+    
     private int upper_bound(float[] a, int first, int last, float value) 
     {
         int i;
@@ -124,5 +139,10 @@ public class Distribution1D {
     public String cdfString()
     {
         return Arrays.toString(cdf);
+    }
+    
+    public void printlnCDF()
+    {
+        System.out.println(cdfString());
     }
 }

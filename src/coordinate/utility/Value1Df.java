@@ -11,4 +11,10 @@ package coordinate.utility;
  */
 public class Value1Df {
     public float x;
+    
+    @Override
+    public String toString()
+    {
+        return String.format("%3.9f", x);
+    }
 }

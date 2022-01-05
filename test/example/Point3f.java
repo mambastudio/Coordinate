@@ -52,7 +52,6 @@ public float x, y, z, w;
         return dest;
     }
     
-    @Override
     public Point3f setValue(float x, float y, float z) {
         Point3f p = SCoord.super.setValue(x, y, z);
         this.refreshGlobalArray();

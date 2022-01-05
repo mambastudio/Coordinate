@@ -22,5 +22,7 @@ public interface AbstractRay<S extends SCoord, V extends VCoord>
     public S getOrigin(); 
     public float getMin();     
     public float getMax();   
+    
+    public AbstractRay<S, V> copy();
       
 }
