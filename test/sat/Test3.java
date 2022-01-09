@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class Test3 {
     public static void main(String... args)
     {
-        test1();
+        test2();
     }
     
     public static void test1()
@@ -77,8 +77,8 @@ public class Test3 {
     
     public static void test2()
     {
-        SATDistribution1D sat1 = new SATDistribution1D(1, 1, 1);
-        SATDistribution1D sat2 = new SATDistribution1D(1, 1, 1, 1, 1);
+        SATDistribution1D sat1 = new SATDistribution1D(1, 2, 1);
+        SATDistribution1D sat2 = new SATDistribution1D(1, 1, 2, 1, 1);
         sat2.setRegionX(1, 3);
         
         float rand0 = (float) Math.random();

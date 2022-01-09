@@ -5,7 +5,11 @@
  */
 package coordinate.sampling.sat;
 
+import coordinate.utility.Value2Df;
+import coordinate.utility.Value2Di;
+import coordinate.utility.Value4Df;
 import static java.lang.Math.max;
+import java.util.Arrays;
 
 /**
  *
@@ -34,6 +38,12 @@ public class SATSubgrid {
         
         this.subgridRangeX = nu;
         this.subgridRangeY = nv;        
+    }
+    
+    public void reset()
+    {
+        Arrays.fill(func, 0);
+        Arrays.fill(sat, 0);
     }
     
     public SATSubgrid(int subgridRangeX, int subgridRangeY, int nu, int nv)
@@ -190,16 +200,32 @@ public class SATSubgrid {
         return subgridSizeX()*subgridSizeY();
     }
     
-    public int getSubgridLastIndexX()
+    public int getSubgridSizeLastIndexX()
     {
         return subgridSizeX()-1;
     }
     
-    public int getSubgridLastIndexY()
+    public int getSubgridSizeLastIndexY()
     {
         return subgridSizeY()-1;
     }
     
+    public Value4Df getSubgridUnitBound(Value2Di tileXY)
+    {
+        Value2Df unitMin = new Value2Df(
+                tileXY.x/(float)this.subgridRangeX,
+                tileXY.y/(float)this.subgridRangeY);
+        Value2Df unitMax = new Value2Df(
+                (tileXY.x + 1)/(float)this.subgridRangeX,
+                (tileXY.y + 1)/(float)this.subgridRangeY);
+        Value4Df unitBound = new Value4Df(
+                unitMin.x, unitMin.y,
+                unitMax.x, unitMax.y
+        );
+        
+        return unitBound;
+    }    
+       
     /** 
      * get index of sub-grid (1 dimension) from global index
      * 
@@ -245,7 +271,7 @@ public class SATSubgrid {
     /**
      * Global index of sub-grid given subgridIndexFromGlobalIndex(x, y)
  
- It is an enhanced form of x + y*w -> subIndexX*subSizeX + subIndexY*subArea * subCountX
+        It is an enhanced form of x + y*w -> subIndexX*subSizeX + subIndexY*subArea * subCountX
      * 
      * @param subgridIndexX
      * @param subgridIndexY
@@ -337,6 +363,11 @@ public class SATSubgrid {
         return !(sy >= subgridSizeY() || sy < 0);
     }
     
+    public int getSubgridIndex(int subgridIndexX, int subgridIndexY)
+    {
+        return subgridIndexX + subgridIndexY * subgridCountX();
+    }
+    
        
     //PROBABILITIES
     
@@ -350,7 +381,7 @@ public class SATSubgrid {
      */
     public float getFuncIntConditional(int subgridIndex, int y)
     {        
-        return getSubgridSATRange(subgridIndex, 0, y, getSubgridLastIndexX(), y);        
+        return getSubgridSATRange(subgridIndex, 0, y, getSubgridSizeLastIndexX(), y);        
     }
     
     public float getFunc(int subgridIndex, int sx, int sy)
@@ -377,8 +408,8 @@ public class SATSubgrid {
     
     public float getMarginal(int subgridIndex, int y) //rowY
     {
-        float marginalLast = getSubgridValueSAT(subgridIndex, getSubgridLastIndexX(), getSubgridLastIndexY());        
-        return getSubgridValueSAT(subgridIndex, getSubgridLastIndexX(), y - 1)/marginalLast;
+        float marginalLast = getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), getSubgridSizeLastIndexY());        
+        return getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), y - 1)/marginalLast;
     }
       
     public float getPdfContinuousConditional(int subgridIndex, int x, int y) //offset along col, which row y
@@ -393,7 +424,7 @@ public class SATSubgrid {
     public float getPdfContinuousMarginal(int subgridIndex, int y)
     {
         float funcInt = getFuncIntConditional(subgridIndex, y);
-        float lastSAT = getSubgridValueSAT(subgridIndex, getSubgridLastIndexX(), getSubgridLastIndexY());
+        float lastSAT = getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), getSubgridSizeLastIndexY());
         
         return (funcInt * subgridArea()) / lastSAT;
     }
@@ -471,20 +502,51 @@ public class SATSubgrid {
     
     public void sampleContinuous(int subgridIndex, float u0, float u1, float[] uv, float[] pdf)
     {
+        this.sampleContinuous(subgridIndex, u0, u1, uv, pdf, null);
+    }
+    
+    public void sampleContinuous(int subgridIndex, float u0, float u1, float[] uv, float[] pdf, int[] offset)
+    {
         float[] pdfs = new float[2];
         float[] pdfTemp = new float[1];
-        int v[] = new int[1];
-        int vtemp[] = new int[1];
+        int v[] = new int[1];        
         
         //start with marginal and then conditional
         uv[1] = sampleContinuousMarginal(subgridIndex, u1, v, pdfTemp);
-        pdfs[1] = pdfTemp[0];
-        uv[0] = sampleContinuousConditional(subgridIndex, u0, v[0], vtemp, pdfTemp);
+        pdfs[1] = pdfTemp[0];        
+        if(offset != null)
+            offset[1] = v[0];
+        
+        uv[0] = sampleContinuousConditional(subgridIndex, u0, v[0], v, pdfTemp);
         pdfs[0] = pdfTemp[0];
+        if(offset != null)
+            offset[0] = v[0];
         
         if(pdf != null)
             pdf[0] = pdfs[0] * pdfs[1];
     }
     
-    
+    public float[] getUpperGrid()
+    {
+        int subgridcount = subgridCount();
+        
+        float[] uppergrid = new float[subgridcount];
+        
+        
+        for(int y = 0; y<subgridCountY(); y++)
+        {
+            for(int x = 0; x<subgridCountX(); x++)
+            {
+                int subgridIndex = getSubgridIndex(x, y);
+                int globalIndex = globalIndexInSubgrid(
+                        subgridIndex, 
+                        getSubgridSizeLastIndexX(), 
+                        getSubgridSizeLastIndexY());
+                
+                uppergrid[subgridIndex] = sat[globalIndex];
+            }
+        }
+        
+        return uppergrid;
+    }
 }

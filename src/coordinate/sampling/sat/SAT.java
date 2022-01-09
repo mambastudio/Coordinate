@@ -5,6 +5,8 @@
  */
 package coordinate.sampling.sat;
 
+import coordinate.utility.Value2Di;
+import coordinate.utility.Value4Df;
 import static java.lang.Math.max;
 
 /**
@@ -59,6 +61,37 @@ public final class SAT {
     public void setRegion(int minX, int minY, int strideX, int strideY)
     {
         this.region.setRegion(minX, minY, strideX, strideY);
+    }
+    
+    public void setRegion(SATRegion region)
+    {
+        setRegion(region.getMinX(), region.getMinY(), region.lengthX(), region.lengthY());
+    }
+    
+    public void revertToFullRegion()
+    {
+        this.region.revertToFullRegion();
+    }
+    
+     //sub region
+    public SATRegion getSubRegionFromUnitBound(Value4Df unitBound)
+    {
+        SATRegion subregion;
+        Value2Di minXY = new Value2Di(
+                (int)(nu * unitBound.x), 
+                (int)(nv * unitBound.y));
+        Value2Di maxXY = new Value2Di(
+                (int)(nu * unitBound.z), 
+                (int)(nv * unitBound.w));
+        
+        Value2Di strideXY = new Value2Di(
+                maxXY.x - minXY.x,
+                maxXY.y - minXY.y);
+        
+        subregion = new SATRegion(nu, nv);        
+        subregion.setRegion(minXY.x, minXY.y, strideXY.x, strideXY.y);
+        
+        return subregion;
     }
     
     public void setArray(float... arr)

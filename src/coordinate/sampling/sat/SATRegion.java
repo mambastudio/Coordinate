@@ -28,9 +28,10 @@ public class SATRegion {
     public void setRegion(int minX, int minY, int strideX, int strideY)
     {
         if(minX < 0 || minY < 0)
-            throw new RuntimeException("out of range sat region");
+            throw new RuntimeException("minX and minY is less than zero " +minX+ " " +minY);
         if(minX + strideX > nu || minY + strideY > nv)
-            throw new RuntimeException("out of range sat region");
+            throw new RuntimeException("minX + strideX is > nu || minY + strideY is > nv. Actual values: (minX + strideX) = " 
+                    +(minX + strideX)+ " where nu is "+nu+ " (minY + strideY) " +(minX + strideX)+ " where nv is " +nv);
         if(strideX <= 0 || strideY <= 0)
             throw new RuntimeException("mismatch of sat region");
         this.minX = minX;
@@ -101,5 +102,20 @@ public class SATRegion {
     public void setStride(int strideX, int strideY)
     {
         this.setRegion(minX, minY, strideX, strideY);
+    }
+    
+    public void revertToFullRegion()
+    {
+        setRegion(0, 0, nu, nv);
+    }
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("minX    %5d, minY    %5d", minX, minY)).append("\n");
+        builder.append(String.format("strideX %5d, strideY %5d", strideX, strideY)).append("\n");
+        builder.append(String.format("nu      %5d, nv      %5d", nu, nv)).append("\n");
+        return builder.toString();
     }
 }
