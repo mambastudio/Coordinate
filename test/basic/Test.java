@@ -5,9 +5,7 @@
  */
 package basic;
 
-import coordinate.parser.obj.OBJMappedParser;
-import coordinate.parser.obj.OBJParser;
-import java.util.Arrays;
+import coordinate.utility.Value2Di;
 
 /**
  *
@@ -16,8 +14,11 @@ import java.util.Arrays;
 public class Test {
     public static void main(String... args)
     {
-        OBJMappedParser parser = new OBJMappedParser();
-        parser.readAttributes("C:\\Users\\user\\Documents\\3D Scenes\\CornellBox\\CornellBox-Empty-CO.obj");
+        Value2Di xy = new Value2Di(0, 0);
+        System.out.println(xy);
+        xy.applyJitterFromCenter(1, 1);
+        System.out.println(xy);
         
+        System.out.println(Math.floorMod(-3, 4));
     }
 }

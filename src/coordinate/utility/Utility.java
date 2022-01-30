@@ -198,9 +198,10 @@ public class Utility {
     //sunflow renderer
     public static int getSphericalGridIndex(int width, int height, VCoord d)   
     {
-        Value2Di xy = getSphericalGridXY(width, height, d);     
+        Value2Di xy = getSphericalGridXY(width, height, d);          
         return getIndex(xy, width, height);
     }
+    
 
     //u = [0, 1] v = [0, 1]
     //phi is z axis which up

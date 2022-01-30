@@ -277,6 +277,14 @@ public final class SAT {
         return (funcInt * region.getRegionArea()) / lastSAT;
     }
     
+    public float getPdf(int index)
+    {
+        int x = index%nu;
+        int y = index/nu;
+        
+        return getPdf(x, y);
+    }
+    
     public float getPdf(int x, int y)
     {
         float pdfV = getPdfContinuousMarginal(y);

@@ -6,6 +6,7 @@
 package coordinate.utility;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
@@ -27,6 +28,27 @@ public class Value2Di {
     public void set(int x, int y)
     {
         this.x = x; this.y = y;
+    }
+    
+    public void applyJitterFromCenter(int rangeX, int rangeY)
+    {
+        int minX = -1*Math.abs(rangeX);
+        minX += x;        
+        int minY = -1*Math.abs(rangeY);
+        minY += y;        
+        int maxX = Math.abs(rangeX);
+        maxX += x;
+        int maxY = Math.abs(rangeY);
+        maxY += y;
+                
+        x = getRandomNumber(minX, maxX);
+        y = getRandomNumber(minY, maxY);
+        
+    }
+    
+    private int getRandomNumber(int min, int max) {
+        //ThreadLocalRandom.current().nextInt(min, max + 1);
+        return (int) (Math.random() * ((max - min) + 1)) + min;
     }
     
     @Override
