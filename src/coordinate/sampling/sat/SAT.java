@@ -5,6 +5,7 @@
  */
 package coordinate.sampling.sat;
 
+import coordinate.utility.Utility;
 import coordinate.utility.Value2Di;
 import coordinate.utility.Value4Df;
 import static java.lang.Math.max;
@@ -328,6 +329,8 @@ public final class SAT {
         if (pdf != null) {            
             pdf[0] = getPdfContinuousMarginal(offset);
         }
+        
+        System.out.println(offset + du);
                        
         return (offset + du) / (region.getNv());    
     }
@@ -382,7 +385,7 @@ public final class SAT {
     }
     
     //binary search (from opencl code)    
-    private int upperBoundMarginal(int first, int last, float value) 
+    private int upperBoundMarginal(int first, int last, float value) //last is exclusive
     {
         int begin = first;
         int end = last;
@@ -395,8 +398,8 @@ public final class SAT {
             begin = b_right ? mid + 1 : begin;
             end =  b_right ? end : mid; 
         }
-
-        return begin;
+        
+        return Utility.clamp(begin, first, end);
     }
         
     public void sampleContinuous(float u0, float u1, float[] uv, int offset[], float[] pdf)

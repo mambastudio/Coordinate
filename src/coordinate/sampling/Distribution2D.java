@@ -75,6 +75,11 @@ public class Distribution2D{
             pdf[0] = pdfs[0] * pdfs[1];
     }
     
+    public float sampleContinuousMarginal(float u, Value1Df pdf, int[] off)
+    {
+        return pMarginal.sampleContinuous(u, pdf, off);
+    }
+    
     public Value2Di sampleDiscrete(float u0, float u1)
     {
         return sampleDiscrete(u0, u1, null);

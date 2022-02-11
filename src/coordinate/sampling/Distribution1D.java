@@ -5,6 +5,7 @@
  */
 package coordinate.sampling;
 
+import coordinate.utility.Utility;
 import static coordinate.utility.Utility.clamp;
 import static coordinate.utility.Utility.debugArray;
 import coordinate.utility.Value1Df;
@@ -120,6 +121,7 @@ public class Distribution1D {
         return index;
     }
     
+    //last is exclusive    
     private int upper_bound(float[] a, int first, int last, float value) 
     {
         int i;
@@ -128,6 +130,8 @@ public class Distribution1D {
                 break;
             }
         }
+        
+        i = Utility.clamp(i, first, last-1);
         return i;
     }
     
