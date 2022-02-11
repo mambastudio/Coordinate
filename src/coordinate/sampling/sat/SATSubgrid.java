@@ -212,12 +212,14 @@ public class SATSubgrid {
     
     public Value4Df getSubgridUnitBound(Value2Di tileXY)
     {
+        int tx = tileXY.x, ty = tileXY.y;
+              
         Value2Df unitMin = new Value2Df(
-                tileXY.x/(float)this.subgridRangeX,
-                tileXY.y/(float)this.subgridRangeY);
+                tx/(float)this.subgridRangeX,
+                ty/(float)this.subgridRangeY);
         Value2Df unitMax = new Value2Df(
-                (tileXY.x + 1)/(float)this.subgridRangeX,
-                (tileXY.y + 1)/(float)this.subgridRangeY);
+                (tx + 1)/(float)this.subgridRangeX,
+                (ty + 1)/(float)this.subgridRangeY);
         Value4Df unitBound = new Value4Df(
                 unitMin.x, unitMin.y,
                 unitMax.x, unitMax.y
@@ -426,7 +428,20 @@ public class SATSubgrid {
         float funcInt = getFuncIntConditional(subgridIndex, y);
         float lastSAT = getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), getSubgridSizeLastIndexY());
         
-        return (funcInt * subgridArea()) / lastSAT;
+        float pdf = (funcInt * subgridArea()) / lastSAT;
+        
+        if(Float.isNaN(pdf))
+            System.out.println(lastSAT);
+        
+        return pdf;
+    }
+    
+    public float getPdf(int subgridIndex, int x, int y)
+    {
+        float pdfV = getPdfContinuousMarginal(subgridIndex, y);
+        float pdfU = getPdfContinuousConditional(subgridIndex, x, y); //offset along col, which row y
+        
+        return pdfU * pdfV;
     }
         
     public float sampleContinuousConditional(int subgridIndex, float u, int y, int[] off, float[] pdf) //float u, int y, int off[], float pdf[]
@@ -524,6 +539,8 @@ public class SATSubgrid {
         
         if(pdf != null)
             pdf[0] = pdfs[0] * pdfs[1];
+        
+        
     }
     
     public float[] getUpperGrid()
