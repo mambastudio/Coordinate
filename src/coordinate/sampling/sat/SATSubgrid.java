@@ -392,6 +392,11 @@ public class SATSubgrid {
         return func[index];
     }
     
+    public float getFunc(int subgridIndex, int si)
+    {
+        return func[si];
+    }
+    
     public float[] getFuncArray()
     {
         return func;
@@ -405,12 +410,16 @@ public class SATSubgrid {
     public float getConditional(int subgridIndex, int x, int y) //columnX, rowY
     {
         float funcInt = getFuncIntConditional(subgridIndex, y);
+        if(funcInt<=0)
+            return 0;
         return getSubgridSATRange(subgridIndex, 0, y, x - 1, y)/funcInt;
     }
     
     public float getMarginal(int subgridIndex, int y) //rowY
     {
         float marginalLast = getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), getSubgridSizeLastIndexY());        
+        if(marginalLast<=0)
+            return 0;
         return getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), y - 1)/marginalLast;
     }
       
@@ -418,8 +427,7 @@ public class SATSubgrid {
     {
         float funcValue = getFunc(subgridIndex, x, y);
         float funcInt = getFuncIntConditional(subgridIndex, y);
-        
-        return funcValue/funcInt;
+        return (funcInt>0)? funcValue/funcInt : 0;
     }
     
     
@@ -427,13 +435,7 @@ public class SATSubgrid {
     {
         float funcInt = getFuncIntConditional(subgridIndex, y);
         float lastSAT = getSubgridValueSAT(subgridIndex, getSubgridSizeLastIndexX(), getSubgridSizeLastIndexY());
-        
-        float pdf = (funcInt * subgridArea()) / lastSAT;
-        
-        if(Float.isNaN(pdf))
-            System.out.println(lastSAT);
-        
-        return pdf;
+        return (funcInt>0)?(funcInt * subgridArea()) / lastSAT : 0;
     }
     
     public float getPdf(int subgridIndex, int x, int y)
@@ -454,8 +456,12 @@ public class SATSubgrid {
             off[0] = offset;
         
         // Compute offset along CDF segment
-        float du = (u - getConditional(subgridIndex, offset, y)) / (getConditional(subgridIndex, offset + 1, y) - getConditional(subgridIndex, offset, y));
+        float du = (u - getConditional(subgridIndex, offset, y));// (getConditional(subgridIndex, offset + 1, y) - getConditional(subgridIndex, offset, y));
        
+        if((getConditional(subgridIndex, offset + 1, y) - getConditional(subgridIndex, offset, y))>0)
+        {
+            du /= (getConditional(subgridIndex, offset + 1, y) - getConditional(subgridIndex, offset, y));
+        }
         // Compute PDF for sampled offset
         if (pdf != null) {
             pdf[0] = getPdfContinuousConditional(subgridIndex, offset, y);            
@@ -473,10 +479,13 @@ public class SATSubgrid {
         if(off != null)
             off[0] = offset;
         
-       
-        
         // Compute offset along CDF segment
-        float du = (u - getMarginal(subgridIndex, offset)) / (getMarginal(subgridIndex, offset + 1) - getMarginal(subgridIndex, offset));
+        float du = (u - getMarginal(subgridIndex, offset)); // (getMarginal(subgridIndex, offset + 1) - getMarginal(subgridIndex, offset));
+        
+        if((getMarginal(subgridIndex, offset + 1) - getMarginal(subgridIndex, offset))>0)
+        {
+            du /= (getMarginal(subgridIndex, offset + 1) - getMarginal(subgridIndex, offset));
+        }
         
         // Compute PDF for sampled offset
         if (pdf != null) {            

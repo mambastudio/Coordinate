@@ -59,16 +59,38 @@ public class Distribution2D{
         pdf.x = pdfTemp[1];
     }
     
+    public void sampleContinuous(float u0, float u1, float[] uv, int offset[], float[] pdf)
+    {
+        Value1Df pdfTemp = new Value1Df();        
+        float[] pdfs = new float[2];        
+        int[] offsetV = new int[1];
+        int[] offsetU = new int[1];
+        
+        uv[1] = pMarginal.sampleContinuous(u1, pdfTemp, offsetV);
+        pdfs[1] = pdfTemp.x;
+        uv[0] = pConditionalV.get(offsetV[0]).sampleContinuous(u0, pdfTemp, offsetU);
+        pdfs[0] = pdfTemp.x; 
+        
+        if(pdf != null)
+            pdf[0] = pdfs[0] * pdfs[1];
+        
+        if(offset != null)
+        {
+            offset[0] = offsetU[0];
+            offset[1] = offsetV[0];
+        }
+    }
+    
     public void sampleContinuous(float u0, float u1, float[] uv,
             float[] pdf) 
     {        
         Value1Df pdfTemp = new Value1Df();        
         float[] pdfs = new float[2];
         
-        int[] v = new int[1];
-        uv[1] = pMarginal.sampleContinuous(u1, pdfTemp, v);
+        int[] offsetV = new int[1];
+        uv[1] = pMarginal.sampleContinuous(u1, pdfTemp, offsetV);
         pdfs[1] = pdfTemp.x;
-        uv[0] = pConditionalV.get(v[0]).sampleContinuous(u0, pdfTemp);
+        uv[0] = pConditionalV.get(offsetV[0]).sampleContinuous(u0, pdfTemp);
         pdfs[0] = pdfTemp.x; 
                 
         if(pdf != null)

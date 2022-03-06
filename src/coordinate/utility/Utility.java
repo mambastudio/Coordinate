@@ -166,33 +166,17 @@ public class Utility {
         return pixel.x + pixel.y * width;
     }
     
+    
+    //https://computergraphics.stackexchange.com/questions/7738/how-to-assign-calculate-triangle-texture-coordinates
+    //also sunflow Texture.java
     public static Value2Di getSphericalGridXY(int width, int height, VCoord d)
     {
-        float xf, yf;
-        int xi, yi;
-        float phi, theta;
-
-        //do conversion of vector direction to u v - [0 to env map size] coordinates
-        phi = acosf(d.get('y'));
-        theta = atan2f(d.get('z'), d.get('x'));
-        xf = 0.5f - 0.5f * theta / PI_F;
-        yf = phi / PI_F;
+        Value2Df uv = Utility.getLongLatUV(d);
         
-        xf = xf - (int) xf;
-        yf = yf - (int) yf;
+        uv.x = frac(uv.x);
+        uv.y = frac(uv.y);
         
-        if (xf < 0)
-            xf++;
-        if (yf < 0)
-            yf++;
-        
-        float dx = (float) xf * (width - 1);
-        float dy = (float) yf * (height - 1);
-        
-        xi = (int) dx;
-        yi = (int) dy;
-
-        return new Value2Di(xi, yi);
+        return new Value2Di((int)(uv.x * (width - 1)), (int)(uv.y * (height - 1)));
     }
 
     //sunflow renderer
@@ -218,6 +202,25 @@ public class Utility {
 
         newD.set(x, y, z, 0);        
         return newD;
-
     }
+    
+    //https://github.com/fpsunflower/sunflow/blob/15fa9c6cc6729934181bb877e67f1d1c13679f89/src/org/sunflow/core/light/ImageBasedLight.java#L242
+    public static Value2Df getLongLatUV(VCoord vec)
+    {
+        float u, v;
+        
+        // assume lon/lat format
+        double phi, theta;
+        phi = Math.acos(vec.get('y'));
+        theta = Math.atan2(vec.get('z'), vec.get('x'));
+        u = (float) (0.5 - 0.5 * theta / Math.PI);
+        v = (float) (phi / Math.PI);
+        
+        return new Value2Df(u, v);
+    }
+    
+    public static final float frac(float x) {
+        return x < 0 ? x - (int) x + 1 : x - (int) x;
+    }
+    
 }

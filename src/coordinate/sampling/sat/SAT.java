@@ -75,7 +75,7 @@ public final class SAT {
     }
     
      //sub region
-    public SATRegion getSubRegionFromUnitBound(Value4Df unitBound)
+    public SATRegion getSubRegionFromUnitBound(Value4Df unitBound, boolean enlarge)
     {
         SATRegion subregion;
         Value2Di minXY = new Value2Di(
@@ -84,6 +84,14 @@ public final class SAT {
         Value2Di maxXY = new Value2Di(
                 (int)(nu * unitBound.z), 
                 (int)(nv * unitBound.w));
+        
+        if(enlarge)
+        {            
+            minXY.x = Utility.clamp(minXY.x - 2, 0, nu);
+            minXY.y = Utility.clamp(minXY.y - 2, 0, nv);
+            maxXY.x = Utility.clamp(maxXY.x + 2, 0, nu);
+            maxXY.y = Utility.clamp(maxXY.y + 2, 0, nv);
+        }
         
         Value2Di strideXY = new Value2Di(
                 maxXY.x - minXY.x,
@@ -118,6 +126,11 @@ public final class SAT {
     public float getFunc(int x, int y)
     {
         int index = region.getIndex(x, y);
+        return func[index];
+    }
+    
+    public float getFunc(int index)
+    {
         return func[index];
     }
     
@@ -235,12 +248,16 @@ public final class SAT {
     public float getConditional(int x, int y) //columnX, rowY
     {
         float funcInt = getFuncIntConditional(y);
+        if(funcInt <= 0)
+            return 0;
         return getSATRange(region.getMinX(), y, x - 1, y)/funcInt;
     }
     
     public float getMarginal(int y) //rowY
     {   
         float marginalLast = getSATRange(region.getMinX(), region.getMinY(), region.getLastIndexX(), region.getLastIndexY());
+        if(marginalLast <=0 )
+            return 0;
         return getSATRange(region.getMinX(), region.getMinY(), region.getLastIndexX(), y - 1)/marginalLast;
     }
     
@@ -256,26 +273,18 @@ public final class SAT {
         return getSATRange(region.getMinX(), y, region.getLastIndexX(), y);        
     }
     
-    public float getFuncIntMarginal(int y)
-    {
-        float funcInt = getFuncIntConditional(y);
-        return funcInt * region.getRegionArea();
-    }
-    
     public float getPdfContinuousConditional(int x, int y) //offset along col, which row y
     {
         float funcValue = getFunc(x, y);
-        float funcInt = getFuncIntConditional(y);
-        
-        return funcValue/funcInt;
+        float funcInt = getFuncIntConditional(y);        
+        return (funcInt > 0) ? funcValue/funcInt : 0;
     }
         
     public float getPdfContinuousMarginal(int y)
     {
         float funcInt = getFuncIntConditional(y);
         float lastSAT = getSATRange(region.getMinX(), region.getMinY(), region.getLastIndexX(), region.getLastIndexY());
-        
-        return (funcInt * region.getRegionArea()) / lastSAT;
+        return (funcInt > 0) ? (funcInt * region.getRegionArea()) / lastSAT : 0;
     }
     
     public float getPdf(int index)
@@ -303,8 +312,13 @@ public final class SAT {
             off[0] = offset;
         
         // Compute offset along CDF segment
-        float du = (u - getConditional(offset, y)) / (getConditional(offset + 1, y) - getConditional(offset, y));
+        float du = (u - getConditional(offset, y)); // (getConditional(offset + 1, y) - getConditional(offset, y));
        
+        if((getConditional(offset + 1, y) - getConditional(offset, y))>0)
+        {
+            du /= (getConditional(offset + 1, y) - getConditional(offset, y));
+        }
+        
         // Compute PDF for sampled offset
         if (pdf != null) {
             pdf[0] = getPdfContinuousConditional(offset, y);            
@@ -323,15 +337,18 @@ public final class SAT {
             off[0] = offset;
         
         // Compute offset along CDF segment
-        float du = (u - getMarginal(offset)) / (getMarginal(offset + 1) - getMarginal(offset));
+        float du = (u - getMarginal(offset)); // (getMarginal(offset + 1) - getMarginal(offset));
+        
+        if((getMarginal(offset + 1) - getMarginal(offset))>0)
+        {
+            du /= (getMarginal(offset + 1) - getMarginal(offset));
+        }
         
         // Compute PDF for sampled offset
         if (pdf != null) {            
             pdf[0] = getPdfContinuousMarginal(offset);
         }
-        
-        System.out.println(offset + du);
-                       
+                               
         return (offset + du) / (region.getNv());    
     }
     

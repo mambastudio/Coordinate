@@ -69,6 +69,16 @@ public class SATRegion {
         return minY;
     }
     
+    public int getMaxX()
+    {
+        return getLastIndexX();
+    }
+    
+    public int getMaxY()
+    {
+        return getLastIndexY();
+    }
+    
     public int lengthX()
     {
         return strideX;

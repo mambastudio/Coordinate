@@ -12,6 +12,12 @@ package coordinate.utility;
 public class Value1Df {
     public float x;
     
+    public final boolean isBad()
+    {
+        return (Float.isNaN(this.x)) || 
+               (Float.isInfinite(this.x));
+    }
+    
     @Override
     public String toString()
     {

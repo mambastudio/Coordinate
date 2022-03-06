@@ -29,6 +29,28 @@ public class SATDistribution1D {
         sat.setRegion(minX, 0, maxX, 1);
     }
     
+    public float sampleContinuous(float u, float[] pdf, int[] off)
+    {
+        Value1Df pdfValue = new Value1Df();
+        float u_ = sampleContinuous(u, pdfValue, off);
+        if(pdf != null)
+            pdf[0] = pdfValue.x;
+        return u_;
+    }
+    
+    public float sampleContinuous(float u, Value1Df pdf, int[] off)
+    {
+        float[] pdfS = new float[1];
+        float[] uvS = new float[2];
+        int[] offS = new int[2];
+        sat.sampleContinuous(u, 1, uvS, offS, pdfS);
+        if(pdf!=null)
+            pdf.x = pdfS[0];
+        if(off!= null)
+            off[0] = offS[0];
+        return uvS[0];
+    }
+    
     public int sampleDiscreteConditional(float u)
     {
         return sat.sampleDiscreteConditional(u, 0);

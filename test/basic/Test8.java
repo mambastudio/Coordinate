@@ -10,6 +10,7 @@ import coordinate.sampling.Distribution2D;
 import coordinate.sampling.sat.SATDistribution1D;
 import coordinate.sampling.sat.SATDistribution2D;
 import coordinate.sampling.sat.SAT;
+import coordinate.sampling.sat.SATSubgrid;
 import coordinate.utility.Value1Df;
 import coordinate.utility.Value2Di;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 public class Test8 {
     public static void main(String... args)
     {
-        test6();
+        test7();
     }
     
     public static void test1()
@@ -73,13 +74,11 @@ public class Test8 {
     public static void test3()
     {
         float[] array = new float[]{
-                                2, 1, 0, 0, 3,
-                                0, 1, 2, 0, 6,
-                                1, 2, 1, 0, 5,
-                                1, 1, 0, 2, 9,
+                                2, 1, 0, 0, 3
         };
-        SATDistribution2D distSAT = new SATDistribution2D(array, 5, 4);
-        Distribution2D dist = new Distribution2D(array, 5, 4);
+        SATDistribution2D distSAT = new SATDistribution2D(array, 5, 1);
+        Distribution2D dist = new Distribution2D(array, 5, 1);
+        Distribution1D dist1 = new Distribution1D(array);
         
         float rand0 = (float) Math.random();
         float rand1 = (float) Math.random();
@@ -90,14 +89,20 @@ public class Test8 {
         float[] uvSAT  = new float[2];
         float[] pdfSAT = new float[1];
         
+        float[] u1  = new float[1];
+        float[] pdf1 = new float[1];
+        
         dist.sampleContinuous(rand0, rand1, uv, pdf);
-        distSAT.sampleContinuous(rand0, rand1, uvSAT, pdfSAT);
+        distSAT.sampleContinuous(rand0, 1, uvSAT, pdfSAT);
+        u1[0] = dist1.sampleContinuous(rand0, pdf1, null);
         
         System.out.println(Arrays.toString(uv));
         System.out.println(Arrays.toString(uvSAT));
+        System.out.println(Arrays.toString(u1));
         
         System.out.println(Arrays.toString(pdf));
         System.out.println(Arrays.toString(pdfSAT));
+        System.out.println(Arrays.toString(pdf1));
     }
     
     public static void test4()
@@ -174,5 +179,54 @@ public class Test8 {
         System.out.println("Discrete:");
         System.out.println("sample " +sample2);
         System.out.println("pdf    " +pdf2);
+    }
+    
+    public static void test7()
+    {
+        SAT sat = new SAT(3, 3);
+        sat.setArray(
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0              
+        ); 
+        
+        Distribution2D dsat = new Distribution2D(new float[]{
+                0, 0, 0,
+                0, 0, 0,
+                0, 1, 0        
+        }, 3, 3);
+        
+        SATSubgrid subgrid = new SATSubgrid(3, 3, 6, 3);
+        subgrid.setArray(
+                0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 1, 0, 0      
+        );
+        
+        float rand0 = 6.999f;
+        float rand1 = 2.5f;
+        
+        int[] offset = new int[2];
+        float pdf[] = new float[1];
+        float uv[] = new float[2];
+        
+        int[] soffset = new int[2];
+        float spdf[] = new float[1];
+        float suv[] = new float[2];
+        
+        
+        sat.sampleContinuous(rand0, rand1, uv, offset, pdf);
+        subgrid.sampleContinuous(0, rand0, rand1, suv, spdf, soffset);
+        
+        System.out.println("sat");
+        System.out.println(" uv     " +Arrays.toString(uv));
+        System.out.println(" offset " +Arrays.toString(offset));
+        System.out.println(" pdf    " +Arrays.toString(pdf));
+        
+        System.out.println();
+        System.out.println("subgrid");
+        System.out.println(" uv     " +Arrays.toString(suv));
+        System.out.println(" offset " +Arrays.toString(soffset));
+        System.out.println(" pdf    " +Arrays.toString(spdf));
     }
 }

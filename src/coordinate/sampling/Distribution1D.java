@@ -38,16 +38,26 @@ public class Distribution1D {
         cdf[0] = 0;
         for(int i = 1; i < count+1; ++i)
             cdf[i] = cdf[i-1] + func[i-1] / n;
-              
+        
         //Transform step function integral into CDF
         funcInt = cdf[count];
         if(funcInt > 0)
         {
             for (int i = 1; i < n+1; ++i)
                 cdf[i] /= funcInt;
-        }    
+        }  
+       
         
        debugArray(cdf);
+    }
+    
+    public float sampleContinuous(float u, float[] pdf, int[] off)
+    {
+        Value1Df pdfValue = new Value1Df();
+        float u_ = sampleContinuous(u, pdfValue, off);
+        if(pdf != null)
+            pdf[0] = pdfValue.x;
+        return u_;
     }
     
     public float sampleContinuous(float u, Value1Df pdf, int[] off)
@@ -55,19 +65,22 @@ public class Distribution1D {
         // Find surrounding CDF segments and _offset_
         int ptr = upper_bound(cdf, 0, count, u);
         int offset = max(0, ptr - 1);
+        
         if (off != null) {
             off[0] = offset;
         }
                 
         // Compute offset along CDF segment
-        float du = (u - cdf[offset]) / (cdf[offset + 1] - cdf[offset]);
-        
+        float du = (u - cdf[offset]); 
+        if((cdf[offset + 1] - cdf[offset])>0)
+        {
+            du /= (cdf[offset + 1] - cdf[offset]);
+        }
         // Compute PDF for sampled offset
         if (pdf != null) {
-            pdf.x = func[offset] / funcInt;       
+            pdf.x = (funcInt > 0) ? func[offset] / funcInt : 0;       
         }
-        
-
+                
         // Return $x\in{}[0,1)$ corresponding to sample
         return (offset + du) / count;        
     }
@@ -107,8 +120,8 @@ public class Distribution1D {
         int offset = max(0, ptr - 1);
         
         if (pdf != null) {
-            pdf.x = func[offset] / (funcInt * count);
-        }
+            pdf.x = (funcInt > 0) ? func[offset] / funcInt / count : 0;       
+        }        
         return offset;        
     }
     
@@ -131,7 +144,7 @@ public class Distribution1D {
             }
         }
         
-        i = Utility.clamp(i, first, last-1);
+        //i = Utility.clamp(i, first, last);
         return i;
     }
     
