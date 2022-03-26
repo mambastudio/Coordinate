@@ -23,6 +23,14 @@ public class Utility {
     public static final float EPS_PHONG = 1e-3f;
     public static final float EPS_RAY  =  0.000001f;
     
+    public static float check(float value)
+    {
+      if(Float.isInfinite(value)||Float.isNaN(value)|| value<0.000001f)
+          return 0.f;
+      else
+          return value;
+    }
+    
     public static float clamp(float x, float min, float max)
     {
         if (x > max)
