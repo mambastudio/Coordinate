@@ -7,7 +7,6 @@ package coordinate.struct.structfloat;
 
 import coordinate.list.FloatList;
 import coordinate.struct.AbstractStruct;
-import coordinate.struct.structfloat.FloatStructField;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.util.List;

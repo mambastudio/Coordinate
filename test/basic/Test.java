@@ -5,20 +5,26 @@
  */
 package basic;
 
+import static basic.Test.Josto.JOE;
+import static basic.Test.Josto.MWANGI;
 import coordinate.utility.Value2Di;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  *
  * @author user
  */
 public class Test {
+    enum Josto{JOE, MWANGI}
     public static void main(String... args)
     {
-        Value2Di xy = new Value2Di(0, 0);
-        System.out.println(xy);
-        xy.applyJitterFromCenter(1, 1);
-        System.out.println(xy);
-        
-        System.out.println(Math.floorMod(-3, 4));
+        Set<Josto> set = new LinkedHashSet<>();
+        set.add(JOE);
+        set.add(MWANGI);
+        set.add(JOE);
+        System.out.println(set);
     }
+    
+   
 }
