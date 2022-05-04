@@ -3,7 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/raytrace/AbstractPrimitive.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/attribute/Color4T.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJInfo.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/attribute/MaterialT.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
         </group>
     </open-files>
 </project-private>

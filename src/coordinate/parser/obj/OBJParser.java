@@ -39,6 +39,8 @@ public class OBJParser implements AbstractParser{
     
     private boolean defaultMatPresent = true;
     
+    private OBJInfo info;
+    
     public ArrayList<MaterialT> getGroupMaterialList()
     {
         return groupMaterials;
@@ -50,6 +52,11 @@ public class OBJParser implements AbstractParser{
             return new ArrayList<>(Arrays.asList(new MaterialT()));
         else
             return groupMaterials;
+    }
+    
+    public OBJInfo getInfo()
+    {
+        return info;
     }
     
     @Override
@@ -69,6 +76,12 @@ public class OBJParser implements AbstractParser{
         InputStream is = new ByteArrayInputStream(string.getBytes());
 	BufferedReader br = new BufferedReader(new InputStreamReader(is));
         read(new StringReader(br), mesh);
+    }
+    
+    public void readAttributesString(String string)
+    {
+       info = new OBJInfo();
+       info.readAttributesString(string);
     }
     
     public void readAttributes(String uri)
@@ -175,7 +188,10 @@ public class OBJParser implements AbstractParser{
         {
             groupCount++;       
             if(defaultMatPresent)            
-                groupMaterials.add(new MaterialT());               
+                if(reader.peekNextTokenIsNumber())
+                    groupMaterials.add(new MaterialT());  
+                else
+                    groupMaterials.add(new MaterialT(reader.getNextToken()));   
             else
                 groupMaterials.add(sceneMaterials.get(sceneMaterials.size()-1));
             groupMaterialCount++;
@@ -187,8 +203,11 @@ public class OBJParser implements AbstractParser{
         if(reader.getNextToken().equals("o"))
         {
             groupCount++;
-            if(defaultMatPresent)            
-                groupMaterials.add(new MaterialT());               
+            if(defaultMatPresent)      
+                if(reader.peekNextTokenIsNumber())
+                    groupMaterials.add(new MaterialT());  
+                else
+                    groupMaterials.add(new MaterialT(reader.getNextToken()));
             else
                 groupMaterials.add(sceneMaterials.get(sceneMaterials.size()-1));
             groupMaterialCount++;

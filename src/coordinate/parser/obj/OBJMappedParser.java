@@ -144,7 +144,7 @@ public class OBJMappedParser implements AbstractParser{
             {
                 if(info.splitPolicy() == OBJECT)
                 {                   
-                    String nameGroup = parser.readLineString().trim();
+                    String nameGroup = parser.readLineString().replace("o", "").trim();
                     MaterialT material = new MaterialT(nameGroup);
 
                     //id material
@@ -156,7 +156,7 @@ public class OBJMappedParser implements AbstractParser{
             {                
                 if(info.splitPolicy() == GROUP)
                 {
-                    String nameGroup = parser.readLineString().trim();
+                    String nameGroup = parser.readLineString().replace("g", "").trim();
                     MaterialT material = new MaterialT(nameGroup);
                     //id material
                     idMaterials.add(material);

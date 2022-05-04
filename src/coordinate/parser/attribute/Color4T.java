@@ -6,6 +6,7 @@
 package coordinate.parser.attribute;
 
 import coordinate.generic.AbstractCoordinateFloat;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -120,5 +121,10 @@ public class Color4T implements AbstractCoordinateFloat
     {
         float[] array = getArray();
         return String.format("(%3.2f, %3.2f, %3.2f)", array[0], array[1], array[2]);
+    }
+    
+    public Color getColorFX()
+    {
+        return new Color(r, g, b, w);
     }
 }

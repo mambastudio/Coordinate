@@ -6,13 +6,17 @@
 package coordinate.parser.obj;
 
 import coordinate.generic.io.LineMappedReader;
-import coordinate.generic.io.StringMappedReader;
+import coordinate.generic.io.StringReader;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.GROUP;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.NONE;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.OBJECT;
 import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.USEMTL;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +48,11 @@ public class OBJInfo {
     
     public LineMappedReader reader = null;
     private SplitOBJPolicy splitPolicy = NONE;
+    
+    public OBJInfo()
+    {
+        
+    }
     
     public OBJInfo(String stringFile) 
     {       
@@ -111,10 +120,66 @@ public class OBJInfo {
             splitPolicy = USEMTL;
         else if(o > 0 && o == g)
             splitPolicy = OBJECT;
-       
-            
                 
         return this;
+    }
+    
+    //read from string
+    public void readAttributesString(String string)
+    {
+        InputStream is = new ByteArrayInputStream(string.getBytes());
+	BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        readAttributesString(new StringReader(br));
+    }
+    
+    private void readAttributesString(StringReader parser)
+    {        
+        while(parser.hasNext())
+        {
+            String currentToken = parser.getNextToken();            
+            switch (currentToken) {
+                case "v":
+                    v++;
+                    break;                
+                case "vt":
+                    vt++;
+                    break;
+                case "vn":
+                    vn++;
+                    break;
+                case "f":
+                    f++;
+                    break;
+                case "g":
+                    g++;
+                    break;  
+                case "o":
+                    o++;
+                    break;
+                case "usemtl":
+                    usemtl++;
+                    break;
+                default:                    
+                    break;
+            }                
+        }       
+        
+        if(o>g && o>usemtl)
+            splitPolicy = OBJECT;
+        else if(g>o && g>usemtl)
+            splitPolicy = GROUP;
+        else if(usemtl>o && usemtl>g)
+            splitPolicy = USEMTL;
+        else if(usemtl == o && o == g && g > 0)  
+            splitPolicy = USEMTL;
+        else if(usemtl == o && o == g && g == 0)  
+            splitPolicy = NONE;
+        else if(usemtl>0 && usemtl == o)
+            splitPolicy = USEMTL;
+        else if(usemtl>0 && usemtl == g)
+            splitPolicy = USEMTL;
+        else if(o > 0 && o == g)
+            splitPolicy = OBJECT;
     }
     
     public OBJInfo readAndClose()

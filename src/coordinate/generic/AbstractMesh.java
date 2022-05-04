@@ -31,9 +31,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     
     protected ArrayList<MaterialT> materials;
     protected ArrayList<GroupT> groups;
-    
-    protected ArrayList<MaterialT> uniqueMaterials;
-    
+        
     public abstract void addPoint(P p);
     public abstract void addPoint(float... values);
     public abstract void addNormal(N n);
@@ -73,20 +71,10 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
     {
         this.materials = materialList;
     }
-    
-    public void setUniqueMaterialList(ArrayList<MaterialT> uniqueMaterials)
-    {
-        this.uniqueMaterials = uniqueMaterials;
-    }
-    
+        
     public ArrayList<MaterialT> getMaterialList()
     {
         return materials;
-    }
-    
-    public ArrayList<MaterialT> getUniqueMaterialList()
-    {
-        return uniqueMaterials;
     }
     
     public void setGroupList(ArrayList<GroupT> groupList)
