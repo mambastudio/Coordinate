@@ -19,7 +19,6 @@ public class MaterialT implements Serializable {
     
     public Color4T reflection;      //reflection - r, g, b, w (pad)
     public float eu, ev, ior;       //reflection - eu, ev, ior
-    public boolean iorEnabled;      //reflection - transmission enabled
     
     public Color4T emitter;         //emission   - r, g, b, w (power)
     public boolean emitterEnabled;  //emission   - emission enabled
@@ -32,7 +31,6 @@ public class MaterialT implements Serializable {
         
         this.reflection = new Color4T(0.9f, 0.9f, 0.9f);
         this.eu = 60; this.ev = 30; this.ior = 1;
-        this.iorEnabled = false;
                 
         this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
@@ -45,7 +43,6 @@ public class MaterialT implements Serializable {
         
         this.reflection = new Color4T(0.9f, 0.9f, 0.9f);
         this.eu = 60; this.ev = 30; this.ior = 1;
-        this.iorEnabled = false;
                 
         this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
@@ -59,7 +56,6 @@ public class MaterialT implements Serializable {
         
         this.reflection = new Color4T(0.9f, 0.9f, 0.9f);
         this.eu = 60; this.ev = 30; this.ior = 1;
-        this.iorEnabled = false;
                 
         this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
@@ -72,7 +68,6 @@ public class MaterialT implements Serializable {
         
         this.reflection = new Color4T(0.9f, 0.9f, 0.9f);
         this.eu = 60; this.ev = 30; this.ior = 1;
-        this.iorEnabled = false;
                 
         this.emitter = new Color4T(1, 1, 1, 1);
         this.emitterEnabled = false;
@@ -86,7 +81,6 @@ public class MaterialT implements Serializable {
         
         this.reflection = new Color4T(0.9f, 0.9f, 0.9f);
         this.eu = 60; this.ev = 30; this.ior = 1;
-        this.iorEnabled = false;
                 
         this.emitter = new Color4T(er, eg, eb, 1);
         this.emitterEnabled = true;
@@ -107,7 +101,6 @@ public class MaterialT implements Serializable {
         
         reflection = mat.reflection.copy();
         eu = mat.eu; ev = mat.ev; ior = mat.ior;
-        iorEnabled = mat.iorEnabled;
                 
         emitter = mat.emitter.copy();
         emitterEnabled = mat.emitterEnabled;
@@ -130,7 +123,6 @@ public class MaterialT implements Serializable {
         
         reflection = mat.reflection.copy();
         eu = mat.eu; ev = mat.ev; ior = mat.ior;
-        iorEnabled = mat.iorEnabled;
                 
         emitter = mat.emitter.copy();
         emitterEnabled = mat.emitterEnabled;
@@ -146,7 +138,6 @@ public class MaterialT implements Serializable {
         
         mat.reflection = reflection.copy();
         mat.eu = eu; mat.ev = ev; mat.ior = ior;
-        mat.iorEnabled = iorEnabled;
                 
         mat.emitter = emitter.copy();
         mat.emitterEnabled = emitterEnabled;
@@ -166,7 +157,6 @@ public class MaterialT implements Serializable {
         builder.append("reflection     ").append(reflection).append("\n");
         builder.append("eu             ").append(eu).append("\n");
         builder.append("ev             ").append(ev).append("\n");       
-        builder.append("ior enabled    ").append(iorEnabled).append("\n");
         builder.append("ior            ").append(ior).append("\n").append("\n");
         
         builder.append("emitter        ").append(emitter).append("\n");
