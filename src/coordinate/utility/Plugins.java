@@ -11,15 +11,16 @@ import java.util.HashMap;
  *
  * @author user
  */
-public class PluginClass {
-    private static final HashMap<Class, Object> map = new HashMap();
-    public static<T> void addPluginClass(Class<T> clazz, T t)
+public class Plugins {
+    private final HashMap<Class, Object> map = new HashMap();
+    
+    public <T> void addPluginClass(Class<T> clazz, T t)
     {
         if(t != null)
             map.put(clazz, t);
     }
     
-    public static<T> T get(Class<T> clazz)
+    public <T> T get(Class<T> clazz)
     {
         if(map.containsKey(clazz))
             return (T) map.get(clazz);

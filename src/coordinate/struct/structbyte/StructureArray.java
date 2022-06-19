@@ -35,7 +35,7 @@ public class StructureArray<T extends Structure> implements Iterable<T> {
     public StructureArray(Class<T> clazz, int size)
     {       
         this.clazz = clazz;
-        this.struct = getObject(clazz);
+        this.struct = getObject(clazz);        
         this.array = new ByteList(struct.getByteSize() * size);
         this.size = size;        
     }

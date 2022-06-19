@@ -89,8 +89,8 @@ public final class SAT {
         {            
             minXY.x = Utility.clamp(minXY.x - 0, 0, nu);
             minXY.y = Utility.clamp(minXY.y - 0, 0, nv);
-            maxXY.x = Utility.clamp(maxXY.x + 0, 0, nu);
-            maxXY.y = Utility.clamp(maxXY.y + 0, 0, nv);
+            maxXY.x = Utility.clamp(maxXY.x + 1, 0, nu);
+            maxXY.y = Utility.clamp(maxXY.y + 1, 0, nv);
         }
         
         Value2Di strideXY = new Value2Di(
