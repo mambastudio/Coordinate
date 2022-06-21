@@ -3,10 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/struct/newstruct/StructByte.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/refl/StructureField.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/struct/newstruct/StructUnsafe.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/AbstractByteStruct.java</file>
+=======
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/UnsafeUtil.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/Test7.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/UnsafeByteBuffer.java</file>
+>>>>>>> 8476d152bdc5312af2d8950e29b7238880b4dfeb
         </group>
     </open-files>
 </project-private>
