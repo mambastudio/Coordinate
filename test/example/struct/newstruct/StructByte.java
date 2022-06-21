@@ -18,7 +18,7 @@ import java.util.Collections;
  *
  * @author user
  */
-public class StructByte implements AbstractByteStruct<ByteBuffer> {
+public class StructByte extends AbstractByteStruct<ByteBuffer> {
     private final StructureField[] fields;    
     private final int alignment;
     private final int byteSize;
@@ -131,10 +131,12 @@ public class StructByte implements AbstractByteStruct<ByteBuffer> {
         return globalArrayIndex;
     }
     
-    public final void setGlobalBuffer(ByteBuffer globalBuffer, int index)
+    public final void setGlobalBuffer(ByteBuffer globalBuffer, int index, boolean updateFieldsFromBuffer)
     {
         setGlobalBuffer(globalBuffer);
         setGlobalIndex(index * getByteSize());
+        if(updateFieldsFromBuffer)
+            refreshFieldValues();
     }
     
     @Override
@@ -142,6 +144,7 @@ public class StructByte implements AbstractByteStruct<ByteBuffer> {
         this.globalArray = globalBuffer;
     }
     
+    @Override
     public final void refreshGlobalArray()
     {
         if(globalArray == null || globalArrayIndex == -1) return;
@@ -150,6 +153,7 @@ public class StructByte implements AbstractByteStruct<ByteBuffer> {
         globalArray.put(array);        
     }
     
+    @Override
     public final void refreshFieldValues()
     {
         if(globalArray == null || globalArrayIndex == -1) return;

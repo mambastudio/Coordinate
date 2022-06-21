@@ -13,7 +13,7 @@ import coordinate.utility.Value1Di;
  *
  * @author user
  */
-public class StructUnsafe implements AbstractByteStruct<OffheapArray>{
+public class StructUnsafe extends AbstractByteStruct<OffheapArray>{
 
     @Override
     public int getByteSize() {
@@ -47,6 +47,16 @@ public class StructUnsafe implements AbstractByteStruct<OffheapArray>{
 
     @Override
     public int setupAlignment() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refreshGlobalArray() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refreshFieldValues() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

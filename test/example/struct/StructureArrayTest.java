@@ -55,6 +55,7 @@ public class StructureArrayTest {
     {   
        
         public int value;
+        public long value2;
         public Atom atom;
         public Atom atom2;
         

@@ -19,7 +19,7 @@ import java.util.Collections;
  *
  * @author user
  */
-public  class Structure implements AbstractByteStruct<byte[]>{
+public  class Structure extends AbstractByteStruct<byte[]>{
     private final StructureField[] fields;    
     private final int alignment;
     private final int byteSize;

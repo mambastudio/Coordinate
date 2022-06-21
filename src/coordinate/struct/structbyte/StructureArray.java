@@ -5,7 +5,6 @@
  */
 package coordinate.struct.structbyte;
 
-import coordinate.struct.structbyte.Structure;
 import coordinate.list.ByteList;
 import java.util.Iterator;
 import java.util.logging.Level;

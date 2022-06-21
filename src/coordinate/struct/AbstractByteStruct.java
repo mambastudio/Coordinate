@@ -12,20 +12,25 @@ import coordinate.utility.Value1Di;
  * @author user
  * @param <GlobalBuffer>
  */
-public interface AbstractByteStruct<GlobalBuffer> extends AbstractStruct {
-    public int getByteSize();   
-    public void setupOffset(Value1Di offset);
+public abstract class AbstractByteStruct<GlobalBuffer> implements AbstractStruct {
+    public abstract int getByteSize();   
+    public abstract void setupOffset(Value1Di offset);
     
     //global buffer and index
-    public void setGlobalBuffer(GlobalBuffer globalBuffer);
-    public void setGlobalIndex(int globalIndex);
+    public abstract void setGlobalBuffer(GlobalBuffer globalBuffer);
+    public abstract void setGlobalIndex(int globalIndex);
     
     //field values for struct as byte array
-    public byte[] getFieldValuesAsArray();
+    public abstract byte[] getFieldValuesAsArray();
     //get field values from global array
-    public void  setFieldValuesFromGlobalArray();
+    public abstract void  setFieldValuesFromGlobalArray();
+    
+    //refresh global arrays from field value
+    public abstract void refreshGlobalArray();  
+    //refresh field values from global arrays
+    public abstract void refreshFieldValues();
     
     //alignment for memory
-    public int setupAlignment();
+    public abstract int setupAlignment();
     
 }

@@ -43,20 +43,18 @@ public class StructArrayBuffer<T extends StructByte> implements Iterable<T> {
     {
         
         T t = getObject(clazz);               
-        t.setGlobalBuffer(array, index); 
-        t.setFieldValuesFromGlobalArray();
+        t.setGlobalBuffer(array, index, true); 
         return t;
     }
     
     public void initFrom(T t, int index)
     {        
-        t.setGlobalBuffer(array, index);
-        t.setFieldValuesFromGlobalArray();
+        t.setGlobalBuffer(array, index, true);
     }
     
     public void set(T t, int index)
     {
-        t.setGlobalBuffer(array, index);
+        t.setGlobalBuffer(array, index, false);
         array.position(t.getGlobalArrayIndex());
         array.put(t.getFieldValuesAsArray());
         
