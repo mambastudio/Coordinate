@@ -5,10 +5,12 @@
  */
 package coordinate.struct;
 
+import coordinate.utility.Value1Di;
+
 /**
  *
  * @author user
  */
 public interface AbstractStruct {
-    
+   
 }

@@ -7,9 +7,7 @@ package example.struct;
 
 import coordinate.struct.structbyte.StructureArray;
 import coordinate.struct.structbyte.Structure;
-import coordinate.struct.annotation.arraysize;
 import coordinate.generic.AbstractCoordinateFloat;
-import java.util.Arrays;
 /**
  *
  * @author user
@@ -23,7 +21,7 @@ public class StructureArrayTest {
         isect.atom.charge = 3;
         isect.atom2.charge = 67;
         
-       // System.out.println(isect.getLayout());
+        System.out.println(isect.getLayout());
        
         arrayBox.set(isect, 1);
         

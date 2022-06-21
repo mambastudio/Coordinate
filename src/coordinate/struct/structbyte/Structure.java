@@ -5,6 +5,8 @@
  */
 package coordinate.struct.structbyte;
 
+import coordinate.struct.refl.StructureField;
+import coordinate.struct.AbstractByteStruct;
 import coordinate.struct.AbstractStruct;
 import coordinate.struct.refl.ArrayRefl;
 import coordinate.utility.Value1Di;
@@ -17,7 +19,7 @@ import java.util.Collections;
  *
  * @author user
  */
-public abstract class Structure implements AbstractStruct{
+public  class Structure implements AbstractByteStruct<byte[]>{
     private final StructureField[] fields;    
     private final int alignment;
     private final int byteSize;
@@ -60,6 +62,7 @@ public abstract class Structure implements AbstractStruct{
     }
     
     //called from outside struct or called independently, if need arises
+    @Override
     public final void setupOffset(Value1Di offset)
     {    
         for (StructureField field : fields) {
@@ -117,6 +120,7 @@ public abstract class Structure implements AbstractStruct{
         return offsets;
     }
             
+    @Override
     public int getByteSize()
     {
         return byteSize;
@@ -129,8 +133,8 @@ public abstract class Structure implements AbstractStruct{
     
     public final void setGlobalArray(byte[] globalArray, int index)
     {
-        this.globalArray = globalArray;
-        this.globalArrayIndex = index * getByteSize(); 
+        setGlobalBuffer(globalArray);
+        setGlobalIndex(index * getByteSize());
     }
     
     public final void refreshGlobalArray()
@@ -147,7 +151,8 @@ public abstract class Structure implements AbstractStruct{
         this.setFieldValuesFromGlobalArray();
     }
        
-    protected byte[] getFieldValuesAsArray()
+    @Override
+    public final byte[] getFieldValuesAsArray()
     {
         ByteBuffer buffer = this.getEmptyLocalByteBuffer(ByteOrder.nativeOrder());        
         int pos = buffer.position(); //current position in global array (translated as local position) 
@@ -168,8 +173,8 @@ public abstract class Structure implements AbstractStruct{
             else if(field.isStructure())
             {
                 Structure struct = (Structure) field.getFieldObject();
-                struct.globalArray = globalArray;
-                struct.globalArrayIndex = globalArrayIndex + field.getOffset();
+                struct.setGlobalBuffer(globalArray);
+                struct.setGlobalIndex(globalArrayIndex+ field.getOffset());
                 buffer.put(struct.getFieldValuesAsArray());
                  
             }
@@ -201,7 +206,8 @@ public abstract class Structure implements AbstractStruct{
         return buffer.array();
     }
     
-    protected void  setFieldValuesFromGlobalArray()
+    @Override
+    public final void setFieldValuesFromGlobalArray()
     {        
         ByteBuffer buffer = getLocalByteBuffer(ByteOrder.nativeOrder());          
         int pos = buffer.position(); //current position in global array (translated as local position)        
@@ -228,8 +234,8 @@ public abstract class Structure implements AbstractStruct{
             else if(field.isStructure())
             {
                 Structure struct = (Structure) field.getFieldObject();
-                struct.globalArray = globalArray;
-                struct.globalArrayIndex = globalArrayIndex + field.getOffset();
+                struct.setGlobalBuffer(globalArray);
+                struct.setGlobalIndex(globalArrayIndex+ field.getOffset());
                 struct.setFieldValuesFromGlobalArray();
             }
             else if(field.isArray())
@@ -268,7 +274,7 @@ public abstract class Structure implements AbstractStruct{
     private ByteBuffer getLocalByteBuffer(ByteOrder order)
     {
         if(globalArray == null)
-            return null;        
+            return null;           
         ByteBuffer buffer = ByteBuffer.wrap(globalArray, globalArrayIndex, getByteSize());
         return buffer.order(order);
     }
@@ -313,5 +319,17 @@ public abstract class Structure implements AbstractStruct{
     protected int computeAlignmentOffset(int offset, int align)
     {
         return (offset + align - 1) & -align;
-    }    
+    }  
+    
+    @Override
+    public void setGlobalBuffer(byte[] globalBuffer)
+    {
+        this.globalArray = globalBuffer;
+    }
+    
+    @Override
+    public void setGlobalIndex(int globalIndex)
+    {
+        this.globalArrayIndex = globalIndex;
+    }
 }

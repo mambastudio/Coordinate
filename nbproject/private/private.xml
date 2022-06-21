@@ -3,8 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/list/ByteList.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/structbyte/StructureArray.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/struct/newstruct/StructByte.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/refl/StructureField.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/struct/newstruct/StructUnsafe.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/AbstractByteStruct.java</file>
         </group>
     </open-files>
 </project-private>
