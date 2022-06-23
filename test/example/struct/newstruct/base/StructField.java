@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.struct.refl;
+package example.struct.newstruct.base;
 
 import coordinate.generic.AbstractCoordinate;
 import coordinate.generic.AbstractCoordinateFloat;
 import coordinate.generic.AbstractCoordinateInteger;
-import coordinate.struct.AbstractByteStruct;
-import coordinate.utility.Value1Di;
 import coordinate.struct.annotation.arraysize;
+import coordinate.struct.refl.ArrayRefl;
+import coordinate.utility.Value1Di;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -20,24 +20,24 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author user
+ * @author jmburu
  */
-public class StructureField {
+public class StructField {
     private Field field;
-    private AbstractByteStruct parentObject;
+    private StructInterface parentObject;
     
     //need here to put info on struct from array
     //TODO
     
-    private int alignment;
+    private int alignValue; //either align/byte size value or struct max align/byte value (Kmax)
     private int byteSize;
     private int offset;
     
-    private StructureField(AbstractByteStruct parentObject, Field field)
+    private StructField(StructInterface parentObject, Field field)
     {
         if(!(field.getType().isPrimitive() 
                 || (parentObject instanceof AbstractCoordinate)
-                || (parentObject instanceof AbstractByteStruct)))
+                || (parentObject instanceof StructInterface)))
             
             throw new UnsupportedOperationException("field not supported yet");
         this.field = field;
@@ -45,44 +45,44 @@ public class StructureField {
     }
     
     //called by struct (in constructor)
-    public final int setupAlignment()
+    public final int calculateAlignValues()
     {
         if(this.isPrimitive())        
-            alignment =  getByteSizeofPrimitive((Class<? extends Number>) field.getType());        
+            alignValue =  getByteSizeofPrimitive((Class<? extends Number>) field.getType());        
         else if(this.isAbstractCoordinate())
-            alignment =  getByteSizeofAbstractCoordinate((Class<? extends AbstractCoordinate>) field.getType());
+            alignValue =  getByteSizeofAbstractCoordinate((Class<? extends AbstractCoordinate>) field.getType());
         else if(this.isArray())
         {
             if(this.isArrayClassPrimitive())        
-                alignment =  getByteSizeofPrimitive((Class<? extends Number>) getArrayClass());        
+                alignValue =  getByteSizeofPrimitive((Class<? extends Number>) getArrayClass());        
             else if(this.isArrayClassAbstractCoordinate())
-                alignment =  getByteSizeofAbstractCoordinate((Class<? extends AbstractCoordinate>) getArrayClass());
+                alignValue =  getByteSizeofAbstractCoordinate((Class<? extends AbstractCoordinate>) getArrayClass());
             else
             {
-                AbstractByteStruct struct = (AbstractByteStruct)getObject(getArrayClass());
-                alignment =  struct.getByteSize();
+                StructInterface struct = (StructInterface)getObject(getArrayClass());
+                alignValue =  struct.getByteSize();
             }
         }
         else
-            alignment =  ((AbstractByteStruct)getFieldObject()).setupAlignment();
+            alignValue =  ((StructInterface)getFieldObject()).calculateAlignValues();
         
-        return alignment;
+        return alignValue;
     }    
    
     //called by struct (in constructor)
-    public final void setupByteSize(Value1Di offset)
+    public final void calculateByteSize(Value1Di offset)
     {
         if(this.isPrimitive())
         {
             byteSize = getByteSizeofPrimitive((Class<? extends Number>) field.getType());
-            offset.x = computeAlignmentOffset(offset.x, alignment);
+            offset.x = computeAlignmentOffset(offset.x, alignValue);
             offset.x += byteSize;         
             
         }
         else if(this.isAbstractCoordinate())
         {
             byteSize = getByteSizeofAbstractCoordinate((Class<? extends AbstractCoordinate>) field.getType());
-            offset.x = computeAlignmentOffset(offset.x, alignment);
+            offset.x = computeAlignmentOffset(offset.x, alignValue);
             offset.x += byteSize;
         }
         else if(this.isArray())
@@ -92,67 +92,67 @@ public class StructureField {
             if(this.isArrayClassPrimitive())
             {
                 byteSize = getByteSizeofPrimitive((Class<? extends Number>) getArrayClass()) * arraysize;
-                offset.x = computeAlignmentOffset(offset.x, alignment);
+                offset.x = computeAlignmentOffset(offset.x, alignValue);
                 offset.x += byteSize;         
             }
             else if(this.isArrayClassAbstractCoordinate())
             {
                 byteSize = getByteSizeofAbstractCoordinate((Class<? extends AbstractCoordinate>) getArrayClass()) * arraysize;
-                offset.x = computeAlignmentOffset(offset.x, alignment);
+                offset.x = computeAlignmentOffset(offset.x, alignValue);
                 offset.x += byteSize;
             }
             else
             {
-                AbstractByteStruct structure =(AbstractByteStruct)getObject(getArrayClass());
+                StructInterface structure =(StructInterface)getObject(getArrayClass());
                 byteSize = structure.getByteSize() * arraysize;
-                offset.x = computeAlignmentOffset(offset.x, alignment);
+                offset.x = computeAlignmentOffset(offset.x, alignValue);
                 offset.x += byteSize;
             }
         }
         else
         {
-            AbstractByteStruct structure = (AbstractByteStruct)getFieldObject();
+            StructInterface structure = (StructInterface)getFieldObject();
             byteSize = structure.getByteSize();
-            offset.x = computeAlignmentOffset(offset.x, alignment);
+            offset.x = computeAlignmentOffset(offset.x, alignValue);
             offset.x += byteSize;
         }
     }
     
     //called outside independently
-    public final void setupOffset(Value1Di offset)
+    public final void calculateOffset(Value1Di offset)
     {
         if(this.isPrimitive())
         {
-            offset.x = computeAlignmentOffset(offset.x, alignment);
+            offset.x = computeAlignmentOffset(offset.x, alignValue);
             this.offset = offset.x;
             offset.x += byteSize;
         }
         else if(this.isAbstractCoordinate())
         {
-            offset.x = computeAlignmentOffset(offset.x, alignment);
+            offset.x = computeAlignmentOffset(offset.x, alignValue);
             this.offset = offset.x;
             offset.x += byteSize;
         }
         else if(this.isArray())
         {
-            offset.x = computeAlignmentOffset(offset.x, alignment);
+            offset.x = computeAlignmentOffset(offset.x, alignValue);
             this.offset = offset.x;
             offset.x += byteSize;
         }
         else
         {
-            AbstractByteStruct structure = (AbstractByteStruct)getFieldObject();
-            offset.x = computeAlignmentOffset(offset.x, alignment); //struct alignment
+            StructInterface structure = (StructInterface)getFieldObject();
+            offset.x = computeAlignmentOffset(offset.x, alignValue); //struct alignment
             this.offset = offset.x;
             offset.x += byteSize;
-            structure.setupOffset(new Value1Di()); //Notice here we start from scratch ( = 0)
+            structure.calculateOffsetValues(new Value1Di()); //Notice here we start from scratch ( = 0)
         }
     }
     
         
     public int getAlign()
     {
-        return alignment;
+        return alignValue;
     }
     
     public void setOffset(int address)
@@ -183,7 +183,7 @@ public class StructureField {
         try {
             return field.get(parentObject);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -263,7 +263,7 @@ public class StructureField {
     {
         if(isArray())
             return false;
-        return isInstanceOf(AbstractByteStruct.class);
+        return isInstanceOf(StructInterface.class);
     }
     
     
@@ -315,7 +315,7 @@ public class StructureField {
         if(isArray())
         {
             Class clazz = getArrayClass();
-            return this.isInstanceOf(clazz, AbstractByteStruct.class);
+            return this.isInstanceOf(clazz, StructInterface.class);
         }
         return false;
     }
@@ -325,17 +325,17 @@ public class StructureField {
         try {
             return field.get(parentObject) == null;
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
     
-    public static<S extends AbstractByteStruct> List<StructureField> getAllStructFields(S struct)
+    public static<S extends StructInterface> List<StructField> getAllStructFields(S struct)
     {
         Field fields[] = struct.getClass().getDeclaredFields();
-        ArrayList<StructureField> structFieldList = new ArrayList<>();
+        ArrayList<StructField> structFieldList = new ArrayList<>();
         for (Field field : fields) {
-            StructureField structField = new StructureField(struct, field);           
+            StructField structField = new StructField(struct, field);           
             if ( structField.isPublic() &&
                     !structField.isVolatile())                           
                 if(structField.isStructure())                 
@@ -361,10 +361,10 @@ public class StructureField {
         return structFieldList;
     } 
     
-    public static<S extends AbstractByteStruct> StructureField[] getAllStructFieldsAsArray(S struct)
+    public static<S extends StructInterface> StructField[] getAllStructFieldsAsArray(S struct)
     {
-        List<StructureField> list = getAllStructFields(struct);
-        return list.toArray(new StructureField[list.size()]);
+        List<StructField> list = getAllStructFields(struct);
+        return list.toArray(new StructField[list.size()]);
     }
     
     private boolean isInstanceOf(Class b)
@@ -415,7 +415,7 @@ public class StructureField {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -440,7 +440,7 @@ public class StructureField {
         try {
             field.set(parentObject, object);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -449,7 +449,7 @@ public class StructureField {
         try {
             return field.get(parentObject);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new IllegalStateException("unable to get object of field");
     }
@@ -460,7 +460,7 @@ public class StructureField {
         try {
             return field.getFloat(parentObject);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new UnsupportedOperationException("Error in casting and processing"); 
     }
@@ -470,7 +470,7 @@ public class StructureField {
         try {       
             field.setFloat(parentObject, value);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -515,7 +515,7 @@ public class StructureField {
         try {
             return field.getBoolean(parentObject);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new UnsupportedOperationException("Error in casting and processing"); 
     }
@@ -525,7 +525,7 @@ public class StructureField {
         try {       
             field.setBoolean(parentObject, value);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -534,7 +534,7 @@ public class StructureField {
         try {
             return field.getInt(parentObject);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new UnsupportedOperationException("Error in casting and processing"); 
     }
@@ -544,7 +544,7 @@ public class StructureField {
         try {       
             field.setInt(parentObject, value);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -553,7 +553,7 @@ public class StructureField {
         try {
             return field.getLong(parentObject);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
         throw new UnsupportedOperationException("Error in casting and processing"); 
     }
@@ -563,7 +563,7 @@ public class StructureField {
         try {       
             field.setLong(parentObject, value);
         } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StructureField.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StructField.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

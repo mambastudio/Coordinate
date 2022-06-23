@@ -5,7 +5,6 @@
  */
 package example.struct.newstruct.base;
 
-import coordinate.struct.refl.StructureField;
 import coordinate.utility.Value1Di;
 import java.util.Arrays;
 
@@ -19,8 +18,8 @@ import java.util.Arrays;
 public interface StructInterface {
     
     //fields
-    public void generateStructureFields(); //call in constructor first - 1
-    public StructureField[] getStructureFields();
+    public void generateStructFields(); //call in constructor first - 1
+    public StructField[] getStructFields();
     
     //byte size -> size of struct in memory
     public void calculateByteSize(Value1Di offset); //call in constructor first - 3
@@ -31,11 +30,11 @@ public interface StructInterface {
     }
     
     //align values and offsets
-    public void calculateAlignValues(); //call in constructor first - 2
+    public int calculateAlignValues(); //call in constructor first - 2
+    public int getAlignValue();
     public void calculateOffsetValues(Value1Di offset); //call in constructor first - 4
     public int[] getOffsetValues(); //get offset of each field/member (stored in structfields)
-    
-     
+         
     /**
      * Align is the size of data (e.g. 4-byte data -> int, float), and offset is starting point 
      * or reference starting point.
@@ -57,9 +56,9 @@ public interface StructInterface {
     {
         calculateOffsetValues(new Value1Di());
         StringBuilder builder = new StringBuilder();
-        for(StructureField field : getStructureFields())
+        for(StructField field : getStructFields())
         {
-            builder.append("alignment ").append(field.getAlignment()).append(" ");
+            builder.append("alignment ").append(field.getAlign()).append(" ");
             builder.append("byte size ").append(field.getByteSize()).append("\n");            
         }
         builder.append("field offsets: ").append(Arrays.toString(getOffsetValues())).append("\n");

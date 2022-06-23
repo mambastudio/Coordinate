@@ -48,7 +48,7 @@ public  class Structure extends AbstractByteStruct<byte[]>{
             StructureField maxByteField = Collections.max(Arrays.asList(fields), 
                    (a, b) -> Integer.compare(a.setupAlignment(), b.setupAlignment()));   
 
-            return maxByteField.getAlignment();
+            return maxByteField.getAlign();
         }
     }
     
@@ -82,7 +82,7 @@ public  class Structure extends AbstractByteStruct<byte[]>{
         StringBuilder builder = new StringBuilder();
         for(StructureField field : fields)
         {
-            builder.append("alignment ").append(field.getAlignment()).append(" ");
+            builder.append("alignment ").append(field.getAlign()).append(" ");
             builder.append("byte size ").append(field.getByteSize()).append("\n");            
         }
         builder.append("field offsets: ").append(Arrays.toString(getOffsets())).append("\n");

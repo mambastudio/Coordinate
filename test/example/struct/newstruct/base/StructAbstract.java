@@ -19,8 +19,8 @@ import java.util.Collections;
  * 
  */
 public abstract class StructAbstract<GlobalBuffer> implements StructInterface {
-    private StructureField[] fields;    
-    private int alignment; //A power of 2, alignment of offset
+    private StructField[] fields;    
+    private int maxAlign; //A power of 2, largest field/member size
     private int byteSize;
     
     public StructAbstract()
@@ -32,7 +32,7 @@ public abstract class StructAbstract<GlobalBuffer> implements StructInterface {
     public final void init()
     {
         //generate fields first
-        generateStructureFields();
+        generateStructFields();
         
         //calculate alignment of members, their offsets and overall bytesize of struct
         //all information is stored in this struct
@@ -43,18 +43,27 @@ public abstract class StructAbstract<GlobalBuffer> implements StructInterface {
     
     //construtor call
     @Override
-    public final void calculateAlignValues()
+    public final int calculateAlignValues()
     {
         if(fields.length == 1)
         {
-            alignment = fields[0].setupAlignment();
+            maxAlign = fields[0].calculateAlignValues();
         }
         else
         {
-            StructureField maxByteField = Collections.max(Arrays.asList(fields), 
-                   (a, b) -> Integer.compare(a.setupAlignment(), b.setupAlignment()));   
+            StructField maxByteField = Collections.max(Arrays.asList(fields), 
+                   (a, b) -> Integer.compare(a.calculateAlignValues(), b.calculateAlignValues()));   
 
-            alignment = maxByteField.getAlignment();
+            maxAlign = maxByteField.getAlign();
+        }
+        return maxAlign;
+    }
+    
+    @Override
+    public void calculateOffsetValues(Value1Di offset)
+    {
+        for (StructField field : fields) {
+            field.calculateOffset(offset);
         }
     }
 }
