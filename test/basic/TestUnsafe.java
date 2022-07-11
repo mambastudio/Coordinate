@@ -5,6 +5,11 @@
  */
 package basic;
 
+
+import coordinate.unsafe.UnsafeByteBuffer;
+import coordinate.unsafe.UnsafeUtils;
+import java.util.Arrays;
+
 /**
  *
  * @author jmburu
@@ -12,7 +17,13 @@ package basic;
 public class TestUnsafe {
     public static void main(String... string)
     {
-        UnsafeByteBuffer buffer = new UnsafeByteBuffer((long)Integer.MAX_VALUE * 3);
-        buffer.freeMemory();
+        UnsafeByteBuffer ubuffer = new UnsafeByteBuffer(UnsafeUtils.getIntCapacity(5));
+        ubuffer.putInt(3, 5, 89, 34, 8);        
+        ubuffer.position(0);        
+        System.out.println(Arrays.toString(ubuffer.getIntArray(5)));
+        
+       
+        
+        ubuffer.freeMemory();
     }
 }

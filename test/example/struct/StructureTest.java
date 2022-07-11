@@ -5,9 +5,8 @@
  */
 package example.struct;
 
-import coordinate.struct.structbyte.Structure;
-import coordinate.struct.annotation.arraysize;
-import coordinate.utility.Value1Di;
+import coordinate.struct.structbyte.StructBufferMemory;
+
 
 /**
  *
@@ -21,7 +20,7 @@ public class StructureTest {
         System.out.println(struct.getLayout());       
     }
      
-    public static class Struct1 extends Structure
+    public static class Struct1 extends StructBufferMemory
     {        
         
         public float f;
@@ -33,7 +32,7 @@ public class StructureTest {
         public Struct2 struct;
     }
     
-    public static class Struct2 extends Structure
+    public static class Struct2 extends StructBufferMemory
     {        
         public long d;
         public float f;        

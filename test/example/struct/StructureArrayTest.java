@@ -5,9 +5,9 @@
  */
 package example.struct;
 
-import coordinate.struct.structbyte.StructureArray;
-import coordinate.struct.structbyte.Structure;
 import coordinate.generic.AbstractCoordinateFloat;
+import coordinate.struct.cache.StructBufferCache;
+import coordinate.struct.structbyte.StructBufferMemory;
 /**
  *
  * @author user
@@ -15,15 +15,15 @@ import coordinate.generic.AbstractCoordinateFloat;
 public class StructureArrayTest {
     public static void main(String... args)
     {
-        StructureArray<Intersection> arrayBox = new StructureArray<>(Intersection.class, 4);
+        StructBufferCache<Intersection> arrayBox = new StructBufferCache<>(Intersection.class, 4);
         Intersection isect = new Intersection();     
         isect.value = 8;
         isect.atom.charge = 3;
         isect.atom2.charge = 67;
         
         System.out.println(isect.getLayout());
-       
-        arrayBox.set(isect, 1);
+               
+        arrayBox.setStruct(isect, 1);
         
         System.out.println(arrayBox.get(1).atom.charge);
         System.out.println(arrayBox.get(1).atom2.charge);
@@ -51,7 +51,7 @@ public class StructureArrayTest {
 */
     }
     
-    public static class Intersection extends Structure
+    public static class Intersection extends StructBufferMemory
     {   
        
         public int value;
@@ -62,7 +62,7 @@ public class StructureArrayTest {
         public void setCharge(int charge)
         {
             this.atom.charge = charge;
-            this.refreshGlobalArray();
+            this.refreshGlobalBuffer();
         }
         
         
@@ -77,7 +77,7 @@ public class StructureArrayTest {
         
     }
     
-    public static class Atom extends Structure
+    public static class Atom extends StructBufferMemory
     {
         public int charge;
     }

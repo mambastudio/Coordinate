@@ -24,7 +24,9 @@ public class Test {
         set.add(MWANGI);
         set.add(JOE);
         System.out.println(set);
+        
+        System.out.println(byte[].class.isAssignableFrom(byte[].class));
     }
     
-   
+    
 }

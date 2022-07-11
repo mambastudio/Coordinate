@@ -15,6 +15,11 @@ import coordinate.generic.AbstractParser;
 import coordinate.generic.io.StringReader;
 import coordinate.list.IntList;
 import coordinate.parser.attribute.MaterialT;
+import coordinate.parser.obj.OBJInfo.SplitOBJPolicy;
+import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.GROUP;
+import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.NONE;
+import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.OBJECT;
+import static coordinate.parser.obj.OBJInfo.SplitOBJPolicy.USEMTL;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -39,7 +44,8 @@ public class OBJParser implements AbstractParser{
     
     private boolean defaultMatPresent = true;
     
-    private OBJInfo info;
+    private OBJInfo info;    
+    private SplitOBJPolicy splitPolicy = NONE;
     
     public ArrayList<MaterialT> getGroupMaterialList()
     {
@@ -75,6 +81,13 @@ public class OBJParser implements AbstractParser{
     public void readString(String string, AbstractMesh mesh) {
         InputStream is = new ByteArrayInputStream(string.getBytes());
 	BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        read(new StringReader(br), mesh);
+    }
+    
+    public void readFile(Class<?> clazz, String file, AbstractMesh mesh)
+    {
+        InputStream is = clazz.getResourceAsStream(file);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         read(new StringReader(br), mesh);
     }
     
@@ -163,14 +176,48 @@ public class OBJParser implements AbstractParser{
                     readFaces(parser);
                     break;
                 case "g":
-                    readGroup(parser);
+                    switch (splitPolicy) {
+                        case GROUP:
+                            readGroup(parser);
+                            break;
+                        case NONE:
+                            readGroup(parser);
+                            break;
+                        default:
+                            parser.getNextToken();
+                            break;
+                    }
                     break;  
+  
                 case "o":
-                    readObject(parser);
+                    switch (splitPolicy) {
+                        case OBJECT:
+                            readObject(parser);
+                            break;
+                        case NONE:
+                            readObject(parser);
+                            break;
+                        default:
+                            parser.getNextToken();
+                            break;
+                    }
                     break;
+
                 case "usemtl":
-                    readMaterial(parser);
+                    switch (splitPolicy) 
+                    {
+                        case USEMTL:
+                            readMaterial(parser);
+                            break;
+                        case NONE:
+                            readMaterial(parser);
+                            break;
+                        default:
+                            parser.getNextToken();
+                            break;
+                    }
                     break;
+
                 default:
                     parser.getNextToken();
                     break;
@@ -342,4 +389,9 @@ public class OBJParser implements AbstractParser{
         
         mesh.add(type, groupCount, getMaterialCount(), indices);
     }    
+    
+    public void setSplitPolicy(SplitOBJPolicy splitPolicy)
+    {
+        this.splitPolicy = splitPolicy;
+    }
 }

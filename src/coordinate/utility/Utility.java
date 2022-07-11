@@ -231,4 +231,52 @@ public class Utility {
         return x < 0 ? x - (int) x + 1 : x - (int) x;
     }
     
+    
+    public static Value2Df sampleUniformTriangle(Value2Df aSamples)
+    {
+        float term = (float) Math.sqrt(aSamples.x);
+
+        return new Value2Df(1.f - term, aSamples.y * term);
+    }
+    
+    
+    public static float cosHemispherePdfW(VCoord aNormal,
+                                   VCoord aDirection)
+    {
+        return Math.max(0.f, aNormal.dot(aDirection)) * INV_PI_F;
+    }
+    
+    //////////////////////////////////////////////////////////////////////////
+    // Utilities for converting PDF between Area (A) and Solid angle (W)
+    // WtoA = PdfW * cosine / distance_squared
+    // AtoW = PdfA * distance_squared / cosine
+
+    public static float pdfWtoA(
+        float aPdfW,
+        float aDist,
+        float aCosThere)
+    {
+        return aPdfW * Math.abs(aCosThere) / (float)Math.pow(aDist, 2);
+    }
+
+    public static float pdfAtoW(
+        float aPdfA,
+        float aDist,
+        float aCosThere)
+    {
+        return aPdfA * (float)Math.pow(aDist, 2) / Math.abs(aCosThere);
+    }
+    
+    // Mis power (1 for balance heuristic)
+    public static float mis(float aPdf) 
+    {
+        return aPdf;
+    }
+
+    // Mis weight for 2 pdfs
+    public static float mis2(float aSamplePdf, float aOtherPdf) 
+    {
+        return mis(aSamplePdf) / (mis(aSamplePdf) + mis(aOtherPdf));
+    }
+
 }

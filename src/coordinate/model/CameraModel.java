@@ -9,6 +9,8 @@ import static java.lang.Math.abs;
 import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
 import coordinate.generic.AbstractRay;
+import coordinate.utility.Value1Df;
+import coordinate.utility.Value2Df;
 
 /**
  *
@@ -136,6 +138,46 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         return ray;
     }
     
+    public R generateRayJitter(float x, float y, float xResolution, float yResolution, R ray)
+    {
+        float d = (float) (1./Math.tan(Math.toRadians(fov)/2));
+        
+        //generate random number (0 to 1)
+        Value2Df sample = Value2Df.getRandom();
+        float jitter1   = 1.f/xResolution * (2 * sample.x - 1.f);
+        float jitter2   = 1.f/yResolution * (2 * sample.y - 1.f);
+        
+        float a = xResolution/yResolution;
+        float px = a * (2 * x/xResolution - 1 + jitter1);
+        float py = -2 * y/yResolution + 1 + jitter2;
+        float pz = -d;
+        
+        V rd = (V) up.getCoordInstance();
+        rd.set(px, py, pz);
+        rd.normalizeAssign();
+        S ro = (S) lookat.getSCoordInstance();
+     
+        ray.set(ro, rd);
+        
+        float focalDistance = focalDistance();
+        float ft = focalDistance/abs(ray.getDirection().get('z'));        
+        S pFocus = ray.getPoint(ft);
+        
+        //SamplingDisk disk = new SamplingDisk(0.5f);
+        //Point2f lensUV = disk.sampleDisk(Rng.getFloat(), Rng.getFloat());
+        //Point2f lensUV = new Point2f();        
+        //Point3f oo = new Point3f(lensUV.x, lensUV.y, 0);
+        
+        S oo = (S) lookat.getSCoordInstance();
+        V dd = (V) pFocus.sub(oo);
+        
+        cameraTransform.inverse().transformAssign(oo);
+        cameraTransform.inverse().transformAssign(dd);
+        
+        ray.set(oo, dd);
+        return ray;
+    }
+    
     private float focalDistance()
     {
         return lookat.sub(position).length();
@@ -149,6 +191,7 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         builder.append("Camera: ").append("\n");
         builder.append("         eye    ").append(String.format("(%.5f, %.5f, %.5f)", position.get('x'), position.get('y'), position.get('z'))).append("\n");
         builder.append("         lookat ").append(String.format("(%.5f, %.5f, %.5f)", lookat.get('x'), lookat.get('y'), lookat.get('z'))).append("\n");
+        builder.append("         up     ").append(String.format("(%.5f, %.5f, %.5f)", up.get('x'), up.get('y'), up.get('z'))).append("\n");
         
         return builder.toString(); 
     }
@@ -177,4 +220,5 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         return new float[]{xs, ys};        
     }
     
+   
 }
