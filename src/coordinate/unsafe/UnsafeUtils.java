@@ -5,10 +5,20 @@
  */
 package coordinate.unsafe;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.misc.Cleaner;
 import sun.misc.Unsafe;
 import sun.nio.ch.DirectBuffer;
 
@@ -84,7 +94,66 @@ public class UnsafeUtils {
     
     public static long getShortCapacity(long capacity)
     {
-        return capacity * SHORTSIZE;
+        return capacity * SHORTSIZE; 
     }
     
+    public static ByteBuffer allocatDirectBufferJNA(long cap)
+    {
+        Memory m = new Memory(cap);
+        ByteBuffer buf = m.getByteBuffer(0, m.size()).order(ByteOrder.nativeOrder());
+        return buf;
+    }
+    
+    //https://www.sobyte.net/post/2021-10/unsafe-bytebuffer/
+    public static ByteBuffer allocateLightDirectBuffer(int cap)
+    {
+        try {
+            Field capacityField = Buffer.class.getDeclaredField("capacity");
+            capacityField.setAccessible(true);
+            Field addressField = Buffer.class.getDeclaredField("address");
+            addressField.setAccessible(true);
+            Unsafe unsafe = getUnsafe();
+            long address = unsafe.allocateMemory(cap);
+            
+            //ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1);
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(0).order(ByteOrder.nativeOrder());
+            unsafe.freeMemory(((DirectBuffer) byteBuffer).address());
+            
+            addressField.setLong(byteBuffer, address);
+            capacityField.setInt(byteBuffer, cap);
+                                   
+            byteBuffer.clear();
+            
+           
+    
+            return byteBuffer;
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(UnsafeUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static void clean(Buffer bb) {
+        if(bb == null) return;
+        if(!(bb instanceof ByteBuffer)) return;
+        ByteBuffer buf = (ByteBuffer) bb;
+        if(!buf.isDirect()) return;
+        getUnsafe().freeMemory(((DirectBuffer) buf).address());
+        
+    }
+    
+    public static void destroyDirectByteBuffer(ByteBuffer toBeDestroyed) {
+        Runnable run = ()->{
+        try {
+            Method cleanerMethod = toBeDestroyed.getClass().getMethod("cleaner");
+            cleanerMethod.setAccessible(true);
+            Object cleaner = cleanerMethod.invoke(toBeDestroyed);
+            Method cleanMethod = cleaner.getClass().getMethod("clean");
+            cleanMethod.setAccessible(true);
+            cleanMethod.invoke(cleaner);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(UnsafeUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }};
+        new Thread(run).start();
+    }
 }

@@ -17,24 +17,19 @@ import java.nio.ByteOrder;
  */
 public class StructBufferCache<T extends StructBufferMemory> extends StructAbstractCache<T, ByteBuffer> {
     
-    public StructBufferCache(Class<T> clazz, int size)
+    public StructBufferCache(Class<T> clazz, long size)
     {
         super(clazz, size);
     }
 
     @Override
-    protected void initBuffer() {
-        this.setBuffer(ByteBuffer.allocate(struct.getByteSize() * (int)size).order(ByteOrder.nativeOrder()));
+    protected void initBuffer() {        
+        this.setBuffer(ByteBuffer.allocate(struct.getByteSize() * (int)size).order(ByteOrder.nativeOrder()));        
     }
 
     @Override
     public long getByteBufferSize() {
         return getBuffer().capacity();
-    }
-
-    @Override
-    public boolean canGetByteBuffer() {
-        return true;
     }
 
     @Override

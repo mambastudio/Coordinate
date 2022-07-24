@@ -33,9 +33,7 @@ public abstract class StructAbstractCache<MemoryType extends StructAbstractMemor
     
     //called by this constructor
     protected abstract void initBuffer();    
-    public abstract long getByteBufferSize();
-    
-    public abstract boolean canGetByteBuffer();
+    public abstract long getByteBufferSize();    
     public abstract ByteBuffer getByteBuffer();
     
     

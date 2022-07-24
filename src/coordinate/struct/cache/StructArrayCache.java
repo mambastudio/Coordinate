@@ -33,11 +33,6 @@ public class StructArrayCache<T extends StructArrayMemory> extends StructAbstrac
     }
 
     @Override
-    public boolean canGetByteBuffer() {
-        return true;
-    }
-
-    @Override
     public ByteBuffer getByteBuffer() {
         return ByteBuffer.wrap(getBuffer()).order(ByteOrder.nativeOrder());
     }

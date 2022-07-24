@@ -8,6 +8,7 @@ package coordinate.struct;
 import coordinate.struct.cache.StructArrayCache;
 import coordinate.struct.cache.StructBufferCache;
 import coordinate.struct.cache.StructDirectCache;
+import coordinate.struct.cache.StructJNACache;
 import coordinate.struct.cache.StructUnsafeCache;
 
 /**
@@ -24,12 +25,16 @@ public class StructUtils {
             if(StructArrayCache.class.isAssignableFrom(clazzCache))
                 return new StructArrayCache(clazzStruct, (int) capacity);
             else if(StructBufferCache.class.isAssignableFrom(clazzCache))                
-                return new StructBufferCache(clazzStruct, (int) capacity);
+                return new StructBufferCache(clazzStruct, capacity);
             else if(StructDirectCache.class.isAssignableFrom(clazzCache))
                 return new StructDirectCache(clazzStruct, (int) capacity);
             else if(StructUnsafeCache.class.isAssignableFrom(clazzCache))
-                return new StructUnsafeCache(clazzStruct, capacity);                    
+                return new StructUnsafeCache(clazzStruct, capacity); 
+            else if(StructJNACache.class.isAssignableFrom(clazzCache))
+                return new StructJNACache(clazzStruct, capacity); 
         } 
         return null;
     }
+        
+       
 }

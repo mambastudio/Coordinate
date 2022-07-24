@@ -7,7 +7,9 @@ package basic;
 
 import static basic.Test.Josto.JOE;
 import static basic.Test.Josto.MWANGI;
+import coordinate.unsafe.UnsafeUtils;
 import coordinate.utility.Value2Di;
+import java.nio.ByteBuffer;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -19,13 +21,8 @@ public class Test {
     enum Josto{JOE, MWANGI}
     public static void main(String... args)
     {
-        Set<Josto> set = new LinkedHashSet<>();
-        set.add(JOE);
-        set.add(MWANGI);
-        set.add(JOE);
-        System.out.println(set);
-        
-        System.out.println(byte[].class.isAssignableFrom(byte[].class));
+        ByteBuffer buf = UnsafeUtils.allocateLightDirectBuffer(10000000);
+        buf = UnsafeUtils.allocateLightDirectBuffer(34);
     }
     
     

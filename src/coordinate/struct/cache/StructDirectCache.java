@@ -45,11 +45,6 @@ public class StructDirectCache <T extends StructBufferMemory> extends StructAbst
     }
 
     @Override
-    public boolean canGetByteBuffer() {
-        return false;
-    }
-
-    @Override
     public ByteBuffer getByteBuffer() {
         return getBuffer();
     }

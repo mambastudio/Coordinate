@@ -45,11 +45,6 @@ public class StructUnsafeCache <T extends StructUnsafeMemory> extends StructAbst
     }
 
     @Override
-    public boolean canGetByteBuffer() {
-        return false;
-    }
-
-    @Override
     public ByteBuffer getByteBuffer() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
