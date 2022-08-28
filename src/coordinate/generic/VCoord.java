@@ -14,11 +14,23 @@ public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
     public abstract V getCoordInstance();
     public abstract V copy();
     
-   
+    
+    
+    public default V newV(float x, float y, float z)
+    {
+        V dest = (V) copy();
+        dest.set(x, y, z);
+        return dest;
+    }
     
     public default float dot(V b) 
     {
         return get('x') *b.get('x') + get('y')*b.get('y') + get('z')*b.get('z');
+    }
+    
+    public default float absDot(V b)
+    {
+        return Math.abs(dot(b));
     }
     
     public default V cross(V t)
@@ -159,6 +171,11 @@ public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
         set('x', v.get('x')); 
         set('y', v.get('y')); 
         set('z', v.get('z'));
+    }
+    
+    default boolean isZero()
+    {
+        return get('x') == 0 && get('y') == 0 && get('z') == 0;
     }
     
     

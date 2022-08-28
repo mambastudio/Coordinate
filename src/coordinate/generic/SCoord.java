@@ -26,6 +26,15 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return v;
     }
     
+    public default S subS(S b)
+    {
+        S s = getSCoordInstance();        
+        s.set('x', get('x') - b.get('x'));
+        s.set('y', get('y') - b.get('y'));
+        s.set('z', get('z') - b.get('z'));
+        return s;
+    }
+    
     public default S add(V v) 
     {
         S s = getSCoordInstance();
@@ -33,7 +42,9 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         s.set('y', get('y') + v.get('y'));
         s.set('z', get('z') + v.get('z'));
         return s;
-    }       
+    }   
+
+    
     
     public default float distanceTo(S p) {
         float dx = get('x') - p.get('x');
@@ -79,6 +90,18 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return (S) this;
     }
     
+    
+    public default S newCoordAll(float value)
+    {
+        S s = this.getSCoordInstance();
+        float[] values = s.getArray();
+        for(int i = 0; i<values.length; i++)
+            values[i] = value;
+        set(values);
+        return s;
+    }
+    
+    
     public default S setValue(S p) {
         this.set('x', p.get('x'));
         this.set('y', p.get('y'));
@@ -118,5 +141,17 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         s.set('y', s.get('y')* -1);
         s.set('z', s.get('z')* -1);
         return s;        
+    }
+    
+    public default S sqrt()
+    {
+        S s = this.copy();
+        float[] array = this.getArray();
+        for(int i = 0; i<array.length; i++)
+        {
+            array[i] = (float) Math.sqrt(array[i]);
+        }
+        s.setValue(array);
+        return s;
     }
 }

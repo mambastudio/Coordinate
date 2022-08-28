@@ -46,6 +46,7 @@ public interface AbstractCoordinateFloat extends AbstractCoordinate, Serializabl
     }
     
     public void set(float... values);
+    
     public float[] getArray();
         
     public default float get(int i) {
