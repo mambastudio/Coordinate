@@ -8,14 +8,13 @@ package coordinate.generic;
 /**
  *
  * @author user
+ * @param <S>
  * @param <V>
  */
-public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
+public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoordinateFloat{
     public abstract V getCoordInstance();
     public abstract V copy();
-    
-    
-    
+        
     public default V newV(float x, float y, float z)
     {
         V dest = (V) copy();
@@ -176,6 +175,29 @@ public interface VCoord<V extends VCoord> extends AbstractCoordinateFloat{
     default boolean isZero()
     {
         return get('x') == 0 && get('y') == 0 && get('z') == 0;
+    }
+    
+    default S asScalar()
+    {
+        throw new UnsupportedOperationException("not yet supported");
+    }
+    
+    default V abs()
+    {
+        V v = copy();
+        v.set('x', Math.abs(this.get('x')));
+        v.set('y', Math.abs(this.get('y')));
+        v.set('z', Math.abs(this.get('z')));
+        return v;
+    }
+    
+    default V sign()
+    {
+        V v = copy();
+        v.set('x', Math.signum(this.get('x')));
+        v.set('y', Math.signum(this.get('y')));
+        v.set('z', Math.signum(this.get('z')));
+        return v;
     }
     
     

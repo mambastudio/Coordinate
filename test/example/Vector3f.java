@@ -31,7 +31,7 @@ import coordinate.generic.VCoord;
  *
  * @author user
  */
-public class Vector3f implements VCoord<Vector3f>
+public class Vector3f implements VCoord<Point3f, Vector3f>
 {    
     public float x, y, z;
     
@@ -191,6 +191,17 @@ public class Vector3f implements VCoord<Vector3f>
     @Override
     public Vector3f copy() {
         return new Vector3f(x, y, z);
+    }
+    
+    @Override
+    public Point3f asScalar()
+    {
+        Point3f dest = new Point3f();
+        dest.x = x;
+        dest.y = y;
+        dest.z = z;
+        dest.w = 0;
+        return dest;
     }
 
     @Override

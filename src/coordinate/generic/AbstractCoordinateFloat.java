@@ -47,6 +47,18 @@ public interface AbstractCoordinateFloat extends AbstractCoordinate, Serializabl
     
     public void set(float... values);
     
+    default float maxComponent()
+    {
+        float[] array = getArray();
+        if (array.length <= 0)
+            throw new IllegalArgumentException("The array is empty");
+        float max = array[0];
+        for (int i = 1; i < array.length; i++)
+            if (array[i] > max)
+                max = array[i];
+        return max;
+    }
+    
     public float[] getArray();
         
     public default float get(int i) {

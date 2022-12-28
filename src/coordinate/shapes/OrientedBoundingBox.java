@@ -3,23 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.surface;
+package coordinate.shapes;
 
 import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
+import coordinate.model.Transform;
 
 /**
  *
- * @author user
+ * @author jmburu
  * @param <S>
  * @param <V>
  */
-public interface AbstractFrame<S extends SCoord, V extends VCoord<S, V>> {
-    public void setFromZ(V v);
-    public V toWorld(V a);
-    public V toLocal(V a);
+public abstract class OrientedBoundingBox<S extends SCoord, V extends VCoord> {
+    public S center;
+    public V radius;
+    public V invRadius;
+    public Transform<S, V> rotation;
+
     
-    public V binormal();
-    public V tangent ();
-    public V normal  ();
 }

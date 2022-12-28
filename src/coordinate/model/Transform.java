@@ -63,7 +63,7 @@ public class Transform <S extends SCoord, V extends VCoord>{
         return new Transform(sM, sInvM);
     }
     
-    public static Transform rotate(float angle, VCoord axis)
+    public static Transform rotate(float angle, VCoord axis) //degrees
     {
         VCoord a = axis.normalize();
         float s = (float) sin(toRadians(angle));

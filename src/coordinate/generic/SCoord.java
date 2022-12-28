@@ -154,4 +154,13 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         s.setValue(array);
         return s;
     }
+    
+    default S abs()
+    {
+        S s = copy();
+        s.set('x', Math.abs(this.get('x')));
+        s.set('y', Math.abs(this.get('y')));
+        s.set('z', Math.abs(this.get('z')));
+        return s;
+    }
 }

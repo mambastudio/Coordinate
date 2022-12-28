@@ -5,6 +5,7 @@
  */
 package coordinate.surface;
 
+import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
 import coordinate.utility.Utility;
 import static java.lang.Math.cos;
@@ -13,9 +14,10 @@ import static java.lang.Math.sin;
 /**
  *
  * @author user
+ * @param <S>
  * @param <V>
  */
-public class Frame<V extends VCoord<V>> implements AbstractFrame<V> {
+public class Frame<S extends SCoord, V extends VCoord<S, V>> implements AbstractFrame<S, V> {
     private V mX, mY, mZ;
     private V n;
     
@@ -25,7 +27,7 @@ public class Frame<V extends VCoord<V>> implements AbstractFrame<V> {
     }
     
     @Override
-    public void setFromZ(V n) {
+    public final void setFromZ(V n) {
         this.n = n;
         
         V vX = n.getCoordInstance(); vX.set(1, 0, 0);

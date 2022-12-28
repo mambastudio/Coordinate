@@ -8,7 +8,7 @@ package example.obj;
 import coordinate.generic.AbstractMesh;
 import coordinate.list.CoordinateFloatList;
 import coordinate.list.IntList;
-import example.BoundingBox;
+import example.BBox;
 import example.Point2f;
 import example.Point3f;
 import example.Vector3f;
@@ -18,14 +18,14 @@ import example.Vector3f;
  * @author user
  */
 public class SimpleMesh extends AbstractMesh<Point3f, Vector3f, Point2f>{
-    private final BoundingBox bounds;
+    private final BBox bounds;
     public SimpleMesh()
     {
         points = new CoordinateFloatList(Point3f.class);
         normals = new CoordinateFloatList(Vector3f.class);
         texcoords = new CoordinateFloatList(Point2f.class);
         triangleFaces = new IntList();
-        bounds = new BoundingBox();
+        bounds = new BBox();
     }
 
     @Override
