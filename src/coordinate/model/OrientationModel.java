@@ -5,6 +5,7 @@
  */
 package coordinate.model;
 
+import coordinate.transform.Transform;
 import coordinate.generic.AbstractBound;
 import coordinate.generic.AbstractRay;
 import coordinate.generic.SCoord;

@@ -5,11 +5,12 @@
  */
 package coordinate.model;
 
+import coordinate.transform.Matrix;
+import coordinate.transform.Transform;
 import static java.lang.Math.abs;
 import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
 import coordinate.generic.AbstractRay;
-import coordinate.utility.Value1Df;
 import coordinate.utility.Value2Df;
 
 /**

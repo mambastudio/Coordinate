@@ -121,7 +121,15 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         v.set('y', v.get('y') / a);
         v.set('z', v.get('z') / a);
         return v;
-    }    
+    }   
+    
+    public default V divAssign(V v) {
+        set('x', get('x')/v.get('x'));
+        set('y', get('y')/v.get('y'));
+        set('z', get('z')/v.get('z'));
+        return (V) this;
+    }
+    
     public default V neg()        
     {
         V v = this.copy();

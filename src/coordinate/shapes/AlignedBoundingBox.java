@@ -7,19 +7,20 @@ package coordinate.shapes;
 
 import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
-import coordinate.transform.Transform;
 
 /**
  *
- * @author jmburu
+ * @author user
  * @param <S>
  * @param <V>
  */
-public abstract class OrientedBoundingBox<S extends SCoord, V extends VCoord> {
-    public S center;
-    public V radius;
-    public V invRadius;
-    public Transform<S, V> rotation;
-
+public abstract class AlignedBoundingBox<S extends SCoord, V extends VCoord> {
+    protected final S min;
+    protected final S max;
     
+    protected AlignedBoundingBox(S min, S max)
+    {
+        this.min = min;
+        this.max = max;
+    }
 }
