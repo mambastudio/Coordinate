@@ -2,6 +2,28 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/surface/FrameBranchless.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/SCoord.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/surface/AbstractFrame.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/OrientedBoundingBox.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/CubicPolynomial.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/surface/Microfacet.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/roots/LinearRoots.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/QuadraticPolynomial.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/surface/MicrofacetGGX.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/model/Transform.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/Vector3f.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/OBBox.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/roots/PolynomialRoots.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/roots/RootFinderNewton.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/Polynomials.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/VCoord.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/surface/Frame.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/roots/CubicRoots.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/BBox.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/polynomials/roots/QuadraticRoots.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractCoordinateFloat.java</file>
+        </group>
     </open-files>
 </project-private>
