@@ -57,4 +57,16 @@ public class Value2Di {
         int[] array = new int[]{x, y};
         return Arrays.toString(array);
     }
+    
+    public boolean allNonZero()
+    {
+        float array[] = new float[]{x, y};
+        boolean result = true;
+        int i;
+        for(i = 0; i < array.length; ++i)
+        {
+            result &= array[i]>0;
+        }
+        return result;
+    }
 }

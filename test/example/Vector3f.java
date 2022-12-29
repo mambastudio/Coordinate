@@ -224,5 +224,10 @@ public class Vector3f implements VCoord<Point3f, Vector3f>
     public int getByteSize() {
         return 4;
     }
+    
+    @Override
+    public final String toString() {
+        return String.format("(%.2f, %.2f, %.2f)", x, y, z);
+    }
 
 }

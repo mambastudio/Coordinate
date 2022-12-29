@@ -12,6 +12,16 @@ package coordinate.utility;
 public class Value1Df {
     public float x;
     
+    public Value1Df()
+    {
+        x = 0;
+    }
+    
+    public Value1Df(float x)
+    {
+        this.x = x;
+    }
+    
     public final boolean isBad()
     {
         return (Float.isNaN(this.x)) || 

@@ -185,6 +185,12 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return get('x') == 0 && get('y') == 0 && get('z') == 0;
     }
     
+    default boolean hasUndefinedValues()
+    {
+        return (Float.isNaN(this.get('x'))) || (Float.isNaN(this.get('y'))) || (Float.isNaN(this.get('z'))) ||
+               (Float.isInfinite(this.get('x'))) || (Float.isInfinite(this.get('y'))) || (Float.isInfinite(this.get('z')));
+    }
+    
     default S asScalar()
     {
         throw new UnsupportedOperationException("not yet supported");

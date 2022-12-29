@@ -32,16 +32,44 @@ public class Value2Df {
         return random;
     }
     
+    public Value2Df abs()
+    {
+        return new Value2Df(
+                Math.abs(x), 
+                Math.abs(y));
+    }
+    
+    public Value2Df add(float v)
+    {
+        return new Value2Df(
+                x + v, 
+                y + v);
+    }
+    
     public void addAssign(float v)
     {
         x += v;
         y += v;
     }
     
+    public Value2Df add(Value2Df v)
+    {
+       return new Value2Df(
+               x + v.x, 
+               y + v.y);
+    }
+        
     public void addAssign(Value2Df v)
     {
         x += v.x;
         y += v.y;
+    }
+    
+    public Value2Df mul(float v)
+    {
+        return new Value2Df(
+                x * v, 
+                y * v);
     }
     
     public void mulAssign(float v)
@@ -56,9 +84,36 @@ public class Value2Df {
         y *= v.y;
     }
     
+    public Value2Df mul(Value2Df v)
+    {
+        return new Value2Df(
+                x + v.x, 
+                y + v.y);
+    }
+    
     public void subAssign(float v)
     {
         x -= v;
         y -= v;
+    }
+    
+    public boolean allNonZero()
+    {
+        float array[] = new float[]{x, y};
+        boolean result = true;
+        int i;
+        for(i = 0; i < array.length; ++i)
+        {
+            result &= array[i]>0;
+        }
+        return result;
+    }
+    
+    public Value2DBoolean lessThan(Value2Df v)
+    {
+        Value2DBoolean boolValues = new Value2DBoolean(
+                x < v.x, 
+                y < v.y);
+        return boolValues;
     }
 }

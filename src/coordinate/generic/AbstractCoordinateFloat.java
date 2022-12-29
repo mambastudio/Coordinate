@@ -45,6 +45,17 @@ public interface AbstractCoordinateFloat extends AbstractCoordinate, Serializabl
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    public default boolean allNonZero()
+    {
+        float[] x = getArray();
+        boolean result = true;
+        int i;
+        for(i = 0; i < x.length; ++i)
+        {
+            result &= x[i]>0;
+        }
+        return result;
+    }
     public void set(float... values);
     
     default float maxComponent()
