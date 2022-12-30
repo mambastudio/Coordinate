@@ -26,5 +26,7 @@ public class TestOBBox {
         
         System.out.println(obb.ourIntersectBoxCommon(ray, distance, normal, true, true));   
         System.out.println(distance);
+        
     }
+    
 }

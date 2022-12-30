@@ -9,6 +9,6 @@ package coordinate.polynomials;
  *
  * @author jmburu
  */
-public class CubicPolynomial {
+public class Polynomial3 {
     
 }

@@ -7,8 +7,8 @@ package coordinate.polynomials;
 
 /**
  *
- * @author user
+ * @author jmburu
  */
-public class ArbitraryPolynomial {
+public class Polynomial2 {
     
 }

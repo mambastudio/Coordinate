@@ -15,7 +15,7 @@ import coordinate.utility.Value3DBoolean;
 
 /**
  *
- * @author jmburu
+ * @author https://jcgt.org/published/0007/03/04/
  * @param <S>
  * @param <V>
  * @param <R>

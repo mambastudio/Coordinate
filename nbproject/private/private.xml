@@ -3,27 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinderNewton.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/VCoord.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/ArbitraryPolynomial.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/surface/microfacet/MicrofacetGGX.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/Vector3f.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractBound.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/shapes/AlignedBoundingBox.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinder.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/function/RootCallBackFloat.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/surface/frame/Frame.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/box/OBBox.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/Polynomials.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/shapes/OrientedBoundingBox.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/surface/frame/AbstractFrame.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/transform/Transform.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/box/TestOBBox.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/model/CameraModel.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/atomics/AtomicFloat.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/BBox.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/surface/microfacet/Microfacet.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/transform/Matrix.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/OrientedBoundingBox.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Value2DBoolean.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Value3DBoolean.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Value2Df.java</file>
         </group>
     </open-files>
 </project-private>
