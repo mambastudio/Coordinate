@@ -3,10 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/OrientedBoundingBox.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Value2DBoolean.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Value3DBoolean.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Value2Df.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinder.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinderNewton.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/Polynomials.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/box/TestOBBox.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/PolynomialN.java</file>
         </group>
     </open-files>
 </project-private>
