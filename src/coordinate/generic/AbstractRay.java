@@ -23,6 +23,11 @@ public interface AbstractRay<S extends SCoord, V extends VCoord>
     public float getMin();     
     public float getMax();   
     
+    default boolean isInside(float t)
+    {
+        return (getMin() < t) && (t < getMax());    
+    }
+    
     public AbstractRay<S, V> copy();
       
 }

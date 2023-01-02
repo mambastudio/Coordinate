@@ -36,6 +36,7 @@ public class FloatList {
     
     private float[] array;
     private int size;
+    private boolean isSubList = false;
 
     public FloatList()
     {

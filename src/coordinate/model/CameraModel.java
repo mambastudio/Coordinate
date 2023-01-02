@@ -48,25 +48,33 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         V r = (V) d.cross(up).normalize();
         V u = (V) r.cross(d);
 
+        //translate eye position from world to view
         Matrix e = Matrix.identity();
         e.set(0, 3, -position.get('x'));
         e.set(1, 3, -position.get('y'));
         e.set(2, 3, -position.get('z'));
                 
+        //translate eye position from view to world
         Matrix eInv = Matrix.identity();
         eInv.set(0, 3, position.get('x'));
         eInv.set(1, 3, position.get('y'));
         eInv.set(2, 3, position.get('z'));
         
-        Matrix viewToWorld = Matrix.identity();
-        viewToWorld.setRow(0, r.get('x'), u.get('x'), -d.get('x'), 0);
-        viewToWorld.setRow(1, r.get('y'), u.get('y'), -d.get('y'), 0);
-        viewToWorld.setRow(2, r.get('z'), u.get('z'), -d.get('z'), 0);
+        //computing view orientation, in this view to world
+        Matrix viewToWorldOrientation = Matrix.identity();
+        viewToWorldOrientation.setRow(0, r.get('x'), u.get('x'), -d.get('x'), 0);
+        viewToWorldOrientation.setRow(1, r.get('y'), u.get('y'), -d.get('y'), 0);
+        viewToWorldOrientation.setRow(2, r.get('z'), u.get('z'), -d.get('z'), 0);
         
-        Matrix worldToView = viewToWorld.transpose();     
-        Matrix mV = worldToView.mul(e);        
-        Matrix mV_Inv = eInv.mul(viewToWorld);
-                                        
+        //inverse of view orientation, world to view
+        Matrix worldToViewOrientation = viewToWorldOrientation.transpose();   
+        
+        //full transform from world to view is (W_to_V * E)
+        Matrix mV = worldToViewOrientation.mul(e);  
+        //full transform from view to world is (E_inv * V_to_W) 
+        Matrix mV_Inv = eInv.mul(viewToWorldOrientation);
+                     
+        //camera transform
         cameraTransform.m = mV;
         cameraTransform.mInv = mV_Inv;                    
     }
@@ -171,7 +179,8 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         
         S oo = (S) lookat.getSCoordInstance();
         V dd = (V) pFocus.sub(oo);
-        
+                
+        //view to world
         cameraTransform.inverse().transformAssign(oo);
         cameraTransform.inverse().transformAssign(dd);
         

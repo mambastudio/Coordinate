@@ -3,11 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinder.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinderNewton.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/Polynomials.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/box/TestOBBox.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/polynomials/PolynomialN.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/Poly.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/Polynomials.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinderNewton.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/list/FloatList.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/PolynomialCubic.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/list/TestList.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/PolynomialN.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/PolynomialQuadratic.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/rootfinder/RootFinder.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/polynomials/PolynomialLinear.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/polynomials/TestPolynomials.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/function/RootCallBackFloat.java</file>
         </group>
     </open-files>
 </project-private>

@@ -5,6 +5,9 @@
  */
 package coordinate.generic;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  *
  * @author user
@@ -213,11 +216,39 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         v.set('z', Math.signum(this.get('z')));
         return v;
     }
-    
+       
     
     public static VCoord getFromCoordinate(VCoord v, float x, float y, float z)
     {
         v.set(x, y, z);
+        return v;
+    }
+    
+    public static VCoord min3(VCoord v0, VCoord v1)
+    {
+        VCoord v = v0.newV(0, 0, 0);
+        v.set(min(v0.get(0), v0.get(0)), min(v0.get(1), v0.get(1)), min(v0.get(2), v0.get(2)));        
+        return v;
+    }
+    
+    public static VCoord min4(VCoord v0, VCoord v1)
+    {
+        VCoord v = v0.newV(0, 0, 0);
+        v.set(min(v0.get(0), v0.get(0)), min(v0.get(1), v0.get(1)), min(v0.get(2), v0.get(2)), min(v0.get(3), v0.get(3)));        
+        return v;
+    }
+    
+    public static VCoord max3(VCoord v0, VCoord v1)
+    {
+        VCoord v = v0.newV(0, 0, 0);
+        v.set(max(v0.get(0), v0.get(0)), max(v0.get(1), v0.get(1)), max(v0.get(2), v0.get(2)));        
+        return v;
+    }
+    
+    public static VCoord max4(VCoord v0, VCoord v1)
+    {
+        VCoord v = v0.newV(0, 0, 0);
+        v.set(max(v0.get(0), v0.get(0)), max(v0.get(1), v0.get(1)), max(v0.get(2), v0.get(2)), max(v0.get(3), v0.get(3)));        
         return v;
     }
 }

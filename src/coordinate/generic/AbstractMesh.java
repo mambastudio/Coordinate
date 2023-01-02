@@ -286,27 +286,27 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
                 (float)(triangleFaces.get(index * 10 + 9) & 0xFFFF));
     }
     
-    protected Face getFace(int index)
+    protected FaceIndices getFace(int index)
     {
-        Face face = new Face();
-        face.vx = triangleFaces.get(index * 10 + 0);
-        face.vy = triangleFaces.get(index * 10 + 1);
-        face.vz = triangleFaces.get(index * 10 + 2);
+        FaceIndices faceIndices = new FaceIndices();
+        faceIndices.vx = triangleFaces.get(index * 10 + 0);
+        faceIndices.vy = triangleFaces.get(index * 10 + 1);
+        faceIndices.vz = triangleFaces.get(index * 10 + 2);
         
-        face.uvx = triangleFaces.get(index * 10 + 3);
-        face.uvy = triangleFaces.get(index * 10 + 4);
-        face.uvz = triangleFaces.get(index * 10 + 5);
+        faceIndices.uvx = triangleFaces.get(index * 10 + 3);
+        faceIndices.uvy = triangleFaces.get(index * 10 + 4);
+        faceIndices.uvz = triangleFaces.get(index * 10 + 5);
         
-        face.nx = triangleFaces.get(index * 10 + 6);
-        face.ny = triangleFaces.get(index * 10 + 7);
-        face.nz = triangleFaces.get(index * 10 + 8);
+        faceIndices.nx = triangleFaces.get(index * 10 + 6);
+        faceIndices.ny = triangleFaces.get(index * 10 + 7);
+        faceIndices.nz = triangleFaces.get(index * 10 + 8);
         
-        face.mat = triangleFaces.get(index * 10 + 9) & 0xFFFF;
+        faceIndices.mat = triangleFaces.get(index * 10 + 9) & 0xFFFF;
         
-        return face;
+        return faceIndices;
     }
     
-    protected static class Face
+    protected static class FaceIndices
     {
         public int vx,  vy,  vz;
         public int uvx, uvy, uvz;
