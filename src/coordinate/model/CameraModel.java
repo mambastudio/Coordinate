@@ -15,6 +15,8 @@ import coordinate.utility.Value2Df;
 
 /**
  *
+ * Essential mathematics for games and interactive applications by James M. Van Verth & Lars M. Bishop
+ * 
  * @author user
  * @param <S>
  * @param <V>
@@ -112,14 +114,59 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         return position;
     }
     
+    /**
+     * @param x     
+     * @param y     
+     * @param xResolution     
+     * @param yResolution     
+     * @param ray     
+     * @return      
+     * 
+     * Normalised Device Coordinates (NDC) - unit square (-1,-1) <-> (1, 1)
+     * NDC is similar to projection plane. How far (d) is it from point/origin
+     * to NDC?
+     *            1/d = tan(theta_fov/2)  
+     *              d = cot(theta_fov/2)
+     * 
+     * Calculate aspect ratio of screen since screen width is not always equal
+     * to height
+     *              a = w_s/h_s
+     * 
+     * Calculate screen space to NDC but height goes down for screen since origin
+     * is upper left corner as usual. i.e. 
+     * (0, 0) <-> (w_s, h_s) to (-1,-1) <-> (1, 1)
+     * 
+     *          x_ndc = 2*x_s/w_s - 1
+     *          y_ndc = -2*y_s/h_s + 1
+     * 
+     * NDC to view space is almost similar but need to factor in the aspect ratio
+     *            p_x = a * x_ndc
+     *            p_y = y_ndc
+     *            p_z = -d
+     * Therefore,
+     *              p = (p_x, p_y, p_z)
+     *  
+     * Direction of ray is p - o but o is (0, 0, 0), therefore
+     *              d = p.normalize()
+     *              o = (0, 0, 0)
+     * 
+     *            ray = (o, d)
+     * 
+     * Transform ray from view to world
+     *     ray_world  = cameraTransform.inverse().transform(ray) 
+    */
     public R generateRay(float x, float y, float xResolution, float yResolution, R ray)
     {
-        float d = (float) (1./Math.tan(Math.toRadians(fov)/2));
         
+        float d_ndc = (float) (1./Math.tan(Math.toRadians(fov)/2));
+        
+        //aspect ratio of screen is a * w_s/h_s
         float a = xResolution/yResolution;
+        
+        
         float px = a * (2 * x/xResolution - 1);
         float py = -2 * y/yResolution + 1;
-        float pz = -d;
+        float pz = -d_ndc;
         
         V rd = (V) up.getCoordInstance();
         rd.set(px, py, pz);
@@ -230,5 +277,53 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         return new float[]{xs, ys};        
     }
     
-   
+    protected Value2Df screenSpaceToNDC(Value2Df screenCoord, Value2Df screenResolution)
+    {
+        float x_ndc = (2 * screenCoord.x/screenResolution.x - 1);
+        float y_ndc = -2 * screenCoord.y/screenResolution.y + 1;
+        return new Value2Df(x_ndc, y_ndc);
+    }
+    
+    protected Value2Df ndcToScreenSpace(Value2Df ndcCoord, Value2Df screenResolution)
+    {
+        float xs = screenResolution.x/2*ndcCoord.x + screenResolution.x/2;
+        float ys = -screenResolution.y/2*ndcCoord.y + screenResolution.y/2;
+        return new Value2Df(xs, ys);
+    }
+    
+    protected Value2Df ndcToViewSpace(Value2Df ndcCoord, Value2Df screenResolution)
+    {
+        return new Value2Df(
+                ndcCoord.x * getAspectRatio(screenResolution),
+                ndcCoord.y
+        );        
+    }
+    
+    protected Value2Df viewSpaceToNDC(S position, Value2Df screenResolution)
+    {
+        float a = getAspectRatio(screenResolution);
+        float d = distanceToProjectionPlane();
+        
+        float xndc = d*position.get('x')/(-a*position.get('z'));
+        float yndc = d*position.get('y')/(-position.get('z'));
+        
+        return new Value2Df(xndc, yndc);
+    }
+    
+    //aspect ratio of screen is a * w_s/h_s
+    protected float getAspectRatio(Value2Df screenResolution)
+    {        
+        return screenResolution.x/screenResolution.y;
+    }
+    
+    //view position to projection plane or NDC plane
+    protected float distanceToProjectionPlane()
+    {
+        return (float) (1./Math.tan(Math.toRadians(fov)/2));
+    }
+    
+    protected boolean isNDCValid(Value2Df ndcCoord)
+    {
+        return ndcCoord.x >=-1 && ndcCoord.x <=1 && ndcCoord.y >=-1 && ndcCoord.y <=1;
+    }
 }
