@@ -17,7 +17,7 @@ import static java.lang.Math.sin;
  * @param <S>
  * @param <V>
  */
-public class Frame<S extends SCoord, V extends VCoord<S, V>> implements AbstractFrame<S, V> {
+public class Frame<S extends SCoord<S, V>, V extends VCoord<S, V>> implements AbstractFrame<S, V> {
     private V mX, mY, mZ;
     private V n;
     
@@ -75,6 +75,12 @@ public class Frame<S extends SCoord, V extends VCoord<S, V>> implements Abstract
     public static VCoord reflect(VCoord v)
     {
         return v.newV(-v.get('x'), -v.get('y'), v.get('z'));
+    }
+    
+    public static VCoord reflect(VCoord wi, VCoord m) {
+        //return 2 * dot(wi, m) * Vector(m) - wi;
+        VCoord v  = m.asScalar().sub(m.asScalar());
+        return v.mul(2 * wi.dot(m));        
     }
     
     //v is incidence but points outwards
