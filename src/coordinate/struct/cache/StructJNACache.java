@@ -55,4 +55,9 @@ public class StructJNACache<T extends StructBufferMemory> extends StructAbstract
     {
         return Pointer.nativeValue(m.getPointer(0));
     }
+    
+    public Memory getMemory()
+    {
+        return m;
+    }
 }

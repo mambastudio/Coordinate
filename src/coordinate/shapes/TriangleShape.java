@@ -18,16 +18,20 @@ import coordinate.generic.VCoord;
  */
 public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>> 
 {
-    private final S p1;
-    private final S p2;
-    private final S p3;
-    private final V n;
+    protected final S p1;
+    protected final S p2;
+    protected final S p3;
+    protected V n;
     
     protected TriangleShape(S p1, S p2, S p3)
     {
         this.p1 = p1; this.p2 = p2; this.p3 = p3;
-        this.n = null;
+        this.n = (V) (e1().cross(e2())).normalize();
     }
+    
+    public abstract V e1();
+    
+    public abstract V e2();
     
     public boolean intersect(R r)
     {
@@ -39,7 +43,22 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
         return this.mollerIntersection(r, tuv, p1, p2, p3);
     }
     
-    private boolean mollerIntersection(R r, float[] tuv, S p1, S p2, S p3)
+    public S getP1()
+    {
+        return p1;
+    }
+    
+    public S getP2()
+    {
+        return p2;
+    }
+    
+    public S getP3()
+    {
+        return p1;
+    }
+    
+    protected boolean mollerIntersection(R r, float[] tuv, S p1, S p2, S p3)
     {
         V e1, e2, h, s, q;
         double a, f, b1, b2;
@@ -80,5 +99,11 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
         }
         else
             return false;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "Tri: p1=" +p1+ " p2=" +p2+ " p3=" +p3;
     }
 }

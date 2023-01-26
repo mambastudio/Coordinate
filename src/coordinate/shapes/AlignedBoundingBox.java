@@ -37,4 +37,9 @@ public abstract class AlignedBoundingBox<S extends SCoord, V extends VCoord, R e
         
         return tmin.maxComponent() <= tmax.minComponent();
     }
+    
+    public boolean planeBoxOverlap()
+    {
+        return false;
+    }
 }

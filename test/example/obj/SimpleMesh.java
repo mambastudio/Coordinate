@@ -11,13 +11,21 @@ import coordinate.list.IntList;
 import example.BBox;
 import example.Point2f;
 import example.Point3f;
+import example.Ray;
+import example.Tri;
 import example.Vector3f;
 
 /**
  *
  * @author user
  */
-public class SimpleMesh extends AbstractMesh<Point3f, Vector3f, Point2f>{
+public class SimpleMesh extends AbstractMesh<
+        Point3f, 
+        Vector3f, 
+        Point2f, 
+        Ray, 
+        Tri>{
+    
     private final BBox bounds;
     public SimpleMesh()
     {
@@ -62,5 +70,11 @@ public class SimpleMesh extends AbstractMesh<Point3f, Vector3f, Point2f>{
         Point2f t = new Point2f(values[0], values[1]);
         texcoords.add(t);   
     }
+
+    @Override
+    public Tri getTriangle(int index) {
+        return new Tri(this.getVertex1(index), this.getVertex2(index), this.getVertex3(index));
+    }
+
     
 }

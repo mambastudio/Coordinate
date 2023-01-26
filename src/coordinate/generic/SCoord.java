@@ -5,6 +5,9 @@
  */
 package coordinate.generic;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  *
  * @author user
@@ -16,6 +19,31 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
     public abstract S getSCoordInstance();  
     public abstract V getVCoordInstance();
     public abstract S copy();
+    
+    public default S newS(float x, float y, float z)
+    {
+        S dest = (S) copy();
+        dest.set(x, y, z);
+        return dest;
+    }
+    
+    public default V add(S b)
+    {
+        V v = getVCoordInstance();        
+        v.set('x', get('x') + b.get('x'));
+        v.set('y', get('y') + b.get('y'));
+        v.set('z', get('z') + b.get('z'));
+        return v;
+    }
+    
+    public default S addS(S b)
+    {
+        S s = getSCoordInstance();        
+        s.set('x', get('x') + b.get('x'));
+        s.set('y', get('y') + b.get('y'));
+        s.set('z', get('z') + b.get('z'));
+        return s;
+    }
             
     public default V sub(S b)
     {
@@ -29,6 +57,15 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
     public default S subS(S b)
     {
         S s = getSCoordInstance();        
+        s.set('x', get('x') - b.get('x'));
+        s.set('y', get('y') - b.get('y'));
+        s.set('z', get('z') - b.get('z'));
+        return s;
+    }
+    
+    public default S sub(V b)
+    {
+        S s = copy();        
         s.set('x', get('x') - b.get('x'));
         s.set('y', get('y') - b.get('y'));
         s.set('z', get('z') - b.get('z'));
@@ -162,5 +199,33 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         s.set('y', Math.abs(this.get('y')));
         s.set('z', Math.abs(this.get('z')));
         return s;
+    }
+    
+    public static SCoord min3(SCoord s0, SCoord s1)
+    {
+        SCoord v = s0.newS(0, 0, 0);
+        v.set(min(s0.get(0), s0.get(0)), min(s0.get(1), s0.get(1)), min(s0.get(2), s0.get(2)));        
+        return v;
+    }
+    
+    public static SCoord min4(SCoord s0, SCoord s1)
+    {
+        SCoord v = s0.newS(0, 0, 0);
+        v.set(min(s0.get(0), s0.get(0)), min(s0.get(1), s0.get(1)), min(s0.get(2), s0.get(2)), min(s0.get(3), s0.get(3)));        
+        return v;
+    }
+    
+    public static SCoord max3(SCoord s0, SCoord s1)
+    {
+        SCoord v = s0.newS(0, 0, 0);
+        v.set(max(s0.get(0), s0.get(0)), max(s0.get(1), s0.get(1)), max(s0.get(2), s0.get(2)));        
+        return v;
+    }
+    
+    public static SCoord max4(SCoord s0, SCoord s1)
+    {
+        SCoord v = s0.newS(0, 0, 0);
+        v.set(max(s0.get(0), s0.get(0)), max(s0.get(1), s0.get(1)), max(s0.get(2), s0.get(2)), max(s0.get(3), s0.get(3)));        
+        return v;
     }
 }

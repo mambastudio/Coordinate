@@ -16,6 +16,8 @@ public class Value3Df {
     
     public Value3Df(){}
     public Value3Df(float x, float y, float z){this.x = x; this.y = y; this.z = z;}
+    public Value3Df div(float value){return new Value3Df(x/value, y/value, z/value);}
+    public Value3Df inverse(){return new Value3Df(1.f/x, 1.f/y, 1.f/z);}
     public Value2Df getXY(){return new Value2Df(x, y);}
     public static Value3Df getRng()
     {

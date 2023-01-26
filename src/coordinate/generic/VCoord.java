@@ -30,6 +30,11 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return get('x') *b.get('x') + get('y')*b.get('y') + get('z')*b.get('z');
     }
     
+    public default float dot(S b) 
+    {
+        return get('x') *b.get('x') + get('y')*b.get('y') + get('z')*b.get('z');
+    }
+    
     public default float absDot(V b)
     {
         return Math.abs(dot(b));
@@ -77,6 +82,15 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return dest;
     }  
     
+    public default V sub(V b)
+    {
+        V v = copy();        
+        v.set('x', get('x') - b.get('x'));
+        v.set('y', get('y') - b.get('y'));
+        v.set('z', get('z') - b.get('z'));
+        return v;
+    }
+        
     public default V mul(V a) 
     {
         V dest = copy();
@@ -85,6 +99,8 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         dest.set('z', get('z') * a.get('z'));
         return dest;
     }
+    
+    
     public default V div(V a) 
     {
         V dest = copy();

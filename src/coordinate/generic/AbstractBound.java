@@ -73,6 +73,12 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
         return tmax > max(tmin, 0.0f);        
     }
     
+    default void include(S... sArray)
+    {
+        for(S s : sArray)
+            include(s);
+    }
+    
     default void include(B b)
     {
         include((S) b.getMaximum());
@@ -106,6 +112,11 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
     {
         V v = getExtents();
         return v.get(maximumExtentAxis());
+    }
+    
+    default V getHalfExtents()
+    {
+        return (V) getExtents().mul(0.5f);
     }
     
     default B getCopy()

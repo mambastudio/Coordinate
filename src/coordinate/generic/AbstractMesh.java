@@ -9,42 +9,50 @@ import coordinate.list.CoordinateFloatList;
 import coordinate.list.IntList;
 import coordinate.parser.attribute.GroupT;
 import coordinate.parser.attribute.MaterialT;
+import coordinate.shapes.TriangleShape;
 import java.util.ArrayList;
 
 
 /**
  *
  * @author user
- * @param <P>
- * @param <N>
+ * @param <S>
+ * @param <V>
  * @param <T>
+ * @param <R>
+ * @param <TriShape>
  */
-public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extends AbstractCoordinateFloat>
+public abstract class AbstractMesh <
+        S extends SCoord, 
+        V extends VCoord, 
+        T extends AbstractCoordinateFloat, 
+        R extends AbstractRay<S, V>,
+        TriShape extends TriangleShape<S, V, R>>
 {    
     public enum MeshType{FACE, FACE_NORMAL, FACE_UV_NORMAL, FACE_UV};
     
     protected IntList triangleFaces;
     
-    protected CoordinateFloatList<P> points = null;
-    protected CoordinateFloatList<N> normals = null;
+    protected CoordinateFloatList<S> points = null;
+    protected CoordinateFloatList<V> normals = null;
     protected CoordinateFloatList<T> texcoords = null;
     
     protected ArrayList<MaterialT> materials;
     protected ArrayList<GroupT> groups;
         
-    public abstract void addPoint(P p);
+    public abstract void addPoint(S p);
     public abstract void addPoint(float... values);
-    public abstract void addNormal(N n);
+    public abstract void addNormal(V n);
     public abstract void addNormal(float... values);
     public abstract void addTexCoord(T t);
     public abstract void addTexCoord(float... values);
     
-    public void initPointList(Class<P> clazz, int size)
+    public void initPointList(Class<S> clazz, int size)
     {
         this.points = new CoordinateFloatList(clazz, size);
     }
     
-    public void initNormalList(Class<N> clazz, int size)
+    public void initNormalList(Class<V> clazz, int size)
     {
         this.normals = new CoordinateFloatList(clazz, size);
     }
@@ -59,7 +67,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         this.triangleFaces = new IntList(size * 10);
     }
     
-    public void initCoordList(Class<P> clazzP, Class<N> clazzN, Class<T> clazzT,
+    public void initCoordList(Class<S> clazzP, Class<V> clazzN, Class<T> clazzT,
             int sizeP, int sizeN, int sizeT, int sizeF)
     {
         this.initPointList(clazzP, sizeP);
@@ -102,7 +110,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         return points.arraySize();
     }
         
-    public P getPoint(int index)
+    public S getPoint(int index)
     {
         return points.get(index);
     }
@@ -122,7 +130,7 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         return normals.arraySize();
     }
         
-    public N getNormal(int index)
+    public V getNormal(int index)
     {
         return normals.get(index);
     }
@@ -207,17 +215,17 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         return index*10;
     }
     
-    public P getVertex1(int primID)
+    public S getVertex1(int primID)
     {
         return points.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 0));
     }
     
-    public P getVertex2(int primID)
+    public S getVertex2(int primID)
     {
         return points.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 1));
     }
 
-    public P getVertex3(int primID)
+    public S getVertex3(int primID)
     {        
         return points.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 2));
     }
@@ -237,17 +245,17 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         return texcoords.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 5));
     }
     
-    public N getNormal1(int primID)
+    public V getNormal1(int primID)
     {
         return normals.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 6));
     }
 
-    public N getNormal2(int primID)
+    public V getNormal2(int primID)
     {
         return normals.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 7));
     }
 
-    public N getNormal3(int primID)
+    public V getNormal3(int primID)
     {
         return normals.get(triangleFaces.get(getArrayIndexFromPrimID(primID) + 8));
     }
@@ -305,6 +313,8 @@ public abstract class AbstractMesh <P extends SCoord, N extends VCoord, T extend
         
         return faceIndices;
     }
+    
+    public abstract TriShape getTriangle(int index);
     
     protected static class FaceIndices
     {
