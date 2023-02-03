@@ -20,7 +20,7 @@ public class Tri extends TriangleShape<Point3f, Vector3f, Ray>  {
 
     @Override
     public Vector3f e1() {
-        return Point3f.sub(p1, p2);
+        return Point3f.sub(p2, p1);
     }
 
     @Override

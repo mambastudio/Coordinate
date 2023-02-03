@@ -29,6 +29,11 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
         this.n = (V) (e1().cross(e2())).normalize();
     }
     
+    public V getNormal()
+    {
+        return n;
+    }
+    
     public abstract V e1();
     
     public abstract V e2();
@@ -55,7 +60,7 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
     
     public S getP3()
     {
-        return p1;
+        return p3;
     }
     
     protected boolean mollerIntersection(R r, float[] tuv, S p1, S p2, S p3)
@@ -100,6 +105,9 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
         else
             return false;
     }
+    
+    
+    
     
     @Override
     public String toString()
