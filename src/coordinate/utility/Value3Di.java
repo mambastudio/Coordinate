@@ -29,6 +29,36 @@ public class Value3Di {
         this.x = x; this.y = y; this.z = z;
     }
     
+    public Value3Di mul(Value3Di val)
+    {
+        return new Value3Di(
+                x * val.x,
+                y * val.y,
+                z * val.z
+        );
+    }
+    
+    public Value3Di sub(Value3Di val)
+    {
+        return new Value3Di(
+                x - val.x,
+                y - val.y,
+                z - val.z
+        );
+    }
+    
+    public int get(int axis)
+    {
+        switch (axis) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            default:
+                return z;
+        }    
+    }
+    
     public void set(int x, int y, int z)
     {
         this.x = x; this.y = y; this.z = z;
@@ -56,5 +86,29 @@ public class Value3Di {
             result &= array[i]>0;
         }
         return result;
+    }
+    
+    public Value3Di leftShift(int shift)
+    {
+        return new Value3Di(
+                x << shift,
+                y << shift,
+                z << shift);
+    }
+    
+    public Value3Di rightShift(int shift)
+    {
+        return new Value3Di(
+                x >> shift,
+                y >> shift,
+                z >> shift);
+    }
+    
+    public Value3Di and(int shift)
+    {
+        return new Value3Di(
+                x & shift,
+                y & shift,
+                z & shift);
     }
 }
