@@ -17,20 +17,18 @@ import coordinate.generic.VCoord;
  * @author user
  * @param <S>
  * @param <V>
- * @param <R>
- * @param <T>
+ * @param <R> 
  * @param <B>
  */
-public abstract class AlignedBoundingBox<
+public abstract class AlignedBBoxShape<
         S extends SCoord, 
         V extends VCoord,          
-        R extends AbstractRay<S, V>,
-        T extends TriangleShape<S, V, R>,
-        B extends AlignedBoundingBox<S, V, R, T, B>> implements AbstractBound<S, V, R, B>{
+        R extends AbstractRay<S, V>,        
+        B extends AlignedBBoxShape<S, V, R, B>> implements AbstractBound<S, V, R, B>{
     protected final S minimum;
     protected final S maximum;
     
-    protected AlignedBoundingBox(S min, S max)
+    protected AlignedBBoxShape(S min, S max)
     {
         this.minimum = min;
         this.maximum = max;
@@ -44,15 +42,5 @@ public abstract class AlignedBoundingBox<
         V tmin = (V) V.min3(t0, t1), tmax = (V) V.max3(t0, t1);
         
         return tmin.maxComponent() <= tmax.minComponent();
-    }
-    
-    public boolean triBoxOverlap(T triangle)
-    {
-        return ShapeUtility.triBoxOverlap((B)this, triangle);
-    }
-    
-    public boolean planeBoxOverlap(T triangle)
-    {
-        return ShapeUtility.planeBoxIntersection(triangle, (B)this);
-    }
+    }    
 }
