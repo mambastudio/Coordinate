@@ -337,7 +337,16 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
         return !(min.x > rad || max.x < -rad);
     }
     
-    
+    //real-time rendering 4th edition by Tomas et al
+    public<B extends AlignedBBoxShape<S, V, R, B>> boolean planeBoxIntersection(AlignedBBoxShape<S, V, R, B> aabb)
+    {
+        S c         = aabb.getCenter();
+        V h         = aabb.getHalfExtents();        
+        float e     = h.get('x') * Math.abs(n.get('x')) + h.get('y') * Math.abs(n.get('y')) + h.get('z') * Math.abs(n.get('z'));
+        float s     = n.dot(c) - n.dot(getP1());
+        
+        return !(s - e > 0 || s + e < 0);
+    }
     
     private boolean planeBoxIntersection(V normal, S localV0, V halfExtents){        
         int q;        
