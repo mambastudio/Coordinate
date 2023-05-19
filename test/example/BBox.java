@@ -5,7 +5,7 @@
  */
 package example;
 
-import coordinate.shapes.AlignedBoundingBox;
+import coordinate.shapes.AlignedBBoxShape;
 import static java.lang.Math.min;
 import static java.lang.Math.max;
 
@@ -13,7 +13,7 @@ import static java.lang.Math.max;
  *
  * @author user
  */
-public class BBox extends AlignedBoundingBox<Point3f, Vector3f, Ray, Tri, BBox>
+public class BBox extends AlignedBBoxShape<Point3f, Vector3f, Ray, BBox>
 {
     
     

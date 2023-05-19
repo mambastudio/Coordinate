@@ -127,4 +127,9 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
         return bound;
     }
     
+    default boolean isOriented()
+    {
+        return false;
+    }
+    
 }

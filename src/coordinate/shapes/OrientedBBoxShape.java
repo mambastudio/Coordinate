@@ -20,13 +20,13 @@ import coordinate.utility.Value3DBoolean;
  * @param <V>
  * @param <R>
  */
-public abstract class OrientedBoundingBox<S extends SCoord<S, V>, V extends VCoord<S, V>, R extends AbstractRay<S, V>> {
+public abstract class OrientedBBoxShape<S extends SCoord<S, V>, V extends VCoord<S, V>, R extends AbstractRay<S, V>> implements GenericShape<S, V, R> {
     public S center;
     public V radius;
     public V invRadius;
     public Transform<S, V> rotation;
     
-    public OrientedBoundingBox(S center, V radius, float degrees, V axis)
+    public OrientedBBoxShape(S center, V radius, float degrees, V axis)
     {
         if(axis.isZero())
             throw new UnsupportedOperationException("axis of the oriented bounding box should not be zero");

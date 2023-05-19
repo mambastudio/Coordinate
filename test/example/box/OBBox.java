@@ -5,7 +5,7 @@
  */
 package example.box;
 
-import coordinate.shapes.OrientedBoundingBox;
+import coordinate.shapes.OrientedBBoxShape;
 import example.Point3f;
 import example.Ray;
 import example.Vector3f;
@@ -14,7 +14,7 @@ import example.Vector3f;
  *
  * https://jcgt.org/published/0007/03/04/
  */
-public class OBBox extends OrientedBoundingBox<Point3f, Vector3f, Ray>{
+public class OBBox extends OrientedBBoxShape<Point3f, Vector3f, Ray>{
     public OBBox()
     {
         this(new Point3f(), new Vector3f(), 0, new Vector3f(0, 1, 0));        
