@@ -5,8 +5,10 @@
  */
 package example.shape;
 
+import example.BBox;
 import example.Point3f;
 import example.Ray;
+import example.Tri;
 
 /**
  *
@@ -20,12 +22,9 @@ public class Test {
     
     public static void triangleTest()
     {
-        Triangle triangle = new Triangle(new Point3f(-1, -1, 0), new Point3f(0, 1, 0), new Point3f(1, 1, 0));
-        Ray ray = new Ray();
-        float[] tuv = new float[3];
+        Tri triangle = new Tri(new Point3f(0, 1.5f, 0), new Point3f(6, 0, 0), new Point3f(0, 0, -4));
+        BBox box = new BBox(new Point3f(), new Point3f(1, 1, -1));
         
-        ray.set(0, 0, -2, 0, 0, 1);
-        triangle.intersection(ray, tuv);
-        System.out.println(tuv[0]);
+        System.out.println(triangle.planeBoxIntersection(box));
     }
 }
