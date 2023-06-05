@@ -9,6 +9,7 @@ import coordinate.generic.AbstractRay;
 import coordinate.generic.SCoord;
 import coordinate.generic.VCoord;
 import coordinate.utility.Value1Df;
+import coordinate.utility.Value2Df;
 import static java.lang.Math.abs;
 
 /**
@@ -25,15 +26,38 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
     protected final S pp3;
     protected V n;
     
+    protected V n1, n2, n3;
+    
     protected TriangleShape(S p1, S p2, S p3)
     {
         this.pp1 = p1; this.pp2 = p2; this.pp3 = p3;
         this.n = (V) (e1().cross(e2())).normalize();
     }
     
+    protected TriangleShape(S p1, S p2, S p3, V n1, V n2, V n3)
+    {
+        this(p1, p2, p3);
+        this.n1 = n1;
+        this.n2 = n2;
+        this.n3 = n3;
+    }
+        
     public V getNormal()
     {
         return n;
+    }
+    
+    public V getNormal(Value2Df uv)
+    {
+        if(n1 != null && n2 != null && n3 != null)            
+            return (V) n1.mul(1 - uv.x - uv.y).add(n2.mul(uv.x).add(n3.mul(uv.y)));          
+        else
+        {
+            V e1 = (V) pp2.sub(pp1);  
+            V e2 = (V) pp3.sub(pp1);
+
+            return (V) e1.cross(e2).normalize();
+        }
     }
     
     public abstract V e1();

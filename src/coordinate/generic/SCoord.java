@@ -36,6 +36,15 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return v;
     }
     
+    public default S add(V v) 
+    {
+        S s = getSCoordInstance();
+        s.set('x', get('x') + v.get('x'));
+        s.set('y', get('y') + v.get('y'));
+        s.set('z', get('z') + v.get('z'));
+        return s;
+    }   
+        
     public default S addS(S b)
     {
         S s = getSCoordInstance();        
@@ -72,14 +81,7 @@ public interface SCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         return s;
     }
     
-    public default S add(V v) 
-    {
-        S s = getSCoordInstance();
-        s.set('x', get('x') + v.get('x'));
-        s.set('y', get('y') + v.get('y'));
-        s.set('z', get('z') + v.get('z'));
-        return s;
-    }   
+    
 
     
     

@@ -17,7 +17,7 @@ import static java.lang.Math.min;
  * @param <B>
  */
 public interface AbstractBound<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound> {
-    public void include(S s);
+    public B include(S s);
     public S getCenter(); 
     public float getCenter(int dim);
     public S getMinimum();
@@ -73,22 +73,25 @@ public interface AbstractBound<S extends SCoord, V extends VCoord, R extends Abs
         return tmax > max(tmin, 0.0f);        
     }
     
-    default void include(S... sArray)
+    default B include(S... sArray)
     {
         for(S s : sArray)
             include(s);
+        return (B) this;
     }
     
-    default void include(B b)
+    default B include(B b)
     {
         include((S) b.getMaximum());
         include((S) b.getMinimum());
+        return (B) this;
     }
     
-    default void include(B... bArray)
+    default B include(B... bArray)
     {
         for(B b : bArray)
             include(b);
+        return (B) this;
     }
     
     default int maximumExtentAxis() {

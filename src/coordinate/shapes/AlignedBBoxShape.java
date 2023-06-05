@@ -25,8 +25,8 @@ public abstract class AlignedBBoxShape<
         V extends VCoord,          
         R extends AbstractRay<S, V>,        
         B extends AlignedBBoxShape<S, V, R, B>> implements AbstractBound<S, V, R, B>{
-    protected final S minimum;
-    protected final S maximum;
+    public S minimum;
+    public S maximum;
     
     protected AlignedBBoxShape(S min, S max)
     {
