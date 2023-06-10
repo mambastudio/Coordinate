@@ -11,14 +11,6 @@
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/shapes/AlignedBBoxShape.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/BBox.java</file>
         </group>
-        <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/SCoord.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/list/IntegerList.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractMesh.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/println/PrintInteger.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractBound.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/shapes/AlignedBBoxShape.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/BBox.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
