@@ -168,6 +168,8 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
         dest.set('x', get('x')/len);
         dest.set('y', get('y')/len);
         dest.set('z', get('z')/len);
+        
+        //if(dest.hasUndefinedValues()) System.out.println("kubafu");
         return dest;   
     }
     
@@ -243,28 +245,28 @@ public interface VCoord<S extends SCoord, V extends VCoord> extends AbstractCoor
     public static VCoord min3(VCoord v0, VCoord v1)
     {
         VCoord v = v0.newV(0, 0, 0);
-        v.set(min(v0.get(0), v0.get(0)), min(v0.get(1), v0.get(1)), min(v0.get(2), v0.get(2)));        
+        v.set(min(v0.get(0), v1.get(0)), min(v0.get(1), v1.get(1)), min(v0.get(2), v1.get(2)));        
         return v;
     }
     
     public static VCoord min4(VCoord v0, VCoord v1)
     {
         VCoord v = v0.newV(0, 0, 0);
-        v.set(min(v0.get(0), v0.get(0)), min(v0.get(1), v0.get(1)), min(v0.get(2), v0.get(2)), min(v0.get(3), v0.get(3)));        
+        v.set(min(v0.get(0), v1.get(0)), min(v0.get(1), v1.get(1)), min(v0.get(2), v1.get(2)), min(v0.get(3), v1.get(3)));        
         return v;
     }
     
     public static VCoord max3(VCoord v0, VCoord v1)
     {
         VCoord v = v0.newV(0, 0, 0);
-        v.set(max(v0.get(0), v0.get(0)), max(v0.get(1), v0.get(1)), max(v0.get(2), v0.get(2)));        
+        v.set(max(v0.get(0), v1.get(0)), max(v0.get(1), v1.get(1)), max(v0.get(2), v1.get(2)));        
         return v;
     }
     
     public static VCoord max4(VCoord v0, VCoord v1)
     {
         VCoord v = v0.newV(0, 0, 0);
-        v.set(max(v0.get(0), v0.get(0)), max(v0.get(1), v0.get(1)), max(v0.get(2), v0.get(2)), max(v0.get(3), v0.get(3)));        
+        v.set(max(v0.get(0), v1.get(0)), max(v0.get(1), v1.get(1)), max(v0.get(2), v1.get(2)), max(v0.get(3), v1.get(3)));        
         return v;
     }
 }

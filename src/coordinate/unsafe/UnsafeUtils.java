@@ -23,11 +23,11 @@ import sun.nio.ch.DirectBuffer;
  */
 public class UnsafeUtils {    
     
-    private final static int INTSIZE = 4;
-    private final static int FLOATSIZE = 4;
-    private final static int SHORTSIZE = 2;
-    private final static int LONGSIZE = 8;
-    private final static int DOUBLESIZE = 8;
+    public final static int INTSIZE = 4;
+    public final static int FLOATSIZE = 4;
+    public final static int SHORTSIZE = 2;
+    public final static int LONGSIZE = 8;
+    public final static int DOUBLESIZE = 8;
     
     
     
@@ -149,6 +149,26 @@ public class UnsafeUtils {
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(UnsafeUtils.class.getName()).log(Level.SEVERE, null, ex);
         }};
-        new Thread(run).start();
+        new Thread(run).start(); 
+    }
+    
+    public static long toAddress(Object obj) {
+        Object[] array = new Object[] {obj};
+        long baseOffset = getUnsafe().arrayBaseOffset(Object[].class);
+        return normalize(getUnsafe().getInt(array, baseOffset));
+    }
+
+    public static Object fromAddress(long address) {
+        Object[] array = new Object[] {null};
+        long baseOffset = getUnsafe().arrayBaseOffset(Object[].class);
+        getUnsafe().putLong(array, baseOffset, address);
+        return array[0];
+    }
+    
+    public static void copyMemory(Object src, long srcAddress, Object dest, long destAddress, long length)
+    {
+        long bytesToCopy = length - (length % 8);
+        getUnsafe().copyMemory(src, srcAddress, dest, destAddress, bytesToCopy);
+        getUnsafe().copyMemory(src, srcAddress + bytesToCopy, dest, destAddress + bytesToCopy, length - bytesToCopy);
     }
 }

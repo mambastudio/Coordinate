@@ -360,6 +360,7 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
         return !(min.x > rad || max.x < -rad);
     }
     
+    
     //real-time rendering 4th edition by Tomas et al
     public boolean planeBoxIntersection(AlignedBBoxShape<S, V, R, ?> aabb)
     {

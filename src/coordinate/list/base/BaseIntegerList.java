@@ -35,7 +35,7 @@ public interface BaseIntegerList<BaseIntList extends BaseIntegerList>
     
     default BaseIntList copyTo(int n, BaseIntList list)
     {
-        if(this.size() == 0)
+        if(this.size() == 0 || n == 0)
             return list;
         list.set(0, this.trimCopy(0, n));
         return list;
