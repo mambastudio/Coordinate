@@ -29,7 +29,7 @@ public class Tri extends TriangleShape<Point3f, Vector3f, Ray>  {
     }
     
     public Point3f v0()
-    {
+    {    
         return pp1;
     }
     

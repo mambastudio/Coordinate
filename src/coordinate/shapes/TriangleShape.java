@@ -18,7 +18,10 @@ import static java.lang.Math.abs;
  * @param <V>
  * @param <R>
  */
-public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>> implements GenericShape<S, V, R> 
+public abstract class TriangleShape<
+        S extends SCoord, 
+        V extends VCoord, 
+        R extends AbstractRay<S, V>> implements GenericShape<S, V, R> 
 {
     protected final S pp1;
     protected final S pp2;
@@ -338,13 +341,16 @@ public abstract class TriangleShape<S extends SCoord, V extends VCoord, R extend
     }
     
     //real-time rendering 4th edition by Tomas et al
-    public<B extends AlignedBBoxShape<S, V, R, B>> boolean planeBoxIntersection(AlignedBBoxShape<S, V, R, B> aabb)
+    public boolean planeBoxIntersection(AlignedBBoxShape<S, V, R, ?> aabb)
     {
         S c         = aabb.getCenter();
         V h         = aabb.getHalfExtents();        
         float e     = h.get('x') * Math.abs(n.get('x')) + h.get('y') * Math.abs(n.get('y')) + h.get('z') * Math.abs(n.get('z'));
         float s     = n.dot(c) - n.dot(getP1());
         
+        System.out.println(s);
+        System.out.println(e);
+        System.out.println((s-e)+ " " +(s+e));
         return !(s - e > 0 || s + e < 0);
     }
     
