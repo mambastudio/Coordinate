@@ -42,7 +42,7 @@ public class BBox extends AlignedBBoxShape<Point3f, Vector3f, Ray, BBox>
     }
     
     @Override
-    public void include(Point3f p) {
+    public BBox include(Point3f p) {
         if (p != null) {
             if (p.x < minimum.x)
                 minimum.x = p.x;
@@ -57,6 +57,7 @@ public class BBox extends AlignedBBoxShape<Point3f, Vector3f, Ray, BBox>
             if (p.z > maximum.z)
                 maximum.z = p.z;
         }
+        return this;
     }
     
     @Override
