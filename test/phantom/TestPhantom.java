@@ -5,6 +5,7 @@
  */
 package phantom;
 
+import coordinate.memory.NativeInteger;
 import coordinate.utility.Sweeper;
 
 /**
@@ -17,10 +18,12 @@ import coordinate.utility.Sweeper;
 public class TestPhantom {
     public static void main(String... args) throws InterruptedException
     {
+        kubafu();
         Thread.sleep(10000);
         //Reference ref = new LargePhantomReference<>(new LargeObject(), new ReferenceQueue<>());
         
         Sweeper.getSweeper().register(new LargeObject(), ()->System.out.println("kubafu"));
+        
 
         //System.out.println("ref = " + ref);
 
@@ -39,5 +42,10 @@ public class TestPhantom {
 
         System.gc();
        
+    }
+    
+    public static void kubafu()
+    {
+        new NativeInteger(1);
     }
 }

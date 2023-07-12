@@ -6,11 +6,11 @@
 package basic;
 
 
-import coordinate.unsafe.NativeIntArray;
 import coordinate.unsafe.UnsafeByteBuffer;
 import coordinate.unsafe.UnsafeUtils;
 import java.nio.IntBuffer;
 import java.util.Arrays;
+import coordinate.memory.NativeInteger;
 
 /**
  *
@@ -34,19 +34,21 @@ public class TestUnsafe {
     
     public static void test2()
     {
-        NativeIntArray array = new NativeIntArray(5);
+        NativeInteger array = new NativeInteger(5);
         int[] src = new int[]{1, 2, 3, 4, 5};
         array.copyFrom(src, 0);
         
         int[] dst = new int[5];
         array.copyTo(dst, 0);
         
-        IntBuffer buf = array.getDirectIntBuffer(1, 4);
+       
+        IntBuffer buf = array.getDirectIntBuffer(1, 4).asIntBuffer();
         int[] bufArr = new int[4];
         buf.get(bufArr);
         System.out.println(Arrays.toString(bufArr));
         
         
         System.out.println(Arrays.toString(dst));
+
     }
 }
