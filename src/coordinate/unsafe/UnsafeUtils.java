@@ -21,15 +21,7 @@ import sun.nio.ch.DirectBuffer;
  *
  * @author user
  */
-public class UnsafeUtils {    
-    
-    public final static int INTSIZE = 4;
-    public final static int FLOATSIZE = 4;
-    public final static int SHORTSIZE = 2;
-    public final static int LONGSIZE = 8;
-    public final static int DOUBLESIZE = 8;
-    
-    
+public class UnsafeUtils {        
     
     private static Unsafe unsafe = null;
     
@@ -66,32 +58,7 @@ public class UnsafeUtils {
         return getUnsafe().getAddress(
             normalize(getUnsafe().getInt(object, 4L)) + 12L);
     }
-    
-    public static long getIntCapacity(long capacity)
-    {
-        return capacity * INTSIZE;
-    }
-    
-    public static long getLongCapacity(long capacity)
-    {
-        return capacity * LONGSIZE;
-    }
-    
-    public static long getFloatCapacity(long capacity)
-    {
-        return capacity * FLOATSIZE;
-    }
-    
-    public static long getDoubleCapacity(long capacity)
-    {
-        return capacity * DOUBLESIZE;
-    }
-    
-    public static long getShortCapacity(long capacity)
-    {
-        return capacity * SHORTSIZE; 
-    }
-    
+        
     public static ByteBuffer allocatDirectBufferJNA(long cap)
     {
         Memory m = new Memory(cap);
