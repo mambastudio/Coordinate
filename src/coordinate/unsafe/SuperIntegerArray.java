@@ -10,6 +10,13 @@ import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getIntCapacity;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
 import coordinate.utility.Sweeper;
+import java.lang.reflect.Field;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,8 +24,22 @@ import coordinate.utility.Sweeper;
  */
 public abstract class SuperIntegerArray {
     
-    private final long size;
     private final long address;
+    private final long size;    
+    
+    //buffer fields
+    static final Field addressField, capacityField;
+    static {
+    try {
+            addressField = Buffer.class.getDeclaredField("address");
+            addressField.setAccessible(true);
+            capacityField = Buffer.class.getDeclaredField("capacity");
+            capacityField.setAccessible(true);
+
+        } catch (NoSuchFieldException e) {
+            throw new AssertionError(e);
+        }
+    }
     
     public SuperIntegerArray(long size)
     {
@@ -42,12 +63,33 @@ public abstract class SuperIntegerArray {
     public final long getAddress(int offset)
     {
         rangeCheck(offset, size);
-        return address + offset;
+        return address + offset * 4;
     }
     
     public final long getSize()
     {
         return size;
+    }
+    
+    public final IntBuffer getDirectIntBuffer()
+    {
+        return getDirectIntBuffer(0, 0);
+    }
+    
+    public final IntBuffer getDirectIntBuffer(int offset, int size)
+    {
+        if(!(offset == 0 && size == 0)) //if it's getDirectIntBuffer(0, 0);
+            rangeCheck(offset + size - 1, this.size);
+        ByteBuffer bb = ByteBuffer.allocateDirect(size * 4).order(ByteOrder.nativeOrder());
+        try {
+            addressField.setLong(bb, getAddress(offset));
+            capacityField.setInt(bb, size * 4); System.out.println("asdfas");
+           
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(SuperIntegerArray.class.getName()).log(Level.SEVERE, null, ex);
+        }           
+        System.out.println(bb);
+        return bb.asIntBuffer();
     }
     
     public void dispose()

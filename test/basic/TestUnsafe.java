@@ -9,6 +9,7 @@ package basic;
 import coordinate.unsafe.NativeIntArray;
 import coordinate.unsafe.UnsafeByteBuffer;
 import coordinate.unsafe.UnsafeUtils;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 
 /**
@@ -39,6 +40,12 @@ public class TestUnsafe {
         
         int[] dst = new int[5];
         array.copyTo(dst, 0);
+        
+        IntBuffer buf = array.getDirectIntBuffer(1, 4);
+        int[] bufArr = new int[4];
+        buf.get(bufArr);
+        System.out.println(Arrays.toString(bufArr));
+        
         
         System.out.println(Arrays.toString(dst));
     }
