@@ -94,7 +94,13 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     public void swap(M m)
     {
+        long tempAddress = address;
+        long tempCapacityBytes = capacityBytes;
         
+        address = m.address;
+        capacityBytes = m.capacityBytes;
+        m.address = tempAddress;
+        m.capacityBytes = tempCapacityBytes;
     }
         
     public final ByteBuffer getDirectIntBuffer()
@@ -161,14 +167,14 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     }
     
     //for why we use 16, refer to https://mail.openjdk.org/pipermail/panama-dev/2021-November/015852.html 
-    public void copyFrom(A array, long offset)
+    public void put(A array, long offset)
     {
         int length = getPrimitiveArrayLength(array);
         rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
         copyMemory(array, 16, null, address(), toAmountBytes(length));
     }
     
-    public void copyTo(A array, long offset)
+    public void get(A array, long offset)
     {
         int length = getPrimitiveArrayLength(array);
         rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array

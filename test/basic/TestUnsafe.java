@@ -34,21 +34,24 @@ public class TestUnsafe {
     
     public static void test2()
     {
-        NativeInteger array = new NativeInteger(5);
-        int[] src = new int[]{1, 2, 3, 4, 5};
-        array.copyFrom(src, 0);
         
-        int[] dst = new int[5];
-        array.copyTo(dst, 0);
+        int[] src1 = new int[]{1, 2, 3, 4, 5};
+        int[] src2 = new int[]{5, 4, 3, 2, 1};
         
-       
-        IntBuffer buf = array.getDirectIntBuffer(1, 4).asIntBuffer();
-        int[] bufArr = new int[4];
+        NativeInteger n1 = new NativeInteger(5);
+        n1.put(src1, 0);
+        
+        NativeInteger n2 = new NativeInteger(5);
+        n2.put(src2, 0);
+        
+        n1.swap(n2);
+        
+        IntBuffer buf = n1.getDirectIntBuffer(0, 5).asIntBuffer();
+        int[] bufArr = new int[5];
         buf.get(bufArr);
         System.out.println(Arrays.toString(bufArr));
         
         
-        System.out.println(Arrays.toString(dst));
 
     }
 }
