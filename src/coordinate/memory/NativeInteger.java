@@ -6,6 +6,8 @@
 package coordinate.memory;
 
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
@@ -17,20 +19,25 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         super(pointer);
     }
 
-    public NativeInteger(long size)
+    public NativeInteger(long capacity)
     {
-        super(size);
+        super(capacity);
     }
 
     public NativeInteger(NativeInteger pointer, long offset) {
         super(pointer, offset);
+    }
+    
+    public NativeInteger(NativeInteger pointer, long offset, long capacity) {
+        super(pointer, offset, capacity);
     }
      
     @Override
     public void dispose()
     {
         System.out.println("native array garbage collected");
-        getUnsafe().freeMemory(address());
+        if(address()!=0)
+            getUnsafe().freeMemory(address());
     }
     
     public void set(long offset, int value)
@@ -45,14 +52,65 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         return getUnsafe().getInt(address() + toAmountBytes(offset));
     }
     
+    
+    public void swapElement(long index1, long index2)
+    {
+        rangeCheck(index1, capacity());
+        rangeCheck(index2, capacity());       
+        int temp = get(index1);
+        set(index1, get(index2));
+        set(index2, temp);
+    }
+    
     @Override
     public int sizeOf() {
         return 4;
     }
+    
+    public int getLast()
+    {
+        return get(capacity()-1);
+    }
 
     @Override
-    public NativeInteger getMemory(long offset) {
+    public NativeInteger offsetMemory(long offset) {
         rangeCheck(offset, capacity());
         return new NativeInteger(this, offset);
+    }
+
+    @Override
+    public String getString(long start, long end) {
+        long cap = end - start;
+        rangeCheckBound(start, end, arrayCapacityLimitString);
+        int[] arr = new int[(int)cap];
+        copyTo(arr, start);
+        return Arrays.toString(arr);
+    }
+    
+    public NativeInteger fill(int val) {
+        for (long i = 0, len = capacity(); i < len; i++)
+            set(i, val);
+        return this;
+    }
+    
+    public NativeInteger fillRandomRange(int min, int max)
+    {
+        for (long i = 0, len = capacity(); i < len; i++)
+            set(i, ThreadLocalRandom.current().nextInt(min, max + 1));
+        return this;
+    }
+    
+    @Override
+    public String toString()
+    {
+        if(capacity() > arrayCapacityLimitString)
+            return getString(0, arrayCapacityLimitString);
+        else
+            return getString(0, capacity());
+    }
+
+    @Override
+    protected final NativeInteger copyStateSize() {
+        return new NativeInteger(capacity());
     }
 }

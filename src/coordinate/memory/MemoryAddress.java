@@ -8,6 +8,7 @@ package coordinate.memory;
 import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
 import coordinate.utility.Sweeper;
+import static java.lang.Math.min;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -25,7 +26,9 @@ import java.util.logging.Logger;
 public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     protected long address;
-    protected long capacityBytes;    
+    protected long capacityBytes; 
+    
+    protected int arrayCapacityLimitString = 400;
         
     //buffer fields
     protected static final Field addressField, capacityField;
@@ -43,6 +46,8 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     protected MemoryAddress(long capacity)
     {
+        if(capacity < 0)
+            throw new UnsupportedOperationException("capacity is less than zero");
         this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));
         this.capacityBytes = toAmountBytes(capacity);
         
@@ -51,6 +56,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     protected MemoryAddress(M memory)
     {
+        //no point of checking bounds since memory parameter will not have existed
         this.address = memory.address;
         this.capacityBytes = memory.capacityBytes;
         
@@ -59,8 +65,14 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     protected MemoryAddress(M memory, long offset)
     {
+        this(memory, offset, memory.capacity() - offset);        
+    }
+    
+    protected MemoryAddress(M memory, long offset, long capacity)
+    {
+        this.rangeCheckBound(offset, offset + capacity, memory.capacity());
         this.address = memory.address + toAmountBytes(offset);
-        this.capacityBytes = memory.capacityBytes - toAmountBytes(offset);
+        this.capacityBytes = toAmountBytes(capacity);
         
         initSweeper();
     }
@@ -88,7 +100,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         
     public final long address(long offset)
     {
-        rangeCheck(toAmountBytes(offset), capacityBytes);
+        rangeCheck(offset, capacity());
         return address + toAmountBytes(offset);
     }
     
@@ -130,6 +142,17 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
             throw new IndexOutOfBoundsException("offset is beyond range, offset = " + offset + " size = " +size);        
     }    
     
+    //Size should encompass the fromIndex and toIndex 
+    protected final void rangeCheckBound(long fromIndex, long toIndex, long size) {
+        if (fromIndex < 0)
+            throw new IndexOutOfBoundsException("fromIndex is less than zero " + fromIndex);
+        if (toIndex > size)
+            throw new IndexOutOfBoundsException("toIndex is greater than size, toIndex = " + toIndex + " size = " +size);
+        if (fromIndex > toIndex)
+            throw new IllegalArgumentException("fromIndex(" + fromIndex +
+                                               ") > toIndex(" + toIndex + ")");
+    }
+    
     private Optional<Class<?>> getPrimitiveArrayObject(Object object)
     {
         /* Check if the given object is an array. */
@@ -167,21 +190,48 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     }
     
     //for why we use 16, refer to https://mail.openjdk.org/pipermail/panama-dev/2021-November/015852.html 
-    public void put(A array, long offset)
+    public void copyFrom(A array, long offset)
     {
         int length = getPrimitiveArrayLength(array);
         rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
         copyMemory(array, 16, null, address(), toAmountBytes(length));
     }
     
-    public void get(A array, long offset)
+    public void copyFrom(M m)
+    {
+        long cap = min(m.capacity(), capacity());
+        copyMemory(null, m.address(), null, address(), toAmountBytes(cap));
+    }
+    
+    public void copyTo(A array, long offset)
     {
         int length = getPrimitiveArrayLength(array);
         rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
         copyMemory(null, address(), array, 16, toAmountBytes(length));
     }
+    
+    public M copy()
+    {
+        M m = copyStateSize();
+        copyMemory(null, address(), null, m.address(), capacityBytes);
+        return m;
+    }
+    
+    public final void setArrayCapacityLimitString(int capacity)
+    {
+        if(capacity < 0)
+            throw new UnsupportedOperationException("capacity is less than zero");
+        this.arrayCapacityLimitString = capacity;
+    }
+    
+    public final boolean equalSize(M memory)
+    {
+        return capacity() == memory.capacity();
+    }
         
+    protected abstract M copyStateSize();
     public abstract void dispose();
     public abstract int sizeOf();
-    public abstract M getMemory(long offset);
+    public abstract M offsetMemory(long offset);
+    public abstract String getString(long start, long end);
 }
