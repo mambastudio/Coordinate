@@ -137,6 +137,11 @@ public abstract class TriangleShape<
             return false;
     }
     
+    public boolean triangleBoxIntersection(AlignedBBoxShape<S, V, R, ?> aabb)
+    {
+        return triangleBoxIntersection(aabb.getCenter(), aabb.getHalfExtents(), getP1(), getP2(), getP3());
+    }
+    
     /**
      * 
      * @param boxcenter
