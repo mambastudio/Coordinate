@@ -9,8 +9,11 @@ package basic;
 import coordinate.unsafe.UnsafeByteBuffer;
 import java.util.Arrays;
 import coordinate.memory.NativeInteger;
+import coordinate.memory.NativeObject;
+import coordinate.memory.NativeObject.Element;
 import coordinate.memory.functions.ParallelNative;
 import coordinate.memory.functions.SerialNative;
+import java.nio.ByteBuffer;
 
 /**
  *
@@ -19,7 +22,7 @@ import coordinate.memory.functions.SerialNative;
 public class TestUnsafe {
     public static void main(String... string)
     {
-        test7();
+        test8();
     }
     
     public static void test1()
@@ -104,5 +107,60 @@ public class TestUnsafe {
         System.out.println(n);
         ParallelNative.sort(n, (a, b) -> a > b);
         System.out.println(n);
+    }
+    
+    public static void test8()
+    {
+        NativeObject<Josto> n = new NativeObject(Josto.class, 3);
+        n.set(0, new Josto(3, 3));
+        n.set(1, new Josto(13, 25));
+        n.set(2, new Josto());
+        Josto josto = n.get(2);
+        System.out.println(josto);
+    }
+    
+    public static class Josto implements Element<Josto>
+    {
+        int a, b;
+        
+        public Josto()
+        {
+            a = b = 0;
+        }
+        
+        public Josto(int a, int b)
+        {
+            this.a = a; this.b = b;
+        }
+        
+        @Override
+        public int sizeOf() {
+            return 8;
+        }
+
+        @Override
+        public byte[] getBytes() {
+            ByteBuffer buf = ByteBuffer.allocate(sizeOf());
+            buf.putInt(a);
+            buf.putInt(b);
+            return buf.array();
+        }
+
+        @Override
+        public void putBytes(byte[] bytes) {
+            ByteBuffer buf = ByteBuffer.wrap(bytes);
+            a = buf.getInt();
+            b = buf.getInt();
+        }
+
+        @Override
+        public Josto newInstance() {
+            return new Josto();
+        }
+        
+        @Override
+        public final String toString() {
+            return String.format("(%3d, %3d)", a, b);
+        }
     }
 }

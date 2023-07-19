@@ -19,11 +19,10 @@ import java.util.logging.Logger;
  */
 public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<T>, byte[]>{
     private T t;
-    private final Class<T> clazz;
     
     public NativeObject(Class<T> clazz, long capacity)
     {
-        super(capacity);
+        super(clazz, capacity);
         this.clazz = clazz;
     }
     
@@ -73,30 +72,33 @@ public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<
     
     public Class<T> getClazz()
     {
-        return clazz;
+        return (Class<T>) clazz;
     }
     
     public T get(long offset)
     {
         rangeCheck(offset, capacity());
-        T t = newInstance();
+        T element = newInstance();
         byte[] b = new byte[sizeOf()];
-        this.copyFrom(b, offset);
-        t.putBytes(b);
-        return t;
+        this.copyTo(b, offset);
+        element.putBytes(b);
+        return element;
     }
     
-    public void set(long index, T t)
+    public void set(long offset, T t)
     {
-        
+        rangeCheck(offset, capacity());
+        byte[] b = t.getBytes();
+        this.copyFrom(b, offset);
     }
     
     private T newInstance()
     {
         if(t == null)
         {
-            try {
-                return clazz.newInstance();
+            try {                
+                t = (T) clazz.newInstance();
+                return (T) t.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
                 Logger.getLogger(NativeObject.class.getName()).log(Level.SEVERE, null, ex);
             }

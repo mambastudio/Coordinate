@@ -29,6 +29,8 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     protected long capacityBytes; 
     
     protected int arrayCapacityLimitString = 400;
+    
+    protected Class<?> clazz = null;
         
     //buffer fields
     protected static final Field addressField, capacityField;
@@ -46,6 +48,17 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     protected MemoryAddress(long capacity)
     {
+        if(capacity < 0)
+            throw new UnsupportedOperationException("capacity is less than zero");
+        this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));
+        this.capacityBytes = toAmountBytes(capacity);
+        
+        initSweeper();
+    }
+    
+    protected MemoryAddress(Class<?> clazz, long capacity)
+    {
+        this.clazz = clazz;
         if(capacity < 0)
             throw new UnsupportedOperationException("capacity is less than zero");
         this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));
@@ -115,12 +128,12 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         m.capacityBytes = tempCapacityBytes;
     }
         
-    public final ByteBuffer getDirectIntBuffer()
+    public final ByteBuffer getDirectByteBuffer()
     {
-        return getDirectIntBuffer(0, 1);
+        return MemoryAddress.this.getDirectByteBuffer(0, 1);
     }
     
-    public final ByteBuffer getDirectIntBuffer(int offset, int capacity)
+    public final ByteBuffer getDirectByteBuffer(int offset, int capacity)
     {
         rangeCheck(toAmountBytes(offset) + toAmountBytes(capacity) - 1, this.capacityBytes);
         ByteBuffer bb = ByteBuffer.allocateDirect((int) toAmountBytes(capacity)).order(ByteOrder.nativeOrder());
@@ -192,22 +205,43 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     //for why we use 16, refer to https://mail.openjdk.org/pipermail/panama-dev/2021-November/015852.html 
     public void copyFrom(A array, long offset)
     {
-        int length = getPrimitiveArrayLength(array);
-        rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
-        copyMemory(array, 16, null, address(), toAmountBytes(length));
+        if(clazz == null)
+        {
+            int length = getPrimitiveArrayLength(array);
+            rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array            
+            copyMemory(array, 16, null, address() + toAmountBytes(offset), toAmountBytes(length));
+        }
+        else
+        {   //we are dealing with objects encoded in bytes therefore array is in bytes
+            int length = getPrimitiveArrayLength(array);
+            rangeCheck(offset + length-1, capacityBytes); //check array copy within bounds for this native array
+            copyMemory(array, 16, null, address() + toAmountBytes(offset), length);
+        }
     }
     
     public void copyFrom(M m)
     {
-        long cap = min(m.capacity(), capacity());
-        copyMemory(null, m.address(), null, address(), toAmountBytes(cap));
+        if(clazz == null)
+        {
+            long cap = min(m.capacity(), capacity());
+            copyMemory(null, m.address(), null, address(), toAmountBytes(cap));
+        }
     }
     
     public void copyTo(A array, long offset)
     {
-        int length = getPrimitiveArrayLength(array);
-        rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
-        copyMemory(null, address(), array, 16, toAmountBytes(length));
+        if(clazz == null)
+        {
+            int length = getPrimitiveArrayLength(array);
+            rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
+            copyMemory(null, address() + toAmountBytes(offset), array, 16, toAmountBytes(length));
+        }
+        else
+        {   //we are dealing with objects encoded in bytes therefore array is in bytes
+            int length = getPrimitiveArrayLength(array);            
+            rangeCheck(offset + length-1, capacityBytes); //check array copy within bounds for this native array
+            copyMemory(null, address() + toAmountBytes(offset), array, 16, length);
+        }
     }
     
     public M copy()
