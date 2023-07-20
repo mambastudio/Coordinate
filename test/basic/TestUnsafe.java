@@ -115,8 +115,8 @@ public class TestUnsafe {
         n.set(0, new Josto(3, 3));
         n.set(1, new Josto(13, 25));
         n.set(2, new Josto());
-        Josto josto = n.get(2);
-        System.out.println(josto);
+        Josto josto = n.get(1);
+        System.out.println(n);
     }
     
     public static class Josto implements Element<Josto>

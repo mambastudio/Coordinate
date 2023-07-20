@@ -108,6 +108,15 @@ public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<
             return (T) t.newInstance();
     }
     
+    @Override
+    public String toString()
+    {
+        if(capacity() > arrayCapacityLimitString)
+            return getString(0, arrayCapacityLimitString);
+        else
+            return getString(0, capacity());
+    }
+    
     public static interface Element<E extends Element<E>>
     {
         public int sizeOf();
