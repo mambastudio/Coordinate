@@ -111,11 +111,7 @@ public class TestUnsafe {
     
     public static void test8()
     {
-        NativeObject<Josto> n = new NativeObject(Josto.class, 3);
-        n.set(0, new Josto(3, 3));
-        n.set(1, new Josto(13, 25));
-        n.set(2, new Josto());
-        Josto josto = n.get(1);
+        NativeObject<Josto> n = new NativeObject(Josto.class, 113).fill(new Josto(1, 13));        
         System.out.println(n);
     }
     
@@ -160,7 +156,12 @@ public class TestUnsafe {
         
         @Override
         public final String toString() {
-            return String.format("(%3d, %3d)", a, b);
+            return String.format("(%1d, %1d)", a, b);
+        }
+
+        @Override
+        public Josto copy() {
+            return new Josto(a, b);
         }
     }
 }

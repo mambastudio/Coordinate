@@ -96,7 +96,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         Sweeper.getSweeper().register(this, ()->dispose());
     }
         
-    protected long toAmountBytes(long amount)
+    protected final long toAmountBytes(long amount)
     {
         return amount * sizeOf();
     }

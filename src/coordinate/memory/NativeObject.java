@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @author jmburu
  * @param <T>
  */
-public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<T>, byte[]>{
+public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObject<T>, byte[]>{
     private T t;
     
     public NativeObject(Class<T> clazz, long capacity)
@@ -54,6 +54,12 @@ public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<
     public NativeObject<T> offsetMemory(long offset) {
         rangeCheck(offset, capacity());
         return new NativeObject(this, offset);
+    }
+    
+    public NativeObject<T> fill(T t) {
+        for (long i = 0, len = capacity(); i < len; i++)
+            set(i, t.copy());
+        return this;
     }
 
     @Override
@@ -98,14 +104,14 @@ public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<
         {
             try {                
                 t = (T) clazz.newInstance();
-                return (T) t.newInstance();
+                return t.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
                 Logger.getLogger(NativeObject.class.getName()).log(Level.SEVERE, null, ex);
             }
             throw new UnsupportedOperationException("unable to create new instance");
         }
         else
-            return (T) t.newInstance();
+            return t.newInstance();
     }
     
     @Override
@@ -123,5 +129,6 @@ public class NativeObject<T extends Element> extends MemoryAddress<NativeObject<
         public byte[] getBytes();
         public void putBytes(byte[] bytes);
         public E newInstance();
+        public E copy();
     }
 }
