@@ -6,6 +6,7 @@
 package coordinate.memory;
 
 import coordinate.memory.NativeObject.Element;
+import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -37,8 +38,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
     }
 
     @Override
-    public void dispose() {
-        System.out.println("native array garbage collected");
+    public void dispose() {        
         if(address()!=0)
             getUnsafe().freeMemory(address());
     }
@@ -121,6 +121,28 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
             return getString(0, arrayCapacityLimitString);
         else
             return getString(0, capacity());
+    }
+
+
+    @Override
+    public void resize(long capacity) {
+        rangeAboveZero(capacity);               
+        if(capacity < capacity())     
+        {
+            NativeObject<T> n = new NativeObject(clazz, capacity);
+            copyMemory(null, address(), null, n.address(), toAmountBytes(capacity));
+            dispose();
+            this.address = n.address;
+            this.capacityBytes = n.capacityBytes;
+        }        
+        else
+        {
+            NativeObject<T> n = new NativeObject(clazz, capacity).fill(newInstance());
+            copyMemory(null, address(), null, n.address(), capacityBytes);
+            dispose();
+            this.address = n.address;
+            this.capacityBytes = n.capacityBytes;
+        }  
     }
     
     public static interface Element<E extends Element<E>>

@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 public class TestUnsafe {
     public static void main(String... string)
     {
-        test8();
+        test9();
     }
     
     public static void test1()
@@ -109,10 +109,27 @@ public class TestUnsafe {
         System.out.println(n);
     }
     
+    //native object
     public static void test8()
     {
         NativeObject<Josto> n = new NativeObject(Josto.class, 113).fill(new Josto(1, 13));        
         System.out.println(n);
+    }
+    
+    //resize
+    public static void test9()
+    {
+        NativeInteger n = new NativeInteger(10).fillRandomRange(0, 5);
+        System.out.println(n);
+        n.resize(20);
+        System.out.println(n);
+        
+        NativeObject<Josto> j = new NativeObject(Josto.class, 5);
+        j.fill(new Josto(13, 3));
+        System.out.println(j);
+        j.resize(3);
+        System.out.println(j);
+        
     }
     
     public static class Josto implements Element<Josto>

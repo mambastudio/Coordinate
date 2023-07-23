@@ -147,6 +147,12 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         return bb;
     }
     
+    protected final void rangeAboveZero(long index)
+    {
+        if (index < 1)
+            throw new IndexOutOfBoundsException("index out of bound " +index);
+    }
+    
     //Size should encompass the fromIndex and toIndex 
     protected final void rangeCheck(long offset, long size) {
         if (offset < 0)
@@ -220,13 +226,17 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     }
     
     public void copyFrom(M m)
-    {
-        if(clazz == null)
-        {
-            long cap = min(m.capacity(), capacity());
-            copyMemory(null, m.address(), null, address(), toAmountBytes(cap));
-        }
+    {       
+        long cap = min(m.capacity(), capacity());
+        copyMemory(null, m.address(), null, address(), toAmountBytes(cap));       
     }
+    
+    public void copyTo(M m)
+    {       
+        long cap = min(m.capacity(), capacity());
+        copyMemory(null, address(), null, m.address(), toAmountBytes(cap));       
+    }
+    
     
     public void copyTo(A array, long offset)
     {
@@ -262,10 +272,12 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     {
         return capacity() == memory.capacity();
     }
-        
+    
+    public abstract void resize(long capacity);      
     protected abstract M copyStateSize();
     public abstract void dispose();
     public abstract int sizeOf();
     public abstract M offsetMemory(long offset);
     public abstract String getString(long start, long end);
+    
 }

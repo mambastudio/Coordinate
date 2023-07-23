@@ -30,9 +30,9 @@ public class ParallelNative {
         return input;
     }
     
-    public static void reduce(NativeInteger input)
+    public static int reduce(NativeInteger input)
     {
-        SerialNative.reduce(input);
+        return SerialNative.reduce(input);
     }
     
     public static int exclusiveScan(NativeInteger input)

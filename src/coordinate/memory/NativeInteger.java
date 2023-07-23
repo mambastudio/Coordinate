@@ -5,6 +5,7 @@
  */
 package coordinate.memory;
 
+import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,8 +35,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
      
     @Override
     public void dispose()
-    {
-        System.out.println("native array garbage collected");
+    {        
         if(address()!=0)
             getUnsafe().freeMemory(address());
     }
@@ -112,5 +112,26 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
     @Override
     protected final NativeInteger copyStateSize() {
         return new NativeInteger(capacity());
+    }
+
+    @Override
+    public void resize(long capacity) {
+        rangeAboveZero(capacity);               
+        if(capacity < capacity())     
+        {
+            NativeInteger n = new NativeInteger(capacity);
+            copyMemory(null, address(), null, n.address(), toAmountBytes(capacity));
+            dispose();
+            this.address = n.address;
+            this.capacityBytes = n.capacityBytes;
+        }        
+        else
+        {
+            NativeInteger n = new NativeInteger(capacity).fill(0);
+            copyMemory(null, address(), null, n.address(), capacityBytes);
+            dispose();
+            this.address = n.address;
+            this.capacityBytes = n.capacityBytes;
+        }
     }
 }
