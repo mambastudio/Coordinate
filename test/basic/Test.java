@@ -21,7 +21,8 @@ public class Test {
         System.out.println("pow 2: " +next_log2(n));
         System.out.println(log2(n));
         
-        System.out.println(round_up(5.1f, 2));
+        System.out.println(next_multipleof(18, 12));
+        System.out.println(next_multipleof(1, 12));
     }
     
     //log2
@@ -42,9 +43,17 @@ public class Test {
     {
         return log2(next_pow2(size));        
     }
-    
-    public static long round_up(float numToRound, long multiple) 
+        
+    public static long previous_multipleof(long numToRound, long multiple) 
     {
-        return ((long)numToRound + multiple - 1) & -multiple;
+        return next_multipleof(numToRound, multiple) - multiple;
+    }
+    
+    //https://stackoverflow.com/questions/3407012/rounding-up-to-the-nearest-multiple-of-a-number
+    public static long next_multipleof(long numToRound, long multiple)
+    {
+        if(multiple == 0 )
+            throw new UnsupportedOperationException("multiple should not be zero");
+        return ((numToRound + multiple - 1) / multiple) * multiple;
     }
 }
