@@ -86,7 +86,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
         rangeCheck(offset, capacity());
         T element = newInstance();
         byte[] b = new byte[sizeOf()];
-        this.copyTo(b, offset);
+        this.copyToArr(b, offset, 1);
         element.putBytes(b);
         return element;
     }
@@ -95,7 +95,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
     {
         rangeCheck(offset, capacity());
         byte[] b = t.getBytes();
-        this.copyFrom(b, offset);
+        this.copyFromArr(b, offset, 1);
     }
     
     private T newInstance()

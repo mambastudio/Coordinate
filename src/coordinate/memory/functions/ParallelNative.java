@@ -6,8 +6,12 @@
 package coordinate.memory.functions;
 
 import coordinate.memory.NativeInteger;
+import coordinate.memory.NativeObject;
+import coordinate.memory.NativeObject.Element;
+import coordinate.utility.RangeCheck;
 import static java.lang.Math.min;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.LongStream;
 
@@ -22,12 +26,37 @@ public class ParallelNative {
     
     public static NativeInteger transform(NativeInteger input, IntFunction<Integer> function)
     {
-        LongStream.range(0, input.capacity())
+        transform(input, function, input.capacity(), input);
+        return input;
+    }
+    
+    public static NativeInteger transform(NativeInteger input, IntFunction<Integer> function, long n, NativeInteger output)
+    {
+        RangeCheck.rangeCheckBound(0, n, input.capacity());
+        RangeCheck.rangeCheckBound(0, n, output.capacity());
+        LongStream.range(0, n)
                 .parallel()
                 .forEach(i->{
-                    input.set(i, function.apply(input.get(i)));                    
+                    output.set(i, function.apply(input.get(i)));                    
                 });
-        return input;
+        return output;
+    }
+    
+    public static<T extends Element<T>> NativeInteger transform(NativeObject<T> input, Function<T, Integer> function)
+    {
+        return transform(input, function, input.capacity(), new NativeInteger(input.capacity()));
+    }
+    
+    public static<T extends Element<T>> NativeInteger transform(NativeObject<T> input, Function<T, Integer> function, long n, NativeInteger output)
+    {
+        RangeCheck.rangeCheckBound(0, n, input.capacity());
+        RangeCheck.rangeCheckBound(0, n, output.capacity());
+        LongStream.range(0, n)
+                .parallel()
+                .forEach(i->{
+                    output.set(i, function.apply(input.get(i)));                    
+                });
+        return output;
     }
     
     public static int reduce(NativeInteger input)
@@ -39,8 +68,13 @@ public class ParallelNative {
     {
         NativeInteger output = new NativeInteger(input.capacity());
         int total = exclusiveScan(input, output);
-        input.copyFrom(output);
+        input.copyFromMem(output);
         return total;
+    }
+    
+    public static int exclusiveScan(NativeInteger input, int n, NativeInteger output)
+    {
+        return SerialNative.exclusiveScan(input, n, output);
     }
     
     public static int exclusiveScan(NativeInteger input, NativeInteger output)

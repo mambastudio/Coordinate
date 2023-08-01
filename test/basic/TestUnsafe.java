@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 public class TestUnsafe {
     public static void main(String... string)
     {
-        test9();
+        test10();
     }
     
     public static void test1()
@@ -42,10 +42,10 @@ public class TestUnsafe {
         int[] src2 = new int[]{5, 4, 3, 2, 1};
         
         NativeInteger n1 = new NativeInteger(5);
-        n1.copyFrom(src1, 0);
+        n1.copyFromArr(src1, 0, src1.length);
         
         NativeInteger n2 = new NativeInteger(5);
-        n2.copyFrom(src2, 0);
+        n2.copyFromArr(src2, 0, src2.length);
         
         n1.swap(n2);
      
@@ -130,6 +130,20 @@ public class TestUnsafe {
         j.resize(3);
         System.out.println(j);
         
+    }
+    
+    //memory copy
+    public static void test10()
+    {
+        NativeInteger n1 = new NativeInteger(10).fillRandomRange(0, 5);
+        System.out.println(n1);
+        NativeInteger n2 = new NativeInteger(10);
+        n1.copyToMem(n2);
+        System.out.println(n2);
+        
+        System.out.println(n1.address());
+        n1.dispose();
+        System.out.println(n1);
     }
     
     public static class Josto implements Element<Josto>

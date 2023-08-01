@@ -14,10 +14,10 @@ import java.util.logging.Logger;
 /**
  *
  * @author user
- * 
- * Cleaner like class for post garbage collection calls (like freeing native memory)
- * 
- * Shamelessly borrowed from JNA
+ *  
+ * Sweeper - Cleaner-like class for post-garbage collection calls (like freeing native memory)
+ * Inspired by JNA (Java Native Access) - https://github.com/java-native-access/jna
+ * Original Sweeper implementation from JNA: https://github.com/java-native-access/jna/blob/master/src/com/sun/jna/internal/Cleaner.java
  * 
  */
 public class Sweeper {

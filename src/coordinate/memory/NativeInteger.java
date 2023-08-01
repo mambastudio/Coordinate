@@ -83,7 +83,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         long cap = end - start;
         rangeCheckBound(start, end, arrayCapacityLimitString);
         int[] arr = new int[(int)cap];
-        copyTo(arr, start);
+        copyToArr(arr, start, end - start);
         return Arrays.toString(arr);
     }
     

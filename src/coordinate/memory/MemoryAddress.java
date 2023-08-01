@@ -7,6 +7,7 @@ package coordinate.memory;
 
 import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
+import coordinate.utility.RangeCheck;
 import coordinate.utility.Sweeper;
 import static java.lang.Math.min;
 import java.lang.reflect.Field;
@@ -208,49 +209,67 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         throw new UnsupportedOperationException("primitive array not supported yet");
     }
     
+    public void copyFromMem(M m)
+    {       
+        copyFromMem(m, m.capacity());
+    }
+    
+    public void copyFromMem(M m, long n)
+    {       
+        RangeCheck.rangeCheckBound(0, n, m.capacity());
+        RangeCheck.rangeCheckBound(0, n, capacity());
+        long cap = min(min(m.capacity(), capacity()), n);
+        copyMemory(null, m.address(), null, address(), toAmountBytes(cap));       
+    }
+    
+    public void copyToMem(M m)
+    {       
+        copyToMem(m, m.capacity());
+    }
+    
+    public void copyToMem(M m, long n)
+    {       
+        RangeCheck.rangeCheckBound(0, n, m.capacity());
+        RangeCheck.rangeCheckBound(0, n, capacity());
+        long cap = min(min(m.capacity(), capacity()), n);
+        copyMemory(null, address(), null, m.address(), toAmountBytes(cap));       
+    }
+    
     //for why we use 16, refer to https://mail.openjdk.org/pipermail/panama-dev/2021-November/015852.html 
-    public void copyFrom(A array, long offset)
+    public void copyToArr(A array, long offset, long n)
+    {
+        if(clazz == null)
+        {            
+            int length = getPrimitiveArrayLength(array);
+            RangeCheck.rangeCheckBound(offset, offset + n, capacity()); //range in native memory?
+            RangeCheck.rangeCheckBound(     0,          n, length);     //range in array?
+            copyMemory(null, address() + toAmountBytes(offset), array, 16, toAmountBytes(n));
+        }
+        else
+        {   //we are dealing with objects encoded in bytes therefore array is in bytes
+            int length = getPrimitiveArrayLength(array);    
+            RangeCheck.rangeCheckBound(toAmountBytes(offset), toAmountBytes(offset + n), capacityBytes);//range in native memory?
+            RangeCheck.rangeCheckBound(                    0,          toAmountBytes(n), length);       //range in array?
+            copyMemory(null, address() + toAmountBytes(offset), array, 16, length);
+        }
+    }
+    
+    //for why we use 16, refer to https://mail.openjdk.org/pipermail/panama-dev/2021-November/015852.html 
+    public void copyFromArr(A array, long offset, long n)
     {
         if(clazz == null)
         {
             int length = getPrimitiveArrayLength(array);
-            rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array            
+            RangeCheck.rangeCheckBound(offset, offset + n, capacity());//range in native memory?
+            RangeCheck.rangeCheckBound(     0,          n, length);    //range in array?
             copyMemory(array, 16, null, address() + toAmountBytes(offset), toAmountBytes(length));
         }
         else
         {   //we are dealing with objects encoded in bytes therefore array is in bytes
             int length = getPrimitiveArrayLength(array);
-            rangeCheck(offset + length-1, capacityBytes); //check array copy within bounds for this native array
+            RangeCheck.rangeCheckBound(toAmountBytes(offset), toAmountBytes(offset + n), capacityBytes);//range in native memory?
+            RangeCheck.rangeCheckBound(                    0,          toAmountBytes(n), length);       //range in array?
             copyMemory(array, 16, null, address() + toAmountBytes(offset), length);
-        }
-    }
-    
-    public void copyFrom(M m)
-    {       
-        long cap = min(m.capacity(), capacity());
-        copyMemory(null, m.address(), null, address(), toAmountBytes(cap));       
-    }
-    
-    public void copyTo(M m)
-    {       
-        long cap = min(m.capacity(), capacity());
-        copyMemory(null, address(), null, m.address(), toAmountBytes(cap));       
-    }
-    
-    
-    public void copyTo(A array, long offset)
-    {
-        if(clazz == null)
-        {
-            int length = getPrimitiveArrayLength(array);
-            rangeCheck(offset + length-1, capacity()); //check array copy within bounds for this native array
-            copyMemory(null, address() + toAmountBytes(offset), array, 16, toAmountBytes(length));
-        }
-        else
-        {   //we are dealing with objects encoded in bytes therefore array is in bytes
-            int length = getPrimitiveArrayLength(array);            
-            rangeCheck(offset + length-1, capacityBytes); //check array copy within bounds for this native array
-            copyMemory(null, address() + toAmountBytes(offset), array, 16, length);
         }
     }
     
