@@ -29,7 +29,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     protected long address;
     protected long capacityBytes; 
     
-    protected int arrayCapacityLimitString = 400;
+    protected int arrayCapacityLimitString = 1000;
     
     protected Class<?> clazz = null;
         
@@ -290,6 +290,13 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     public final boolean equalSize(M memory)
     {
         return capacity() == memory.capacity();
+    }
+    
+    public final boolean isSame(M memory)
+    {
+        if(address == 0 || memory.address == 0)
+            return false;
+        return address == memory.address && capacityBytes == memory.capacityBytes;
     }
     
     public abstract void resize(long capacity);      

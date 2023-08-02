@@ -9,6 +9,7 @@ import coordinate.memory.NativeInteger;
 import coordinate.memory.NativeObject;
 import coordinate.memory.NativeObject.Element;
 import coordinate.utility.RangeCheck;
+import coordinate.utility.Utility;
 import static java.lang.Math.min;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -107,16 +108,31 @@ public class ParallelNative {
         return st1;
     }
     
-    //Parallel Butterfly Sorting Algorithm on GPU by Bilal et al    
-    public static void sort_pair(NativeInteger keys, NativeInteger values, BiPredicate<Integer, Integer> op)
+    //Parallel Butterfly Sorting Algorithm on GPU by Bilal et al
+    public static void sort_pair(
+            NativeInteger keys,     NativeInteger values, 
+            NativeInteger keysOut,  NativeInteger valuesOut, 
+            long n,
+            BiPredicate<Integer, Integer> op)
     {
-        long radix  = 2;
-        long toIndex = min(keys.capacity(), values.capacity());
-        long until = until(toIndex);
-        long sizeList = toIndex;
-        long T = (long) (Math.pow(radix, until)/radix);//data.length/radix if n is power of 2;
+        RangeCheck.rangeCheckBound(0, keys.capacity(), n);
+        RangeCheck.rangeCheckBound(0, values.capacity(), n);
+        RangeCheck.rangeCheckBound(0, keysOut.capacity(), n);
+        RangeCheck.rangeCheckBound(0, valuesOut.capacity(), n);
         
-        for(long xout = 1; xout<=until; xout++)
+        //transfer copy to memory
+        if(!keys.isSame(keysOut))
+            keys.copyToMem(keysOut, n);
+        if(!values.isSame(valuesOut))
+            values.copyToMem(valuesOut, n);
+        
+        long radix  = 2;
+        long toIndex = n;
+        long next_log2 = Utility.next_log2(toIndex);        
+        long sizeList = toIndex;
+        long T = (long) (Math.pow(radix, next_log2)/radix);//data.length/radix if n is power of 2;
+        
+        for(long xout = 1; xout<=next_log2; xout++)
         {            
             double[] PowerX = new double[]{Math.pow(radix, xout)};
             LongStream.range(0, T)
@@ -135,10 +151,10 @@ public class ParallelNative {
                         if(!isInRange(PosEnd, 0, toIndex)) 
                             return;
                         
-                        if(op.test(keys.get(PosStart), keys.get(PosEnd)))
+                        if(op.test(keysOut.get(PosStart), keysOut.get(PosEnd)))
                         {
-                            keys.swapElement(PosStart, PosEnd);
-                            values.swapElement(PosStart, PosEnd);
+                            keysOut.swapElement(PosStart, PosEnd);
+                            valuesOut.swapElement(PosStart, PosEnd);
                         }
                     });
             if(xout > 1)
@@ -162,15 +178,24 @@ public class ParallelNative {
                             if(!isInRange(PosEnd, 0, toIndex)) 
                                 return;
 
-                            if(op.test(keys.get(PosStart), keys.get(PosEnd)))
+                            if(op.test(keysOut.get(PosStart), keysOut.get(PosEnd)))
                             {
-                                keys.swapElement(PosStart, PosEnd);
-                                values.swapElement(PosStart, PosEnd);
+                                keysOut.swapElement(PosStart, PosEnd);
+                                valuesOut.swapElement(PosStart, PosEnd);
                             }
                         });
                 }
             }                    
         }
+    }
+        
+    public static void sort_pair(NativeInteger keys, NativeInteger values, BiPredicate<Integer, Integer> op)
+    {
+        RangeCheck.rangeAboveZero(keys.capacity());
+        RangeCheck.rangeAboveZero(values.capacity());
+        
+        long n = min(keys.capacity(), values.capacity());
+        sort_pair(keys, values, keys, values, n, op);
     }
     
     //Parallel Butterfly Sorting Algorithm on GPU by Bilal et al    
@@ -178,11 +203,11 @@ public class ParallelNative {
     {
         long radix  = 2;
         long toIndex = input.capacity();
-        long until = until(toIndex);
+        long next_log2 = Utility.next_log2(toIndex);
         long sizeList = toIndex;
-        long T = (long) (Math.pow(radix, until)/radix);//data.length/radix if n is power of 2;
+        long T = (long) (Math.pow(radix, next_log2)/radix);//data.length/radix if n is power of 2;
         
-        for(long xout = 1; xout<=until; xout++)
+        for(long xout = 1; xout<=next_log2; xout++)
         {            
             double[] PowerX = new double[]{Math.pow(radix, xout)};
             LongStream.range(0, T)
@@ -236,24 +261,7 @@ public class ParallelNative {
             }                    
         }
     }
-    
-    private static long until(long size)
-    {
-        long log2 = log2nlz(size);
-        long difference = (long) (Math.pow(2, log2) - size);
-
-        if(difference == 0) return log2;
-        else                return log2+1;
-    }
-    
-    //log2
-    private static long log2nlz(long bits )
-    {
-        if( bits == 0 )
-            throw new UnsupportedOperationException("value should be zero");
-        return 63 - Long.numberOfLeadingZeros( bits );
-    }
-    
+        
     //toIndex is exclusive
     protected static final boolean isInRange(long index, long fromIndex, long toIndex)
     {

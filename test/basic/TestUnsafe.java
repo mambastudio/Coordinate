@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 public class TestUnsafe {
     public static void main(String... string)
     {
-        test10();
+        test11();
     }
     
     public static void test1()
@@ -144,6 +144,19 @@ public class TestUnsafe {
         System.out.println(n1.address());
         n1.dispose();
         System.out.println(n1);
+    }
+    
+    //sort_pair
+    public static void test11()
+    {
+        NativeInteger n1 = new NativeInteger(1000).fillRandomRange(0, 5);
+        NativeInteger n2 = new NativeInteger(1000).fillRandomRange(0, 1);
+        System.out.println("key  " +n1);
+        System.out.println("value" +n2);
+        System.out.println("After sorting");
+        ParallelNative.sort_pair(n1, n2, (a, b)-> a>b);
+        System.out.println("key  " +n1);
+        System.out.println("value" +n2);
     }
     
     public static class Josto implements Element<Josto>

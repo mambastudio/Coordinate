@@ -301,4 +301,35 @@ public class Utility {
         return mis(aSamplePdf) / (mis(aSamplePdf) + mis(aOtherPdf));
     }
 
+    //log2
+    public static long log2(long x )
+    {
+        if( x == 0 )
+            throw new UnsupportedOperationException("value should be zero");
+        return 63 - Long.numberOfLeadingZeros( x );
+    }
+    
+    //https://jameshfisher.com/2018/03/30/round-up-power-2/ 
+    public static long next_pow2(long x)
+    {                
+        return x == 1 ? 1 : 1<<(64 - Long.numberOfLeadingZeros(x-1));
+    }
+    
+    public static long next_log2(long size)
+    {
+        return log2(next_pow2(size));        
+    }
+        
+    public static long previous_multipleof(long numToRound, long multiple) 
+    {
+        return next_multipleof(numToRound, multiple) - multiple;
+    }
+    
+    //https://stackoverflow.com/questions/3407012/rounding-up-to-the-nearest-multiple-of-a-number
+    public static long next_multipleof(long numToRound, long multiple)
+    {
+        if(multiple == 0 )
+            throw new UnsupportedOperationException("multiple should not be zero");
+        return ((numToRound + multiple - 1) / multiple) * multiple;
+    }
 }

@@ -40,7 +40,10 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
     @Override
     public void dispose() {        
         if(address()!=0)
+        {
             getUnsafe().freeMemory(address());
+            address = 0;
+        }
     }
 
     @Override
