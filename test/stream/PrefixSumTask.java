@@ -5,42 +5,43 @@
  */
 package stream;
 
-import coordinate.memory.NativeInteger;
 import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.RecursiveTask;
 
 /**
  *
- * @author user
+ * @author jmburu
  */
-class PrefixSumTask extends RecursiveAction {
-    private static final int SEQUENTIAL_THRESHOLD = 10000; // Adjust the threshold for parallelism
+public class PrefixSumTask extends RecursiveAction {
+    private static final int THRESHOLD = 4; // Threshold for sequential processing
+    private int[] array;
+    private int[] prefixSum;
+    private int low;
+    private int high;
 
-    private final NativeInteger nativeInteger;
-    private final long start;
-    private final long end;
-
-    public PrefixSumTask(NativeInteger nativeInteger, long start, long end) {
-        this.nativeInteger = nativeInteger;
-        this.start = start;
-        this.end = end;
+    public PrefixSumTask(int[] array, int[] prefixSum, int low, int high) {
+        this.array = array;
+        this.prefixSum = prefixSum;
+        this.low = low;
+        this.high = high;
     }
 
     @Override
     protected void compute() {
-        if (end - start <= SEQUENTIAL_THRESHOLD) {
-            for (long i = start + 1; i <= end; i++) {
-                int prevValue = nativeInteger.get(i - 1);
-                nativeInteger.set(i, prevValue + nativeInteger.get(i));
+        if (high - low <= THRESHOLD) {
+            for (int i = low + 1; i < high; i++) {
+                prefixSum[i] = array[i - 1] + ((i == low + 1) ? 0 : prefixSum[i - 1]);
             }
         } else {
-            long middle = (start + end) / 2;
-
-            PrefixSumTask leftTask = new PrefixSumTask(nativeInteger, start, middle);
-            PrefixSumTask rightTask = new PrefixSumTask(nativeInteger, middle + 1, end);
+            int mid = (low + high) / 2;
+            PrefixSumTask leftTask = new PrefixSumTask(array, prefixSum, low, mid);
+            PrefixSumTask rightTask = new PrefixSumTask(array, prefixSum, mid, high);
 
             invokeAll(leftTask, rightTask);
 
-            nativeInteger.set(end, nativeInteger.get(start + middle) + nativeInteger.get(end));
+            if (mid > 0) {
+                prefixSum[mid] += prefixSum[mid - 1];
+            }
         }
     }
 }
