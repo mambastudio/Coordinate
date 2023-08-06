@@ -15,6 +15,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  *
@@ -58,6 +60,11 @@ public class ParallelNative {
                     output.set(i, function.apply(input.get(i)));                    
                 });
         return output;
+    }
+    
+    public static Stream<Integer> streamInteger(NativeInteger nativeInteger)
+    {
+        return StreamSupport.stream(new NativeIntegerSpliterator(nativeInteger), true);
     }
     
     public static int reduce(NativeInteger input)

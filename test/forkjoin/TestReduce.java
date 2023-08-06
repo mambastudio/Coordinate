@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package stream;
+package forkjoin;
 
 import coordinate.memory.NativeInteger;
+import coordinate.memory.functions.NativeIntegerSpliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -17,8 +18,7 @@ public class TestReduce {
     public static void main(String... args)
     {
         // Assume you have a NativeInteger with 5 elements
-        NativeInteger nativeInteger = new NativeInteger(124922).fill(21);
-        
+        NativeInteger nativeInteger = new NativeInteger(124922).fill(1);        
 
         // Convert the NativeInteger into a Stream and perform reduction
         int sum = convertToStream(nativeInteger)
