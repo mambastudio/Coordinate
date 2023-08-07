@@ -71,11 +71,11 @@ public class SerialNativeAlgorithm implements NativeIntegerAlgorithm{
         
         //for getting the total values for usage below since stx_v is either a 1 or 0
         //invisible bug (SOLVED)
-        final int st1_v = stencil_1.getLast(); 
-        final int st2_v = stencil_2.getLast();
+        final int st1_v = stencil_1.getLast(); //either 1 or 0 to know accurate total
+        final int st2_v = stencil_2.getLast(); //either 1 or 0 to know accurate total
         
-        int st1 = exclusive_scan(stencil_1.copy(), n, stencil_1); 
-        int st2 = exclusive_scan(stencil_2.copy(), n, stencil_2);
+        int st1_total = exclusive_scan(stencil_1.copy(), n, stencil_1); 
+        int st2_total = exclusive_scan(stencil_2.copy(), n, stencil_2);
                       
         LongStream.range(0, n)
                 .parallel()
@@ -87,12 +87,12 @@ public class SerialNativeAlgorithm implements NativeIntegerAlgorithm{
                 .parallel()
                 .forEach(i->{ 
                     if(flags.get(i) == 0)                    
-                        result.set(stencil_2.get(i) + st1 + st1_v, values.get(i));                    
+                        result.set(stencil_2.get(i) + st1_total + st1_v, values.get(i));                    
                 });
-        if((st1 + st1_v + st2 + st2_v) > n)
+        if((st1_total + st1_v + st2_total + st2_v) > n)
             throw new IndexOutOfBoundsException("Issue with partition");    
         
-        return st1;
+        return st1_total;
     }
 
     /**
