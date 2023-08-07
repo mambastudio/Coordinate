@@ -6,7 +6,7 @@
 package forkjoin;
 
 import coordinate.memory.NativeInteger;
-import coordinate.memory.functions.ParallelNative;
+import coordinate.memory.algorithms.ParallelNative;
 
 /**
  *

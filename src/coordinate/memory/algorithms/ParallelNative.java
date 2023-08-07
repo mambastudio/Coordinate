@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.memory.functions;
+package coordinate.memory.algorithms;
 
 import coordinate.memory.NativeInteger;
 import coordinate.memory.NativeObject;

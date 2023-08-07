@@ -6,7 +6,7 @@
 package forkjoin;
 
 import coordinate.memory.NativeInteger;
-import coordinate.memory.functions.NativeIntegerSpliterator;
+import coordinate.memory.algorithms.NativeIntegerSpliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 

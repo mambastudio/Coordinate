@@ -11,8 +11,10 @@ import java.util.Arrays;
 import coordinate.memory.NativeInteger;
 import coordinate.memory.NativeObject;
 import coordinate.memory.NativeObject.Element;
-import coordinate.memory.functions.ParallelNative;
-import coordinate.memory.functions.SerialNative;
+import coordinate.memory.algorithms.NativeIntegerAlgorithm;
+import coordinate.memory.algorithms.ParallelNative;
+import coordinate.memory.algorithms.SerialNative;
+import coordinate.memory.algorithms.SerialNativeAlgorithm;
 import java.nio.ByteBuffer;
 
 /**
@@ -20,9 +22,11 @@ import java.nio.ByteBuffer;
  * @author jmburu
  */
 public class TestUnsafe {
+    static NativeIntegerAlgorithm par = new SerialNativeAlgorithm();
+            
     public static void main(String... string)
     {
-        test11();
+        test6();
     }
     
     public static void test1()
@@ -71,10 +75,10 @@ public class TestUnsafe {
     {
         NativeInteger n = new NativeInteger(10).fillRandomRange(0, 5);
         System.out.println(n);
-        int value = SerialNative.reduce(n);
+        int value = par.reduce(n, n.capacity(), new NativeInteger(1), (a, b) -> a + b);
         System.out.println(value);
         NativeInteger scanned = new NativeInteger(10);
-        SerialNative.exclusiveScan(n, scanned);
+        par.exclusive_scan(n, n.capacity(), scanned);
         System.out.println(scanned);
     }
     
@@ -95,7 +99,8 @@ public class TestUnsafe {
         NativeInteger flags = new NativeInteger(10).fillRandomRange(0, 1);
         System.out.println(flags);
         NativeInteger output = new NativeInteger(10);
-        ParallelNative.partition(n, output, 10, flags);
+       // ParallelNative.partition(n, output, 10, flags);
+        par.partition(n, output, 10, flags);
         System.out.println(output);
         
     }

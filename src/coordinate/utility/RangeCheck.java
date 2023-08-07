@@ -5,6 +5,8 @@
  */
 package coordinate.utility;
 
+import java.math.BigInteger;
+
 /**
  *
  * @author user
@@ -14,6 +16,14 @@ public class RangeCheck {
     {
         if (index < 1)
             throw new IndexOutOfBoundsException("index out of bound " +index);
+    }
+    
+    public static final void rangeIntegerBound(long index)
+    {
+        BigInteger maxInt = BigInteger.valueOf(Integer.MAX_VALUE);
+        BigInteger value = BigInteger.valueOf(index);
+        if(value.compareTo(maxInt) > 0)
+            throw new IndexOutOfBoundsException("long value is greater than Integer.MAX_VALUE " +index);
     }
     
     public static final void rangeNotNegative(long index)
@@ -45,5 +55,11 @@ public class RangeCheck {
         if (fromIndex > toIndex)
             throw new IllegalArgumentException("fromIndex(" + fromIndex +
                                                ") > toIndex(" + toIndex + ")");
+    }
+    
+    public static final boolean isRangeInBound(long index, long fromIndex, long toIndex) {
+        if(index < fromIndex)
+            return false;
+        else return index < toIndex;
     }
 }

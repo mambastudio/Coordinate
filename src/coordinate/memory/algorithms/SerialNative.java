@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package coordinate.memory.functions;
+package coordinate.memory.algorithms;
 
 import coordinate.memory.NativeInteger;
 import coordinate.utility.RangeCheck;
@@ -15,7 +15,7 @@ import coordinate.utility.RangeCheck;
 public class SerialNative {
     public static int exclusiveScan(NativeInteger input, long n, NativeInteger output)
     {
-        RangeCheck.rangeAboveZero(n);
+        RangeCheck.rangeAboveZero(n);        
         RangeCheck.rangeCheckBound(0, n, input.capacity());
         RangeCheck.rangeCheckBound(0, n, output.capacity());
         
