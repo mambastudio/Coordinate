@@ -102,7 +102,7 @@ public class TestUnsafe {
        // ParallelNative.partition(n, output, 10, flags);
         par.partition(n, output, 10, flags);
         System.out.println(output);
-        
+        System.arraycopy(n, 0, n, 0, 0);
     }
     
     //sort
