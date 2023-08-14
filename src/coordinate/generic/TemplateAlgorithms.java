@@ -10,14 +10,31 @@ package coordinate.generic;
  * @author jmburu
  * @param <DataType>
  * @param <DataValues>
+ * @param <DataTransform>
  * @param <DataResults>
+ * @param <DataFlags>
  * @param <FUnary>
  * @param <FBinary>
  */
-public interface TemplateAlgorithms<DataType, DataValues, DataResults, FUnary, FBinary>  {
-    public DataResults transform(DataValues values, FUnary f);
-    public DataType exclusive_scan(DataValues values, long n, DataResults result);
+public interface TemplateAlgorithms<
+        DataType, DataValues, DataResults, DataTransform, DataFlags, 
+        FUnary, FBinary>  {
+       
     public DataType reduce(DataValues values, long n, DataResults result, FBinary f);
-    public DataType partition(DataValues values, DataResults result, long n, DataValues flags);
-    public void sort_pairs(DataValues keys_in, DataValues values_in, DataResults keys_out, DataResults values_out, long n);
+    
+    default DataTransform transform(DataValues values, FUnary f){
+        throw new UnsupportedOperationException("not yet supported");
+    }        
+    default DataType exclusive_scan(DataValues values, long n, DataResults results, FBinary f){
+        throw new UnsupportedOperationException("not yet supported");
+    }        
+    default DataType exclusive_scan(DataValues values, long n, DataResults results){
+        throw new UnsupportedOperationException("not yet supported");
+    }     
+    default DataType partition(DataValues values, DataResults results, long n, DataFlags flags){
+        throw new UnsupportedOperationException("not yet supported");
+    }
+    default void sort_pairs(DataValues keys_in, DataValues values_in, DataResults keys_out, DataResults values_out, long n){
+        throw new UnsupportedOperationException("not yet supported");
+    }
 }

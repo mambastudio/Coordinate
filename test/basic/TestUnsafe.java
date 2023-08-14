@@ -13,8 +13,7 @@ import coordinate.memory.NativeObject;
 import coordinate.memory.NativeObject.Element;
 import coordinate.memory.algorithms.NativeIntegerAlgorithm;
 import coordinate.memory.algorithms.ParallelNative;
-import coordinate.memory.algorithms.SerialNative;
-import coordinate.memory.algorithms.SerialNativeAlgorithm;
+import coordinate.memory.algorithms.SerialNativeIntegerAlgorithm;
 import java.nio.ByteBuffer;
 
 /**
@@ -22,11 +21,11 @@ import java.nio.ByteBuffer;
  * @author jmburu
  */
 public class TestUnsafe {
-    static NativeIntegerAlgorithm par = new SerialNativeAlgorithm();
+    static NativeIntegerAlgorithm par = new SerialNativeIntegerAlgorithm();
             
     public static void main(String... string)
     {
-        test6();
+        test7();
     }
     
     public static void test1()
@@ -98,20 +97,23 @@ public class TestUnsafe {
         System.out.println(n);      
         NativeInteger flags = new NativeInteger(10).fillRandomRange(0, 1);
         System.out.println(flags);
-        NativeInteger output = new NativeInteger(10);
-       // ParallelNative.partition(n, output, 10, flags);
+        NativeInteger output = new NativeInteger(10);       
         par.partition(n, output, 10, flags);
         System.out.println(output);
-        System.arraycopy(n, 0, n, 0, 0);
     }
     
     //sort
     public static void test7()
     {
-        NativeInteger n = new NativeInteger(10).fillRandomRange(0, 5);
-        System.out.println(n);
-        ParallelNative.sort(n, (a, b) -> a > b);
-        System.out.println(n);
+        NativeInteger key = new NativeInteger(10).fillRandomRange(0, 9);
+        NativeInteger value = new NativeInteger(10).fillRandomRange(0, 9);
+        System.out.println(key);
+        System.out.println(value);
+        NativeInteger key_out = new NativeInteger(10);
+        NativeInteger value_out = new NativeInteger(10);
+        par.sort_pairs(key, value, key_out, value_out, 10);
+        System.out.println(key_out);
+        System.out.println(value_out);
     }
     
     //native object

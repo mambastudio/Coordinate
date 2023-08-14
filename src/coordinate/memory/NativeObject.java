@@ -28,7 +28,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
     }
     
     public NativeObject(NativeObject<T> pointer, long offset) {
-        super(pointer, offset);
+        super(pointer.clazz, pointer, offset);
         clazz = pointer.getClazz();
     }
 
@@ -57,6 +57,11 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
     public NativeObject<T> offsetMemory(long offset) {
         rangeCheck(offset, capacity());
         return new NativeObject(this, offset);
+    }
+    
+    public NativeObject<T> offsetMemoryLast()
+    {
+        return offsetMemory(capacity() - 1);
     }
     
     public NativeObject<T> fill(T t) {
@@ -101,12 +106,17 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
         this.copyFromArr(b, offset, 1);
     }
     
+    public T getLast()
+    {
+        return get(capacity()-1);
+    }
+    
     private T newInstance()
     {
         if(t == null)
         {
-            try {                
-                t = (T) clazz.newInstance();
+            try {                           
+                t = (T) clazz.newInstance();                
                 return t.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
                 Logger.getLogger(NativeObject.class.getName()).log(Level.SEVERE, null, ex);

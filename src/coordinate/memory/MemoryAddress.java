@@ -9,7 +9,6 @@ import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
 import coordinate.utility.RangeCheck;
 import coordinate.utility.Sweeper;
-import static java.lang.Math.min;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -85,6 +84,21 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     protected MemoryAddress(M memory, long offset, long capacity)
     {
         this.rangeCheckBound(offset, offset + capacity, memory.capacity());
+        this.address = memory.address + toAmountBytes(offset);
+        this.capacityBytes = toAmountBytes(capacity);
+        
+        initSweeper();
+    }
+    
+    protected MemoryAddress(Class<?> clazz, M memory, long offset)
+    {
+        this(clazz, memory, offset, memory.capacity() - offset);        
+    }
+    
+    protected MemoryAddress(Class<?> clazz, M memory, long offset, long capacity)
+    {
+        this.rangeCheckBound(offset, offset + capacity, memory.capacity());
+        this.clazz = clazz;
         this.address = memory.address + toAmountBytes(offset);
         this.capacityBytes = toAmountBytes(capacity);
         
@@ -216,10 +230,9 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     public void copyFromMem(M m, long n)
     {       
-        RangeCheck.rangeCheckBound(0, n, m.capacity());
-        RangeCheck.rangeCheckBound(0, n, capacity());
-        long cap = min(min(m.capacity(), capacity()), n);
-        copyMemory(null, m.address(), null, address(), toAmountBytes(cap));       
+        RangeCheck.rangeCheckBound(0, m.capacity(), n);
+        RangeCheck.rangeCheckBound(0,   capacity(), n);
+        copyMemory(null, m.address(), null, address(), toAmountBytes(n));       
     }
     
     public void copyToMem(M m)
@@ -229,10 +242,9 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     public void copyToMem(M m, long n)
     {       
-        RangeCheck.rangeCheckBound(0, n, m.capacity());
-        RangeCheck.rangeCheckBound(0, n, capacity());
-        long cap = min(min(m.capacity(), capacity()), n);
-        copyMemory(null, address(), null, m.address(), toAmountBytes(cap));       
+        RangeCheck.rangeCheckBound(0, m.capacity(), n);
+        RangeCheck.rangeCheckBound(0,   capacity(), n);
+        copyMemory(null, address(), null, m.address(), toAmountBytes(n));       
     }
     
     //for why we use 16, refer to https://mail.openjdk.org/pipermail/panama-dev/2021-November/015852.html 
