@@ -134,4 +134,21 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
             this.capacityBytes = n.capacityBytes;
         }
     }
+    
+    public <E extends IntElement<E>> E get(long index, E e)
+    {
+        e.setInt(get(index));
+        return e;
+    }
+    
+    public <E extends IntElement<E>> void set(long index, E e)
+    {
+        this.set(index, e.getInt());
+    }
+    
+    public static interface IntElement<E extends IntElement<E>>
+    {
+        public int getInt();
+        public void setInt(int value);
+    }
 }

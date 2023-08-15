@@ -14,6 +14,9 @@ import java.util.function.IntUnaryOperator;
  *
  * @author jmburu
  */
-public interface NativeIntegerAlgorithm extends TemplateAlgorithms<Integer, NativeInteger, NativeInteger, IntUnaryOperator, IntBinaryOperator>{
-    
+public interface NativeIntegerAlgorithm extends TemplateAlgorithms<Integer, NativeInteger, NativeInteger, NativeInteger, NativeInteger, IntUnaryOperator, IntBinaryOperator>{
+    @Override
+    default Integer exclusive_scan(NativeInteger values, long n, NativeInteger results){
+        return this.exclusive_scan(values, n, results, (a, b)-> a + b);
+    } 
 }

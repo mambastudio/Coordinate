@@ -3,45 +3,44 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/TriangleShape.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/BlellochScanReduceTask.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/TestScan2.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractBound.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/functions/ParallelNative.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/SerialNativeAlgorithm.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/PrefixSumTask.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeInteger.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/Test8.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/Test.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/BlellochScanDownSweepTask.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Utility.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeObject.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/functions/NativeIntegerAlgorithm.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/Test3.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/functions/SerialNative.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/TemplateAlgorithms.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/stream/TestScan1.java</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/TemplateAlgorithms.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeIntegerAlgorithm.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/ParallelNative.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeObjectAlgorithm.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNative.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeIntegerAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/NativeObject.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/shapes/TriangleShape.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/Test8.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/Test.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/utility/Utility.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractBound.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeObject.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/TemplateAlgorithms.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeInteger.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeObjectAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/TemplateAlgorithms.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeIntegerAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/ParallelNative.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeObjectAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNative.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeIntegerAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/NativeObject.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/Utility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/TemplateAlgorithms.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/Test.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeObjectAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNative.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeObjectAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/NativeInteger.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/Test8.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeIntegerAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/ParallelNative.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeIntegerAlgorithm.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/NativeObject.java</file>
         </group>
     </open-files>
 </project-private>

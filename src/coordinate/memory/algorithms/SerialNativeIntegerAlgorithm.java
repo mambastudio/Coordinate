@@ -16,7 +16,7 @@ import java.util.stream.LongStream;
  *
  * @author jmburu
  */
-public class SerialNativeAlgorithm implements NativeIntegerAlgorithm{
+public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
 
     @Override
     public NativeInteger transform(NativeInteger values, IntUnaryOperator f) {
@@ -28,14 +28,14 @@ public class SerialNativeAlgorithm implements NativeIntegerAlgorithm{
     }
 
     @Override
-    public Integer exclusive_scan(NativeInteger values, long n, NativeInteger result) {
+    public Integer exclusive_scan(NativeInteger values, long n, NativeInteger result, IntBinaryOperator f) {
         RangeCheck.rangeAboveZero(n);
         RangeCheck.rangeCheckBound(0, n, values.capacity());
         RangeCheck.rangeCheckBound(0, n, result.capacity());
         
         result.set(0, 0);
         for(long i = 1; i<n; i++)
-            result.set(i, values.get(i-1) + result.get(i-1));
+            result.set(i, f.applyAsInt(values.get(i-1), result.get(i-1)));
         return result.getLast();        
     }
 
@@ -181,6 +181,5 @@ public class SerialNativeAlgorithm implements NativeIntegerAlgorithm{
                 }
             }                    
         }
-    }
-    
+    }    
 }
