@@ -7,6 +7,7 @@ package coordinate.memory;
 
 import static coordinate.unsafe.UnsafeUtils.copyMemory;
 import static coordinate.unsafe.UnsafeUtils.getUnsafe;
+import coordinate.utility.RangeCheck;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,9 +36,13 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
      
     @Override
     public void dispose()
-    {        
+    {                
         if(address()!=0)
+        {
+            
             getUnsafe().freeMemory(address());
+            address = 0;
+        }
     }
     
     public void set(long offset, int value)
@@ -87,8 +92,30 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         return Arrays.toString(arr);
     }
     
+    public <E extends IntElement<E>> String getString(long start, long end, E e)
+    {
+        long cap = end - start;
+        rangeCheckBound(start, end, arrayCapacityLimitString);
+        StringBuilder builder = new StringBuilder();
+        for(long i = start; i<start + cap; i++)
+        {
+            E ee = e.newInstance();
+            ee.setInt(get(i));            
+            builder.append(ee).append(", ");
+        }
+        return builder.substring(0, builder.length()-2);
+    }
+    
     public NativeInteger fill(int val) {
         for (long i = 0, len = capacity(); i < len; i++)
+            set(i, val);
+        return this;
+    }
+    
+    public NativeInteger fill(int val, int n)
+    {
+        RangeCheck.rangeCheckBound(0, n, capacity());
+        for (long i = 0, len = n; i < len; i++)
             set(i, val);
         return this;
     }
@@ -104,9 +131,9 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
     public String toString()
     {
         if(capacity() > arrayCapacityLimitString)
-            return getString(0, arrayCapacityLimitString);
+            return NativeInteger.this.getString(0, arrayCapacityLimitString);
         else
-            return getString(0, capacity());
+            return NativeInteger.this.getString(0, capacity());
     }
 
     @Override
@@ -127,7 +154,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         }        
         else
         {
-            NativeInteger n = new NativeInteger(capacity).fill(0);
+            NativeInteger n = new NativeInteger(capacity);
             copyMemory(null, address(), null, n.address(), capacityBytes);
             dispose();
             this.address = n.address;
@@ -150,5 +177,6 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
     {
         public int getInt();
         public void setInt(int value);
+        public E newInstance();
     }
 }

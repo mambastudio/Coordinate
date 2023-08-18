@@ -25,7 +25,7 @@ public class TestUnsafe {
             
     public static void main(String... string)
     {
-        test7();
+        test6();
     }
     
     public static void test1()
@@ -93,13 +93,19 @@ public class TestUnsafe {
     //partition
     public static void test6()
     {
-        NativeInteger n = new NativeInteger(10).fillRandomRange(0, 5);
-        System.out.println(n);      
-        NativeInteger flags = new NativeInteger(10).fillRandomRange(0, 1);
-        System.out.println(flags);
-        NativeInteger output = new NativeInteger(10);       
-        par.partition(n, output, 10, flags);
-        System.out.println(output);
+        for(int i = 0; i<1; i++)
+        {
+            int cap = 13;
+            NativeInteger n = new NativeInteger(cap).fillRandomRange(0, 5);
+            System.out.println(n);      
+            NativeInteger flags = new NativeInteger(cap + 1).fillRandomRange(0, 1);
+            System.out.println(flags);
+            NativeInteger output = new NativeInteger(cap);       
+            int value = par.partition(n, output, cap, flags);
+            System.out.println(output);
+            System.out.println(value);
+            System.gc();
+        }
     }
     
     //sort

@@ -53,6 +53,8 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
     /**
      * Parallel mapping approach, but with an exclusive scan that is serial
      * 
+     * FIXME: 
+     * 
      * @param values
      * @param result
      * @param n
@@ -69,14 +71,13 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
         NativeInteger stencil_1 = transform(flags, i -> i != 0 ? 1 : 0);
         NativeInteger stencil_2 = transform(stencil_1, i -> i != 0 ? 0 : 1);
         
-        //for getting the total values for usage below since stx_v is either a 1 or 0
-        //invisible bug (SOLVED)
-        final int st1_v = stencil_1.getLast(); //either 1 or 0 to know accurate total
-        final int st2_v = stencil_2.getLast(); //either 1 or 0 to know accurate total
+        int lastStl_1 = stencil_1.getLast();
         
-        int st1_total = exclusive_scan(stencil_1.copy(), n, stencil_1); 
-        int st2_total = exclusive_scan(stencil_2.copy(), n, stencil_2);
-                      
+        int st1_total = exclusive_scan(stencil_1.copy(), n + 1, stencil_1); //n + 2 because the array has been expanded
+        int st2_total = exclusive_scan(stencil_2.copy(), n + 1, stencil_2);
+        
+        
+                
         LongStream.range(0, n)
                 .parallel()
                 .forEach(i->{
@@ -87,9 +88,9 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
                 .parallel()
                 .forEach(i->{ 
                     if(flags.get(i) == 0)                    
-                        result.set(stencil_2.get(i) + st1_total + st1_v, values.get(i));                    
+                        result.set(stencil_2.get(i) + st1_total, values.get(i));                    
                 });
-        if((st1_total + st1_v + st2_total + st2_v) > n)
+        if((st1_total + st2_total) > n)
             throw new IndexOutOfBoundsException("Issue with partition");    
         
         return st1_total;

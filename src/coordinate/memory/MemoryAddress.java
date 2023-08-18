@@ -50,9 +50,9 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     {
         if(capacity < 0)
             throw new UnsupportedOperationException("capacity is less than zero");
-        this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));
+        this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));         
         this.capacityBytes = toAmountBytes(capacity);
-        
+        getUnsafe().setMemory(address, capacityBytes, (byte)0);
         initSweeper();
     }
     
@@ -61,9 +61,9 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         this.clazz = clazz;
         if(capacity < 0)
             throw new UnsupportedOperationException("capacity is less than zero");
-        this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));
+        this.address = getUnsafe().allocateMemory(toAmountBytes(capacity));        
         this.capacityBytes = toAmountBytes(capacity);
-        
+        getUnsafe().setMemory(address, capacityBytes, (byte)0);
         initSweeper();
     }
     
@@ -108,7 +108,10 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     private void initSweeper()
     {
         //For garbage collection
-        Sweeper.getSweeper().register(this, ()->dispose());
+        Sweeper.getSweeper().register(this, ()->{
+            System.out.println("sfasdf");
+            dispose();
+                });
     }
         
     protected final long toAmountBytes(long amount)
@@ -230,8 +233,10 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     public void copyFromMem(M m, long n)
     {       
-        RangeCheck.rangeCheckBound(0, m.capacity(), n);
-        RangeCheck.rangeCheckBound(0,   capacity(), n);
+        if(n == 0)
+            return;
+        RangeCheck.rangeCheckBound(0, n,  m.capacity());
+        RangeCheck.rangeCheckBound(0, n,  capacity());
         copyMemory(null, m.address(), null, address(), toAmountBytes(n));       
     }
     
@@ -242,8 +247,10 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     public void copyToMem(M m, long n)
     {       
-        RangeCheck.rangeCheckBound(0, m.capacity(), n);
-        RangeCheck.rangeCheckBound(0,   capacity(), n);
+        if(n == 0)
+            return;        
+        RangeCheck.rangeCheckBound(0, n, m.capacity());
+        RangeCheck.rangeCheckBound(0, n,  capacity());
         copyMemory(null, address(), null, m.address(), toAmountBytes(n));       
     }
     

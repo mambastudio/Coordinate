@@ -60,20 +60,37 @@ public class BitUtility {
     }
     
     //log2
-    private static long log2(long x )
+    public static long log2(long x )
     {
         if( x == 0 )
             throw new UnsupportedOperationException("value should be zero");
         return 63 - Long.numberOfLeadingZeros( x );
     }
     
+    public static int log2(int x )
+    {
+        if( x == 0 )
+            throw new UnsupportedOperationException("value should be zero");
+        return 31 - Integer.numberOfLeadingZeros( x );
+    }
+    
     //https://jameshfisher.com/2018/03/30/round-up-power-2/ 
-    private static long next_pow2(long x)
+    public static long next_pow2(long x)
     {                
         return x == 1 ? 1 : 1<<(64 - Long.numberOfLeadingZeros(x-1));
     }
     
+    public static int next_pow2(int x)
+    {                
+        return x == 1 ? 1 : 1<<(32 - Integer.numberOfLeadingZeros(x-1));
+    }
+    
     public static long next_log2(long size)
+    {
+        return log2(next_pow2(size));        
+    }
+    
+    public static int next_log2(int size)
     {
         return log2(next_pow2(size));        
     }
