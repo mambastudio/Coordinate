@@ -15,6 +15,8 @@ import coordinate.memory.algorithms.NativeIntegerAlgorithm;
 import coordinate.memory.algorithms.ParallelNative;
 import coordinate.memory.algorithms.SerialNativeIntegerAlgorithm;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,7 +27,7 @@ public class TestUnsafe {
             
     public static void main(String... string)
     {
-        test6();
+        test12();
     }
     
     public static void test1()
@@ -72,7 +74,7 @@ public class TestUnsafe {
     //scan/prefixsum
     public static void test4()
     {
-        NativeInteger n = new NativeInteger(10).fillRandomRange(0, 5);
+        NativeInteger n = new NativeInteger(10).fillRandomRange(0, 1);
         System.out.println(n);
         int value = par.reduce(n, n.capacity(), new NativeInteger(1), (a, b) -> a + b);
         System.out.println(value);
@@ -155,7 +157,7 @@ public class TestUnsafe {
         System.out.println(n2);
         
         System.out.println(n1.address());
-        n1.dispose();
+        n1.freeMemory();
         System.out.println(n1);
     }
     
@@ -170,6 +172,21 @@ public class TestUnsafe {
         ParallelNative.sort_pair(n1, n2, (a, b)-> a>b);
         System.out.println("key  " +n1);
         System.out.println("value" +n2);
+    }
+    
+    public static void test12()
+    {
+        NativeInteger n = new NativeInteger(Integer.MAX_VALUE);
+        for(int i = 0; i<2; i++)
+        {
+            try {
+                Thread.sleep(20000);
+                n.freeMemory();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TestUnsafe.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
     }
     
     public static class Josto implements Element<Josto>

@@ -35,11 +35,10 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
     }
      
     @Override
-    public void dispose()
+    public void freeMemory()
     {                
         if(address()!=0)
         {
-            
             getUnsafe().freeMemory(address());
             address = 0;
         }
@@ -112,7 +111,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         return this;
     }
     
-    public NativeInteger fill(int val, int n)
+    public NativeInteger fill(int val, long n)
     {
         RangeCheck.rangeCheckBound(0, n, capacity());
         for (long i = 0, len = n; i < len; i++)
@@ -148,7 +147,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         {
             NativeInteger n = new NativeInteger(capacity);
             copyMemory(null, address(), null, n.address(), toAmountBytes(capacity));
-            dispose();
+            freeMemory();
             this.address = n.address;
             this.capacityBytes = n.capacityBytes;
         }        
@@ -156,7 +155,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         {
             NativeInteger n = new NativeInteger(capacity);
             copyMemory(null, address(), null, n.address(), capacityBytes);
-            dispose();
+            freeMemory();
             this.address = n.address;
             this.capacityBytes = n.capacityBytes;
         }

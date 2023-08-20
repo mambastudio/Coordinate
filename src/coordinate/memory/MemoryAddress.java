@@ -110,7 +110,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         //For garbage collection
         Sweeper.getSweeper().register(this, ()->{
             System.out.println("sfasdf");
-            dispose();
+            freeMemory();
                 });
     }
         
@@ -320,7 +320,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     
     public abstract void resize(long capacity);      
     protected abstract M copyStateSize();
-    public abstract void dispose();
+    public abstract void freeMemory();
     public abstract int sizeOf();
     public abstract M offsetMemory(long offset);
     public abstract String getString(long start, long end);

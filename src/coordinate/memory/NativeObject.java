@@ -38,7 +38,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
     }
 
     @Override
-    public void dispose() {        
+    public void freeMemory() {        
         if(address()!=0)
         {
             getUnsafe().freeMemory(address());
@@ -144,7 +144,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
         {
             NativeObject<T> n = new NativeObject(clazz, capacity);
             copyMemory(null, address(), null, n.address(), toAmountBytes(capacity));
-            dispose();
+            freeMemory();
             this.address = n.address;
             this.capacityBytes = n.capacityBytes;
         }        
@@ -152,7 +152,7 @@ public class NativeObject<T extends Element<T>> extends MemoryAddress<NativeObje
         {
             NativeObject<T> n = new NativeObject(clazz, capacity).fill(newInstance());
             copyMemory(null, address(), null, n.address(), capacityBytes);
-            dispose();
+            freeMemory();
             this.address = n.address;
             this.capacityBytes = n.capacityBytes;
         }  

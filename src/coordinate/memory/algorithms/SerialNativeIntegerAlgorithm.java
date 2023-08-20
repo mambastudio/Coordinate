@@ -32,11 +32,11 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
         RangeCheck.rangeAboveZero(n);
         RangeCheck.rangeCheckBound(0, n, values.capacity());
         RangeCheck.rangeCheckBound(0, n, result.capacity());
-        
-        result.set(0, 0);
+          
+        result.set(0, 0); // just in case it's not zero
         for(long i = 1; i<n; i++)
-            result.set(i, f.applyAsInt(values.get(i-1), result.get(i-1)));
-        return result.getLast();        
+            result.set(i, f.applyAsInt(values.get(i-1), result.get(i-1)));        
+        return result.get(n-1);        
     }
 
     @Override
@@ -52,8 +52,6 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
 
     /**
      * Parallel mapping approach, but with an exclusive scan that is serial
-     * 
-     * FIXME: 
      * 
      * @param values
      * @param result
@@ -71,27 +69,32 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
         NativeInteger stencil_1 = transform(flags, i -> i != 0 ? 1 : 0);
         NativeInteger stencil_2 = transform(stencil_1, i -> i != 0 ? 0 : 1);
         
-        int lastStl_1 = stencil_1.getLast();
-        
-        int st1_total = exclusive_scan(stencil_1.copy(), n + 1, stencil_1); //n + 2 because the array has been expanded
-        int st2_total = exclusive_scan(stencil_2.copy(), n + 1, stencil_2);
-        
-        
+        NativeInteger stl_1_out = new NativeInteger(stencil_1.capacity()); //initialised zero automatically
+        NativeInteger stl_2_out = new NativeInteger(stencil_2.capacity());
+                
+        int st1_total = exclusive_scan(stencil_1, n, stl_1_out) + stencil_1.get(n-1); 
+        int st2_total = exclusive_scan(stencil_2, n, stl_2_out) + stencil_2.get(n-1);
                 
         LongStream.range(0, n)
                 .parallel()
                 .forEach(i->{
                     if(flags.get(i) != 0)                      
-                        result.set(stencil_1.get(i), values.get(i));              
+                        result.set(stl_1_out.get(i), values.get(i));              
                 });
         LongStream.range(0, n)
                 .parallel()
                 .forEach(i->{ 
                     if(flags.get(i) == 0)                    
-                        result.set(stencil_2.get(i) + st1_total, values.get(i));                    
+                        result.set(stl_2_out.get(i) + st1_total, values.get(i));                    
                 });
         if((st1_total + st2_total) > n)
-            throw new IndexOutOfBoundsException("Issue with partition");    
+            throw new IndexOutOfBoundsException("Issue with partition");  
+        
+        stencil_1.freeMemory();
+        stencil_2.freeMemory();
+        
+        stl_1_out.freeMemory();
+        stl_2_out.freeMemory();
         
         return st1_total;
     }
