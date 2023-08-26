@@ -10,29 +10,27 @@ import static coordinate.unsafe.UnsafeUtils.getUnsafe;
 import coordinate.utility.RangeCheck;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.IntUnaryOperator;
-import java.util.function.LongToIntFunction;
 
 /**
  *
  * @author jmburu
  */
-public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
+public class NativeFloat extends MemoryAddress<NativeFloat, float[]>{
 
-    public NativeInteger(NativeInteger pointer) {
+    public NativeFloat(NativeFloat pointer) {
         super(pointer);
     }
 
-    public NativeInteger(long capacity)
+    public NativeFloat(long capacity)
     {
         super(capacity);
     }
 
-    public NativeInteger(NativeInteger pointer, long offset) {
+    public NativeFloat(NativeFloat pointer, long offset) {
         super(pointer, offset);
     }
     
-    public NativeInteger(NativeInteger pointer, long offset, long capacity) {
+    public NativeFloat(NativeFloat pointer, long offset, long capacity) {
         super(pointer, offset, capacity);
     }
      
@@ -46,16 +44,16 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         }
     }
     
-    public void set(long offset, int value)
+    public void set(long offset, float value)
     {
         rangeCheck(offset, capacity());
-        getUnsafe().putInt(address() + toAmountBytes(offset), value);
+        getUnsafe().putFloat(address() + toAmountBytes(offset), value);
     }
     
-    public int get(long offset)
+    public float get(long offset)
     {
         rangeCheck(offset, capacity());
-        return getUnsafe().getInt(address() + toAmountBytes(offset));
+        return getUnsafe().getFloat(address() + toAmountBytes(offset));
     }
     
     
@@ -63,7 +61,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
     {
         rangeCheck(index1, capacity());
         rangeCheck(index2, capacity());       
-        int temp = get(index1);
+        float temp = get(index1);
         set(index1, get(index2));
         set(index2, temp);
     }
@@ -73,27 +71,27 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         return 4;
     }
     
-    public int getLast()
+    public float getLast()
     {
         return get(capacity()-1);
     }
 
     @Override
-    public NativeInteger offsetMemory(long offset) {
+    public NativeFloat offsetMemory(long offset) {
         rangeCheck(offset, capacity());
-        return new NativeInteger(this, offset);
+        return new NativeFloat(this, offset);
     }
 
     @Override
     public String getString(long start, long end) {
         long cap = end - start;
         rangeCheckBound(start, end, arrayCapacityLimitString);
-        int[] arr = new int[(int)cap];
+        float[] arr = new float[(int)cap];
         copyToArr(arr, start, end - start);
         return Arrays.toString(arr);
     }
     
-    public <E extends IntElement<E>> String getString(long start, long end, E e)
+    public <E extends FloatElement<E>> String getString(long start, long end, E e)
     {
         long cap = end - start;
         rangeCheckBound(start, end, arrayCapacityLimitString);
@@ -101,19 +99,19 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         for(long i = start; i<start + cap; i++)
         {
             E ee = e.newInstance();
-            ee.setInt(get(i));            
+            ee.setFloat(get(i));            
             builder.append(ee).append(", ");
         }
         return builder.substring(0, builder.length()-2);
     }
     
-    public NativeInteger fill(int val) {
+    public NativeFloat fill(float val) {
         for (long i = 0, len = capacity(); i < len; i++)
             set(i, val);
         return this;
     }
     
-    public NativeInteger fill(int val, long n)
+    public NativeFloat fill(float val, long n)
     {
         RangeCheck.rangeCheckBound(0, n, capacity());
         for (long i = 0, len = n; i < len; i++)
@@ -121,17 +119,10 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         return this;
     }
     
-    public NativeInteger iterateRange(LongToIntFunction operator)
+    public NativeFloat fillRandomRange(float min, float max)
     {
         for (long i = 0, len = capacity(); i < len; i++)
-            set(i, operator.applyAsInt(i));
-        return this;
-    }
-    
-    public NativeInteger fillRandomRange(int min, int max)
-    {
-        for (long i = 0, len = capacity(); i < len; i++)
-            set(i, ThreadLocalRandom.current().nextInt(min, max + 1));
+            set(i, (float) ThreadLocalRandom.current().nextDouble(min, max + 1)); 
         return this;
     }
     
@@ -139,14 +130,14 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
     public String toString()
     {
         if(capacity() > arrayCapacityLimitString)
-            return NativeInteger.this.getString(0, arrayCapacityLimitString);
+            return NativeFloat.this.getString(0, arrayCapacityLimitString);
         else
-            return NativeInteger.this.getString(0, capacity());
+            return NativeFloat.this.getString(0, capacity());
     }
 
     @Override
-    protected final NativeInteger copyStateSize() {
-        return new NativeInteger(capacity());
+    protected final NativeFloat copyStateSize() {
+        return new NativeFloat(capacity());
     }
 
     @Override
@@ -154,7 +145,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         rangeAboveZero(capacity);               
         if(capacity < capacity())     
         {
-            NativeInteger n = new NativeInteger(capacity);
+            NativeFloat n = new NativeFloat(capacity);
             copyMemory(null, address(), null, n.address(), toAmountBytes(capacity));
             freeMemory();
             this.address = n.address;
@@ -162,7 +153,7 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         }        
         else
         {
-            NativeInteger n = new NativeInteger(capacity);
+            NativeFloat n = new NativeFloat(capacity);
             copyMemory(null, address(), null, n.address(), capacityBytes);
             freeMemory();
             this.address = n.address;
@@ -170,21 +161,21 @@ public class NativeInteger extends MemoryAddress<NativeInteger, int[]>{
         }
     }
     
-    public <E extends IntElement<E>> E get(long index, E e)
+    public <E extends FloatElement<E>> E get(long index, E e)
     {
-        e.setInt(get(index));
+        e.setFloat(get(index));
         return e;
     }
     
-    public <E extends IntElement<E>> void set(long index, E e)
+    public <E extends FloatElement<E>> void set(long index, E e)
     {
-        this.set(index, e.getInt());
+        this.set(index, e.getFloat());
     }
     
-    public static interface IntElement<E extends IntElement<E>>
+    public static interface FloatElement<E extends FloatElement<E>>
     {
-        public int getInt();
-        public void setInt(int value);
+        public float getFloat();
+        public void setFloat(float value);
         public E newInstance();
     }
 }

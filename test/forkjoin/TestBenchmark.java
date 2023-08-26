@@ -6,7 +6,6 @@
 package forkjoin;
 
 import coordinate.memory.NativeInteger;
-import coordinate.memory.algorithms.ParallelNative;
 
 /**
  *
@@ -35,8 +34,7 @@ public class TestBenchmark {
 
             // Convert the NativeInteger into a Stream and perform reduction
             startTime = System.nanoTime();
-            sum = ParallelNative.streamInteger(n2)
-                    .reduce(0, (accumulator, element) -> accumulator + element);
+            
             endTime = System.nanoTime();
             System.out.println("parallel " +getReadableTime(endTime - startTime));
         }

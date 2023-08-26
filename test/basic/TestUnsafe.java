@@ -12,7 +12,6 @@ import coordinate.memory.NativeInteger;
 import coordinate.memory.NativeObject;
 import coordinate.memory.NativeObject.Element;
 import coordinate.memory.algorithms.NativeIntegerAlgorithm;
-import coordinate.memory.algorithms.ParallelNative;
 import coordinate.memory.algorithms.SerialNativeIntegerAlgorithm;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
@@ -169,7 +168,7 @@ public class TestUnsafe {
         System.out.println("key  " +n1);
         System.out.println("value" +n2);
         System.out.println("After sorting");
-        ParallelNative.sort_pair(n1, n2, (a, b)-> a>b);
+        par.sort_pairs(n1, n2, n1, n2, 1000);
         System.out.println("key  " +n1);
         System.out.println("value" +n2);
     }
