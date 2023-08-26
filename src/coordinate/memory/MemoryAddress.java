@@ -146,7 +146,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         m.capacityBytes = tempCapacityBytes;
     }
         
-    public final ByteBuffer getDirectByteBuffer()
+    public final ByteBuffer getDirectByteBufferPoint()
     {
         return MemoryAddress.this.getDirectByteBuffer(0, 1);
     }
@@ -222,6 +222,11 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
                 int[] arr = (int[]) object;
                 return arr.length;
             }
+            
+            else if (float.class.isAssignableFrom(option.get())) {
+                float[] arr = (float[]) object;
+                return arr.length;
+            }
         }
         throw new UnsupportedOperationException("primitive array not supported yet");
     }
@@ -259,7 +264,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     {
         if(clazz == null)
         {            
-            int length = getPrimitiveArrayLength(array);
+            int length = getPrimitiveArrayLength(array); //not a primitive exception is handled here
             RangeCheck.rangeCheckBound(offset, offset + n, capacity()); //range in native memory?
             RangeCheck.rangeCheckBound(     0,          n, length);     //range in array?
             copyMemory(null, address() + toAmountBytes(offset), array, 16, toAmountBytes(n));
@@ -278,7 +283,7 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     {
         if(clazz == null)
         {
-            int length = getPrimitiveArrayLength(array);
+            int length = getPrimitiveArrayLength(array); //not a primitive exception is handled here
             RangeCheck.rangeCheckBound(offset, offset + n, capacity());//range in native memory?
             RangeCheck.rangeCheckBound(     0,          n, length);    //range in array?
             copyMemory(array, 16, null, address() + toAmountBytes(offset), toAmountBytes(length));
@@ -325,4 +330,8 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     public abstract M offsetMemory(long offset);
     public abstract String getString(long start, long end);
     
+    public static interface Element<E extends Element<E>>
+    {
+        public ByteBuffer getBytes();
+    }
 }
