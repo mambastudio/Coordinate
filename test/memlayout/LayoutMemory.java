@@ -3,15 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package struct;
+package memlayout;
 
 /**
  *
  * @author jmburu
+ * 
+ * https://courses.cs.washington.edu/courses/cse351/17sp/lectures/CSE351-L14-structs_17sp-ink-day2.pdf
  */
 public interface LayoutMemory {
     
     public int byteSize();
+    public LayoutMemory withId(String name);
+    public String getId();
     
     /**
      * Align is the size of data (e.g. 4-byte data -> int, float), and offset is starting point 

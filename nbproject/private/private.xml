@@ -3,22 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/NativeInteger.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/TemplateAlgorithms.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/Sweeper.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeIntegerAlgorithm.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/NativeIntegerAlgorithm.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/NativeObject.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeFloat.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeIntegerAlgorithm.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/MemoryAddress.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/struct/structint/IntStruct.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeInteger.java</file>
-        </group>
-        <group>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/NativeFloat.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/basic/TestUnsafe.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/algorithms/SerialNativeIntegerAlgorithm.java</file>
@@ -49,6 +33,15 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/struct/StructAbstract.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/struct/LayoutValue.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/struct/StructUtils.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/refl/StructField.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/memlayout/Test.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/memlayout/LayoutValue.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/memlayout/LayoutGroup.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/Struct.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/struct/StructAbstract.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/memlayout/LayoutMemory.java</file>
         </group>
     </open-files>
 </project-private>
