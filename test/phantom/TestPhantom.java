@@ -5,7 +5,7 @@
  */
 package phantom;
 
-import coordinate.memory.NativeInteger;
+import coordinate.memory.nativememory.NativeInteger;
 import coordinate.utility.Sweeper;
 
 /**

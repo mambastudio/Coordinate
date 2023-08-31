@@ -5,7 +5,7 @@
  */
 package forkjoin;
 
-import coordinate.memory.NativeInteger;
+import coordinate.memory.nativememory.NativeInteger;
 
 /**
  *

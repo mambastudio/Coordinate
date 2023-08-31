@@ -8,11 +8,11 @@ package basic;
 
 import coordinate.unsafe.UnsafeByteBuffer;
 import java.util.Arrays;
-import coordinate.memory.NativeInteger;
-import coordinate.memory.NativeObject;
-import coordinate.memory.NativeObject.Element;
-import coordinate.memory.algorithms.NativeIntegerAlgorithm;
-import coordinate.memory.algorithms.SerialNativeIntegerAlgorithm;
+import coordinate.memory.nativememory.NativeInteger;
+import coordinate.memory.nativememory.NativeObject;
+import coordinate.memory.nativememory.NativeObject.Element;
+import coordinate.memory.nativememory.algorithm.NativeIntegerAlgorithm;
+import coordinate.memory.nativememory.algorithm.SerialNativeIntegerAlgorithm;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
