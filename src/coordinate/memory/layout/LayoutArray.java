@@ -12,44 +12,56 @@ import java.util.UUID;
  * @author jmburu
  */
 public class LayoutArray extends LayoutMemory{
-    
+    private final int elementCount;
     private final int byteSize;
     private final LayoutMemory memoryLayout;
     private final String name;
     
-    private LayoutArray(int size, LayoutMemory memoryLayout)
+    private LayoutArray(int elementCount, LayoutMemory memoryLayout)
     {
-        this.byteSize = memoryLayout.byteSize() * size;
+        this.elementCount = elementCount;
+        this.byteSize = memoryLayout.byteSizeAggregate() * elementCount;
         this.memoryLayout = memoryLayout;
         this.name = UUID.randomUUID().toString();
     }
     
-    private LayoutArray(String name, int size, LayoutMemory memoryLayout)
+    private LayoutArray(String name, int elementCount, LayoutMemory memoryLayout)
     {
-        this.byteSize = memoryLayout.byteSize() * size;
+        this.elementCount = elementCount;
+        this.byteSize = memoryLayout.byteSizeAggregate() * elementCount;
         this.memoryLayout = memoryLayout;
         this.name = name;
     }
     
-    public static LayoutArray createArray(int size, LayoutMemory memory)
+    public static LayoutArray arrayLayout(int elementCount, LayoutMemory memory)
     {
-        return new LayoutArray(size, memory);
+        return new LayoutArray(elementCount, memory);
+    }
+    
+    public static LayoutArray createArray(LayoutMemory memory)
+    {
+        return arrayLayout(1, memory);
     }
     
     @Override
     public final int byteSizeElement()
     {
-        return memoryLayout.byteSize();
+        return memoryLayout.byteSizeAggregate();
     }
 
     @Override
-    public int byteSize() {
+    public int byteSizeAggregate() {
         return byteSize;
     }
 
     @Override
     public LayoutMemory withId(String name) {
-        return new LayoutArray(name, byteSize/memoryLayout.byteSize(), memoryLayout);
+        return new LayoutArray(name, elementCount, memoryLayout);
+    }
+    
+    public LayoutMemory getLayoutMemory()
+    {
+        return memoryLayout;
     }
 
     @Override
@@ -57,4 +69,8 @@ public class LayoutArray extends LayoutMemory{
         return name;
     }
     
+    public int elementCount()
+    {
+        return elementCount;
+    }
 }

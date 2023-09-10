@@ -8,6 +8,9 @@ package memlayout;
 import coordinate.memory.layout.LayoutValue;
 import coordinate.memory.layout.LayoutArray;
 import coordinate.memory.layout.LayoutGroup;
+import coordinate.memory.layout.LayoutMemory;
+import coordinate.memory.layout.LayoutMemory.PathElement;
+import coordinate.memory.layout.struct.ValueState;
 
 /**
  *
@@ -16,21 +19,21 @@ import coordinate.memory.layout.LayoutGroup;
 public class Test {
     public static void main(String... args)
     {
-     
-        LayoutGroup group = LayoutGroup.createGroup(
-            LayoutValue.JAVA_LONG.withId("c"),
-            LayoutArray.createArray(2, LayoutValue.JAVA_INT).withId("i"),
-            LayoutValue.JAVA_BYTE.withId("v")
+        LayoutMemory group = LayoutGroup.groupLayout(
+                LayoutValue.JAVA_BYTE.withId("c"),
+                LayoutArray.arrayLayout(2, LayoutValue.JAVA_INT).withId("i"),
+                LayoutValue.JAVA_LONG.withId("v")
         );
         
         System.out.println(group);
         
-        LayoutGroup group2 = LayoutGroup.createGroup(            
-            LayoutValue.JAVA_INT.withId("i"),
-            LayoutValue.JAVA_BYTE.withId("c"),
-            LayoutValue.JAVA_BYTE.withId("d")
-        );
+        LayoutMemory sequence = LayoutArray.arrayLayout(5, group);
         
-        System.out.println(group2);
+        LayoutMemory mem = sequence.select(
+                PathElement.sequenceElement(4),
+                PathElement.groupElement("v"));
+        System.out.println(mem.offset());
+        
+        
     }
 }

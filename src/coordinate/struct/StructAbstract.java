@@ -5,6 +5,8 @@
  */
 package coordinate.struct;
 
+import coordinate.memory.layout.LayoutMemory.PathElement;
+import coordinate.memory.layout.struct.ValueState;
 import coordinate.struct.refl.StructField;
 import coordinate.utility.Value1Di;
 import java.util.Arrays;
@@ -110,4 +112,5 @@ public abstract class StructAbstract implements StructInterface {
     {
         return maxAlign;
     }
+    
 }

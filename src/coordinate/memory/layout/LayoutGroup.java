@@ -8,22 +8,23 @@ package coordinate.memory.layout;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  *
  * @author user
  * 
- * Heavily inspired by Panama java. This actually avoids reflection and thus let's the user develop their own 
+ * Heavily inspired by Panama java. This actually avoids reflection and let's the user develop their own 
  * struct API independently
  * 
  */
 public final class LayoutGroup extends LayoutMemory{
-    private final LinkedHashMap<String, LayoutMemory> fields = new LinkedHashMap();
-    private int[]   fieldByteSizes;
-    private int[]   fieldOffsets;
-    private int     fieldMaxBytes;
+    private final LinkedHashMap<String, LayoutMemory> fields = new LinkedHashMap();  
+    private int   fieldMaxBytes;
     
-    private int groupSize;
+    private int byteSize;
     
     private final String name;
     
@@ -37,7 +38,7 @@ public final class LayoutGroup extends LayoutMemory{
         this.name = name;
     }
     
-    public static LayoutGroup createGroup(LayoutMemory... memoryLayouts)
+    public static LayoutGroup groupLayout(LayoutMemory... memoryLayouts)
     {
         LayoutGroup group = new LayoutGroup();
         for(LayoutMemory memoryLayout : memoryLayouts)
@@ -46,6 +47,16 @@ public final class LayoutGroup extends LayoutMemory{
         group.init();
         
         return group;
+    }
+    
+    public boolean containsField(String name)
+    {
+        return fields.containsKey(name);
+    }
+    
+    public LayoutMemory getField(String name)
+    {
+        return fields.get(name);
     }
     
     public static LayoutGroup createGroup(String name, LayoutMemory... memoryLayouts)
@@ -63,44 +74,32 @@ public final class LayoutGroup extends LayoutMemory{
     
     private void init()
     {
-        calculateFieldByteSizes();
+        calculateMaxByteSize();
         calculateFieldOffsets();    
     }
     
-    private void calculateFieldByteSizes()
+    private void calculateMaxByteSize()
     {
-        fieldByteSizes = new int[fields.size()];
-        int i = 0;
-        for(String string : fields.keySet())
-        {
-            fieldByteSizes[i] = fields.get(string).byteSize();
-            if(fieldByteSizes[i] > fieldMaxBytes)
-                fieldMaxBytes = fieldByteSizes[i];
-            i++;
-        }        
+        layoutIterator((memlayout)->{
+            fieldMaxBytes = memlayout.byteSizeAggregate() > fieldMaxBytes ? memlayout.byteSizeAggregate() : fieldMaxBytes;
+        });       
     }
     
     private void calculateFieldOffsets()
-    {
-        fieldOffsets = new int[fields.size()];
-        int offset = 0;
-        int i = 0;
+    {       
         
-        for(String string : fields.keySet())
-        {                        
-            LayoutMemory memoryLayout = fields.get(string);            
-            offset = this.computeAlignmentOffset(offset, memoryLayout.byteSizeElement());            
-            fieldOffsets[i] = offset;
-            offset += memoryLayout.byteSize();    
-            i++;
-        }
-        
-        groupSize = computeAlignmentOffset(offset, fieldMaxBytes);
+        AtomicInteger currentOffset = new AtomicInteger();      
+        layoutIterator((memlayout)->{
+            currentOffset.set(this.computeAlignmentOffset(currentOffset.get(), memlayout.byteSizeElement()));            
+            memlayout.offset = currentOffset.get();
+            currentOffset.addAndGet(memlayout.byteSizeAggregate());  
+        });        
+        byteSize = computeAlignmentOffset(currentOffset.get(), fieldMaxBytes);
     }
 
     @Override
-    public int byteSize() {
-        return groupSize;
+    public int byteSizeAggregate() {
+        return byteSize;
     }
 
     @Override
@@ -121,12 +120,32 @@ public final class LayoutGroup extends LayoutMemory{
         return name;
     }
     
+    protected void layoutIterator(BiConsumer<Integer, LayoutMemory> consume)
+    {
+        int i = 0;
+        for(String string : fields.keySet())
+        {
+            consume.accept(i, fields.get(string));
+            i++;
+        }
+    }
+    
+    protected void layoutIterator(Consumer<LayoutMemory> consume)
+    {       
+        for(String string : fields.keySet())        
+            consume.accept(fields.get(string));       
+    }
+    
     @Override
     public String toString()
     {
+        int[] fieldOffsets = new int[fields.size()];
+        layoutIterator((i, memlayout) -> fieldOffsets[i] = memlayout.offset());
+        
         StringBuilder builder = new StringBuilder();
         builder.append("offsets : ").append(Arrays.toString(fieldOffsets)).append("\n");
-        builder.append("size    : ").append(byteSize());
+        builder.append("size    : ").append(byteSizeAggregate());
         return builder.toString();
     }
+
 }

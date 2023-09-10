@@ -5,56 +5,40 @@
  */
 package coordinate.memory.layout;
 
-import java.util.UUID;
-
 /**
  *
  * @author jmburu
  */
 public abstract class LayoutValue extends LayoutMemory{
     
+    private final Class<?> carrier;
+    
     public static final OfByte      JAVA_BYTE   = new OfByte("JAVA_BYTE");
     public static final OfInteger   JAVA_INT    = new OfInteger("JAVA_INT");
     public static final OfFloat     JAVA_FLOAT  = new OfFloat("JAVA_FLOAT");
     public static final OfLong      JAVA_LONG   = new OfLong("JAVA_LONG");
     
-    public static LayoutValue createValue(int byteSize)
+    private LayoutValue(Class<?> carrier)
     {
-        return new DefinedLayoutValue(byteSize);
+        if(!isValidCarrier(carrier))
+            throw new UnsupportedOperationException("invalid primitive carrier");
+        this.carrier = carrier;
     }
     
-    private static final class DefinedLayoutValue extends LayoutValue
-    {
-        private final String name;
-        private final int byteSize;
-        
-        private DefinedLayoutValue(int byteSize)
-        {
-            this.name = UUID.randomUUID().toString();
-            this.byteSize = byteSize;
-        }
-        
-        private DefinedLayoutValue(String name, int byteSize)
-        {
-            this.name = name;
-            this.byteSize = byteSize;
-        }
-        
-        @Override
-        public int byteSize() {
-            return byteSize;
-        }
-
-        @Override
-        public LayoutMemory withId(String name) {
-            return new DefinedLayoutValue(name, byteSize);
-        }
-
-        @Override
-        public String getId() {
-            return name;
-        }
-        
+    public final Class<?> carrier() {
+        return carrier;
+    }
+    
+    public static boolean isValidCarrier(Class<?> carrier) {
+        // void.class is not valid
+        return carrier == boolean.class
+                || carrier == byte.class
+                || carrier == short.class
+                || carrier == char.class
+                || carrier == int.class
+                || carrier == long.class
+                || carrier == float.class
+                || carrier == double.class;
     }
     
     public static final class OfByte extends LayoutValue
@@ -63,6 +47,7 @@ public abstract class LayoutValue extends LayoutMemory{
         
         private OfByte(String name)
         {
+            super(byte.class);
             this.name = name;
         }
         
@@ -76,7 +61,7 @@ public abstract class LayoutValue extends LayoutMemory{
         public String getId(){return name;}
         
         @Override
-        public int byteSize() { return 1; }  
+        public int byteSizeAggregate() { return 1; }  
         
     }
     
@@ -86,7 +71,8 @@ public abstract class LayoutValue extends LayoutMemory{
         
         private OfInteger(String name)
         {
-            this.name = name;
+            super(int.class);
+            this.name = name;            
         }
         
         @Override
@@ -99,7 +85,7 @@ public abstract class LayoutValue extends LayoutMemory{
         public String getId(){return name;}
         
         @Override
-        public int byteSize() { return 4; }        
+        public int byteSizeAggregate() { return 4; }        
     }
     
     public static class OfFloat extends LayoutValue
@@ -108,6 +94,7 @@ public abstract class LayoutValue extends LayoutMemory{
         
         private OfFloat(String name)
         {
+            super(float.class);
             this.name = name;
         }
         
@@ -121,7 +108,7 @@ public abstract class LayoutValue extends LayoutMemory{
         public String getId(){return name;}
         
         @Override
-        public int byteSize() { return 4; }        
+        public int byteSizeAggregate() { return 4; }        
     }
     
     public static class OfLong extends LayoutValue
@@ -130,6 +117,7 @@ public abstract class LayoutValue extends LayoutMemory{
         
         private OfLong(String name)
         {
+            super(long.class);
             this.name = name;
         }
         
@@ -143,6 +131,6 @@ public abstract class LayoutValue extends LayoutMemory{
         public String getId(){return name;}
         
         @Override
-        public int byteSize() { return 8; }        
+        public int byteSizeAggregate() { return 8; }        
     }
 }
