@@ -59,7 +59,7 @@ public final class LayoutGroup extends LayoutMemory{
         return fields.get(name);
     }
     
-    public static LayoutGroup createGroup(String name, LayoutMemory... memoryLayouts)
+    private static LayoutGroup createGroup(String name, LayoutMemory... memoryLayouts)
     {
         LayoutGroup group = new LayoutGroup(name);
         for(LayoutMemory memoryLayout : memoryLayouts)
@@ -132,8 +132,9 @@ public final class LayoutGroup extends LayoutMemory{
     
     protected void layoutIterator(Consumer<LayoutMemory> consume)
     {       
-        for(String string : fields.keySet())        
+        fields.keySet().forEach(string -> {
             consume.accept(fields.get(string));       
+        });
     }
     
     @Override

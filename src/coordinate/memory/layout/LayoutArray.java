@@ -5,6 +5,7 @@
  */
 package coordinate.memory.layout;
 
+import coordinate.utility.RangeCheck;
 import java.util.UUID;
 
 /**
@@ -35,6 +36,7 @@ public class LayoutArray extends LayoutMemory{
     
     public static LayoutArray arrayLayout(int elementCount, LayoutMemory memory)
     {
+        RangeCheck.rangeAboveZero(elementCount);
         return new LayoutArray(elementCount, memory);
     }
     

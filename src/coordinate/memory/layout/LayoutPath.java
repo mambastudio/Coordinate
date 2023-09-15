@@ -33,10 +33,10 @@ public class LayoutPath {
     public LayoutPath arrayElement(int index)
     {
         check(LayoutArray.class, "bad sequence");
-        LayoutArray g = (LayoutArray)layout;        
-        RangeCheck.rangeCheck(index, g.elementCount());   
+        LayoutArray arr = (LayoutArray)layout;        
+        RangeCheck.rangeCheck(index, arr.elementCount());   
         
-        LayoutMemory m = g.getLayoutMemory();        
+        LayoutMemory m = arr.getLayoutMemory();        
         return new LayoutPath(m);
     }
         

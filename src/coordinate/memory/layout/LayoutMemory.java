@@ -5,8 +5,10 @@
  */
 package coordinate.memory.layout;
 
+import coordinate.memory.layout.LayoutMemory.PathElement.PathType;
 import static coordinate.memory.layout.LayoutMemory.PathElement.PathType.GROUP_ELEMENT;
 import static coordinate.memory.layout.LayoutMemory.PathElement.PathType.SEQUENCE_ELEMENT;
+import static coordinate.memory.layout.LayoutMemory.PathElement.PathType.SEQUENCE_ELEMENT_RANGE;
 import coordinate.memory.layout.struct.ValueState;
 import java.nio.ByteBuffer;
 import java.util.UUID;
@@ -23,7 +25,7 @@ public abstract class LayoutMemory{
     
     public abstract int byteSizeAggregate();
     
-    protected int byteSizeElement()
+    public int byteSizeElement()
     {
         return byteSizeAggregate();
     }
@@ -38,29 +40,40 @@ public abstract class LayoutMemory{
     
     public LayoutMemory select(PathElement... elements)
     {
+        //elements[0] will check if 'this' path element is either a struct or array in switch statement below
         LayoutPath path = new LayoutPath(this);
-        int offsetUltimate = 0;
+        int offsetUltimate = 0; 
+        //array loops for value state
+        long arrayLength        = 1;
+        int  arrayElementSize   = 0;
+        
         for(PathElement element: elements)
         {            
             switch (element.pathType) {
-                case GROUP_ELEMENT:
+                case GROUP_ELEMENT:                    
                     path = path.groupElement(element.id());
-                    offsetUltimate += path.layout.offset;
+                    offsetUltimate += path.layout.offset;                     
                     break;            
-                case SEQUENCE_ELEMENT:
+                case SEQUENCE_ELEMENT:                       
                     path = path.arrayElement(element.index());
-                    offsetUltimate += path.layout.offset + element.index() * path.layout.byteSizeElement();
+                    offsetUltimate += path.layout.offset + element.index() * path.layout.byteSizeElement();                  
+                    break;
+                case SEQUENCE_ELEMENT_RANGE:   //this is like SEQUENCE_ELEMENT with a range, but adds more information for traversing range which starts at 0 index relative
+                    arrayLength = ((LayoutArray)path.layout).elementCount();       //length of array 
+                    path = path.arrayElement(0);
+                    offsetUltimate += path.layout.offset; 
+                    arrayElementSize = path.layout.byteSizeElement();
                     break;
                 default:
                     throw new UnsupportedOperationException("not supported");
             }            
         }
         if(path.layout instanceof LayoutValue)
-        {
+        {            
             LayoutValue layoutValue = (LayoutValue)path.layout;
-            return new AnonymousLayout(layoutValue.carrier(), offsetUltimate, path.layout.byteSizeElement());
+            return new AnonymousLayout(layoutValue.carrier(), offsetUltimate, path.layout.byteSizeElement(), arrayElementSize, arrayLength);
         }
-        return new AnonymousLayout(offsetUltimate, path.layout.byteSizeElement());
+        return new AnonymousLayout(null, offsetUltimate, path.layout.byteSizeElement(), arrayElementSize, arrayLength);
     }
     
     
@@ -69,7 +82,7 @@ public abstract class LayoutMemory{
         AnonymousLayout memory = (AnonymousLayout) select(elements);
         if(!(memory.hasCarrier()))
             throw new UnsupportedOperationException("path is not a value");
-        return ValueState.valueState(memory.getCarrier(), memory.offset, buffer);
+        return ValueState.valueState(memory.getCarrier(), memory.offset(), memory.arrayElementSize(), memory.arrayLength(), buffer);
     }
     
     
@@ -80,6 +93,8 @@ public abstract class LayoutMemory{
      * The returned value is the new starting point or offset of the align data.
      * 
      * https://en.wikipedia.org/wiki/Data_structure_alignment
+     * 
+     * padding not included here
      * 
      * @param offset
      * @param align
@@ -94,12 +109,13 @@ public abstract class LayoutMemory{
     {
         public enum PathType {
             GROUP_ELEMENT,
-            SEQUENCE_ELEMENT
+            SEQUENCE_ELEMENT,
+            SEQUENCE_ELEMENT_RANGE
         }
         
         final PathType pathType;
         final String id;
-        int index = 0;
+        int index = -1; //to be used in the sequence element section of traversing the memory layout. Check select and valueState methods
         
         
         private PathElement(PathType type, String id)
@@ -142,7 +158,7 @@ public abstract class LayoutMemory{
         
         public static PathElement sequenceElement()
         {
-            return sequenceElement(0);
+            return new PathElement(SEQUENCE_ELEMENT_RANGE, 0);
         }
     }
     
@@ -152,30 +168,40 @@ public abstract class LayoutMemory{
         private final int byteSize;
         private final Class<?> carrier;
         
-        public AnonymousLayout(int offset, int byteSize)
-        {
-            this.offset = offset;
-            this.byteSize = byteSize;
-            this.name = UUID.randomUUID().toString();
-            this.carrier = null;
-        }
-        
-        public AnonymousLayout(Class<?> carrier, int offset, int byteSize)
+        //for array sequence traversal
+        private final int  arrayElementSize;
+        private final long arrayLength;
+                        
+        public AnonymousLayout(Class<?> carrier, int offset, int byteSize, int arrayElementSize, long arrayLength)
         {
             this.offset = offset;
             this.byteSize = byteSize;
             this.name = UUID.randomUUID().toString();
             this.carrier = carrier;
+            if(arrayLength < 1)
+                throw new UnsupportedOperationException("array length is less than one: " +arrayLength);
+            
+            this.arrayElementSize = arrayElementSize;
+            this.arrayLength = arrayLength;            
+        }
+        
+        @Override
+        public int byteSizeElement()
+        {
+            return byteSize;
         }
         
         @Override
         public int byteSizeAggregate() {
-            return byteSize;
+            if(arrayLength == 0)
+                return byteSize;
+            else
+                return (int) (byteSizeElement() * arrayLength);
         }
 
         @Override
         public LayoutMemory withId(String name) {
-            return new AnonymousLayout(offset, byteSize);
+            return new AnonymousLayout(carrier, offset, byteSize, arrayElementSize, arrayLength);
         }
 
         @Override
@@ -191,6 +217,21 @@ public abstract class LayoutMemory{
         public boolean hasCarrier()
         {
             return carrier != null;
+        }
+        
+        public long arrayLength()
+        {
+            return arrayLength;
+        }
+        
+        public int arrayElementSize()
+        {
+            return arrayElementSize;
+        }
+        
+        public boolean isArray()
+        {
+            return arrayLength > 1; //if length is one, it just a field or variable
         }
     }
 }

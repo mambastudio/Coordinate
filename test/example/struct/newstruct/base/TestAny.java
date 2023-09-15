@@ -18,7 +18,7 @@ public class TestAny {
         //new ConcreteClassA();
        // new ConcreteClassB();
         ByteBuffer buffer = ByteBuffer.allocate(10);
-        ValueState x = ValueState.valueState(float.class, 0, buffer);
+        ValueState x = ValueState.valueState(float.class, 0, 0,0, buffer);
         x.set(3f);
         
         float value = (float) x.get();

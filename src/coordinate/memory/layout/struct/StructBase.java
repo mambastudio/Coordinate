@@ -20,10 +20,12 @@ public abstract class StructBase<Struct extends StructBase<Struct>> {
     protected final LayoutGroup layout;
     protected final ByteBuffer buffer;
     
-    public StructBase()
+    protected StructBase()
     {
-        layout = initLayout();
+        layout = initLayoutGroup();
         buffer = ByteBuffer.allocate(layout.byteSizeAggregate());
+        
+        initValueStateHandles();
     }
     
     public final int sizeOf()
@@ -56,6 +58,17 @@ public abstract class StructBase<Struct extends StructBase<Struct>> {
     public abstract Struct newInstance();
     public abstract Struct copy();
     
+    private LayoutGroup initLayoutGroup()
+    {
+        return initLayout();
+    }
+    
+    private void initValueStateHandles()
+    {
+        initValueStates();
+    }
+    
+    protected abstract void initValueStates();
     protected abstract LayoutGroup initLayout();   
     protected final LayoutGroup getLayout()
     {

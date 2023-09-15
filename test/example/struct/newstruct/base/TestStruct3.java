@@ -55,6 +55,11 @@ public class TestStruct3 {
         public void fromBuffer() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
+
+        @Override
+        protected void initValueStates() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
         
     }
 }
