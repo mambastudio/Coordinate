@@ -30,8 +30,8 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
     @Override
     public Integer exclusive_scan(NativeInteger values, long n, NativeInteger result, IntBinaryOperator f) {
         RangeCheck.rangeAboveZero(n);
-        RangeCheck.rangeCheckBound(0, n, values.capacity());
-        RangeCheck.rangeCheckBound(0, n, result.capacity());
+        RangeCheck.checkBound(0, n, values.capacity());
+        RangeCheck.checkBound(0, n, result.capacity());
           
         result.set(0, 0); // just in case it's not zero
         for(long i = 1; i<n; i++)
@@ -42,7 +42,7 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
     @Override
     public Integer reduce(NativeInteger values, long n, NativeInteger result, IntBinaryOperator f) {
         RangeCheck.rangeAboveZero(n);
-        RangeCheck.rangeCheckBound(0, n, values.capacity());
+        RangeCheck.checkBound(0, n, values.capacity());
         int res = 0;
         for(long i = 0; i<n; i++)
             res = f.applyAsInt(res, values.get(i));
@@ -63,8 +63,8 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
     @Override
     public Integer partition(NativeInteger values, NativeInteger result, long n, NativeInteger flags) {
         RangeCheck.rangeAboveZero(n);
-        RangeCheck.rangeCheckBound(0, n, values.capacity());
-        RangeCheck.rangeCheckBound(0, n, result.capacity());
+        RangeCheck.checkBound(0, n, values.capacity());
+        RangeCheck.checkBound(0, n, result.capacity());
         
         NativeInteger stencil_1 = transform(flags, i -> i != 0 ? 1 : 0);
         NativeInteger stencil_2 = transform(stencil_1, i -> i != 0 ? 0 : 1);
@@ -113,10 +113,10 @@ public class SerialNativeIntegerAlgorithm implements NativeIntegerAlgorithm{
     */
     @Override
     public void sort_pairs(NativeInteger keys, NativeInteger values, NativeInteger keysOut, NativeInteger valuesOut, long n) {
-        RangeCheck.rangeCheckBound(0, keys.capacity(), n);
-        RangeCheck.rangeCheckBound(0, values.capacity(), n);
-        RangeCheck.rangeCheckBound(0, keysOut.capacity(), n);
-        RangeCheck.rangeCheckBound(0, valuesOut.capacity(), n);
+        RangeCheck.checkBound(0, keys.capacity(), n);
+        RangeCheck.checkBound(0, values.capacity(), n);
+        RangeCheck.checkBound(0, keysOut.capacity(), n);
+        RangeCheck.checkBound(0, valuesOut.capacity(), n);
         
         //transfer copy to memory
         if(!keys.isSame(keysOut))
