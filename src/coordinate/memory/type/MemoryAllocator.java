@@ -41,6 +41,16 @@ public class MemoryAllocator {
         return new MemoryNativeImpl(layout);
     }
     
+    public static MemoryRegion allocateNative(long byteCapacity, long byteAlignment, boolean initialise)
+    {
+        return new MemoryNativeImpl(byteCapacity, byteAlignment, initialise);
+    }
+    
+    public static MemoryRegion allocateNative(LayoutMemory layout, boolean initialise)
+    {        
+        return new MemoryNativeImpl(layout, initialise);
+    }
+    
     protected static class MemoryHeapImpl implements MemoryRegion<MemoryHeapImpl>
     {                
         private ByteBuffer buffer;
@@ -258,23 +268,39 @@ public class MemoryAllocator {
             }
         }
         
-        private MemoryNativeImpl(long capacityBytes)
+        private MemoryNativeImpl(long capacityBytes, boolean initialise)
         {         
             RangeCheckArray.validateIndexSize(capacityBytes, Long.MAX_VALUE);
             this.address = getUnsafe().allocateMemory(capacityBytes);
             this.capacityBytes = capacityBytes;
-            getUnsafe().setMemory(address, capacityBytes, (byte)0); //(byte)0 is to initialise to 0
+            if(initialise)
+                fill((byte)0); //(byte)0 is to initialise to 0
             initSweeper();
         }
         
+        private MemoryNativeImpl(long capacityBytes)
+        {         
+            this(capacityBytes, true);
+        }
+                
         private MemoryNativeImpl(long capacity, long alignmentBytes)
         {
             this(capacity * alignmentBytes);
+        }
+        
+        private MemoryNativeImpl(long capacity, long alignmentBytes, boolean initialise)
+        {
+            this(capacity * alignmentBytes, initialise);
         }
 
         private MemoryNativeImpl(LayoutMemory layout)
         {            
             this(layout.byteSizeAggregate());
+        }
+        
+        private MemoryNativeImpl(LayoutMemory layout, boolean initialise)
+        {            
+            this(layout.byteSizeAggregate(), initialise);
         }
         
         private MemoryNativeImpl(MemoryNativeImpl memory, long byteOffset)
@@ -347,7 +373,15 @@ public class MemoryAllocator {
 
         @Override
         public void fill(byte value) {
-            getUnsafe().setMemory(address, capacityBytes, value); 
+            long remaining = capacityBytes % 8;
+            
+            // Fill the aligned part efficiently
+            getUnsafe().setMemory(address, capacityBytes - remaining, value);
+
+            // Fill the remaining unaligned bytes individually
+            for (int i = 0; i < remaining; i++) {
+                getUnsafe().setMemory(address + capacityBytes - remaining + i, 1, value);
+            }
         }
 
         @Override

@@ -21,7 +21,7 @@ import coordinate.utility.RangeLong;
 public class Test {
     public static void main(String... args)
     {
-        test2();
+        test3();
     }
         
     public static void test1()
@@ -53,6 +53,13 @@ public class Test {
                 
         System.out.println(array.get(5));        
         System.out.println(array.toString());
+    }
+    
+    public static void test3()
+    {
+        MemoryStruct<Int32> intArray = new MemoryStruct(new Int32(), 100);   
+        //intArray.getMemory().fill((byte)1);
+        System.out.println(intArray);
     }
     
     public static class Josto extends StructBase<Josto>

@@ -30,12 +30,27 @@ public final class MemoryStruct<T extends StructBase> {
     private final T abstractT;
     private final int maximumStringCount = 1000;
     
+    public MemoryStruct(T t)
+    {
+        this(t, 1);
+        set(0, t);
+    }
+    
     public MemoryStruct(T t, long size)
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
         this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
         this.memory = MemoryAllocator.allocateNative(this.memoryLayout);
+        this.abstractT = t;
+    }
+    
+    public MemoryStruct(T t, long size, boolean initialise)
+    {        
+        Objects.requireNonNull(t);
+        RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
+        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
+        this.memory = MemoryAllocator.allocateNative(this.memoryLayout, initialise);
         this.abstractT = t;
     }
     
@@ -143,6 +158,13 @@ public final class MemoryStruct<T extends StructBase> {
         memory.copyTo(m.memory, m.memory.byteCapacity());
     }
     
+    public MemoryStruct<T> copy()
+    { 
+        MemoryStruct<T> mem = new MemoryStruct(abstractT.copy(), size(), false);
+        copyTo(mem);
+        return mem;
+    }
+    
     public void swapElement(long index1, long index2)
     {
         RangeCheckArray.validateIndexSize(index1, size());
@@ -185,5 +207,37 @@ public final class MemoryStruct<T extends StructBase> {
     public interface BiObjLongFunction<V extends StructBase>
     {
         V apply(V v, long value);
+    }
+    
+    public T getStructBase()
+    {
+        return (T) abstractT.copy();
+    }
+    
+    public String getMemoryReadableSize()
+    {
+        return getMemoryReadableSize(abstractT, size());
+    }
+    
+    public static<T extends StructBase> String getMemoryReadableSize(T t, long size)
+    {
+        long bytes = LayoutArray.arrayLayout(size, t.getLayout()).byteSizeAggregate();
+        
+        if (bytes >= 1024 * 1024 * 1024) {
+            // Convert to GB
+            double gb = (double) bytes / (1024 * 1024 * 1024);
+            return String.format("%.2f GB", gb);
+        } else if (bytes >= 1024 * 1024) {
+            // Convert to MB
+            double mb = (double) bytes / (1024 * 1024);
+            return String.format("%.2f MB", mb);
+        } else if (bytes >= 1024) {
+            // Convert to KB
+            double kb = (double) bytes / 1024;
+            return String.format("%.2f KB", kb);
+        } else {
+            // Display in bytes
+            return bytes + " bytes";
+        }
     }
 }
