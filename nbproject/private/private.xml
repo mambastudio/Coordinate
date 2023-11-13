@@ -2,8 +2,24 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
-        <group/>
-        <group/>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryRegion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/LayoutMemory.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryRegion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/LayoutMemory.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryRegion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/LayoutMemory.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryAllocator.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
     </open-files>
 </project-private>

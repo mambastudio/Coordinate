@@ -219,6 +219,12 @@ public final class MemoryStruct<T extends StructBase> {
         return getMemoryReadableSize(abstractT, size());
     }
     
+    public long getOffsetByte(long offsetIndex)
+    {
+        RangeCheckArray.validateIndexSize(offsetIndex, size());
+        return offsetIndex * abstractT.sizeOf();
+    }
+    
     public static<T extends StructBase> String getMemoryReadableSize(T t, long size)
     {
         long bytes = LayoutArray.arrayLayout(size, t.getLayout()).byteSizeAggregate();
