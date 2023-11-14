@@ -5,16 +5,6 @@
         <group>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/struct/StructInterface.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutMemory.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/struct/StructBase.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutArray.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/struct/ValueState.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/memlayout/Test.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/struct/newstruct/base/TestAny.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutValue.java</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/struct/StructInterface.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutMemory.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutGroup.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/struct/StructBase.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutArray.java</file>
@@ -29,5 +19,6 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutMemory.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/memlayout/Test.java</file>
         </group>
+        <group/>
     </open-files>
 </project-private>
