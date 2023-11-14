@@ -107,4 +107,9 @@ public class BitUtility {
             throw new UnsupportedOperationException("multiple should not be zero");
         return ((numToRound + multiple - 1) / multiple) * multiple;
     }
+    
+    public static final long computeAlignmentOffset(long offset, long align)
+    {
+        return (offset + align - 1) & -align;
+    } 
 }

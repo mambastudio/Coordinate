@@ -240,8 +240,8 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     {       
         if(n == 0)
             return;
-        RangeCheck.rangeCheckBound(0, n,  m.capacity());
-        RangeCheck.rangeCheckBound(0, n,  capacity());
+        RangeCheck.checkBound(0, n,  m.capacity());
+        RangeCheck.checkBound(0, n,  capacity());
         copyMemory(null, m.address(), null, address(), toAmountBytes(n));       
     }
     
@@ -254,8 +254,8 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
     {       
         if(n == 0)
             return;        
-        RangeCheck.rangeCheckBound(0, n, m.capacity());
-        RangeCheck.rangeCheckBound(0, n,  capacity());
+        RangeCheck.checkBound(0, n, m.capacity());
+        RangeCheck.checkBound(0, n,  capacity());
         copyMemory(null, address(), null, m.address(), toAmountBytes(n));       
     }
     
@@ -265,15 +265,15 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         if(clazz == null)
         {            
             int length = getPrimitiveArrayLength(array); //not a primitive exception is handled here
-            RangeCheck.rangeCheckBound(offset, offset + n, capacity()); //range in native memory?
-            RangeCheck.rangeCheckBound(     0,          n, length);     //range in array?
+            RangeCheck.checkBound(offset, offset + n, capacity()); //range in native memory?
+            RangeCheck.checkBound(     0,          n, length);     //range in array?
             copyMemory(null, address() + toAmountBytes(offset), array, 16, toAmountBytes(n));
         }
         else
         {   //we are dealing with objects encoded in bytes therefore array is in bytes
             int length = getPrimitiveArrayLength(array);    
-            RangeCheck.rangeCheckBound(toAmountBytes(offset), toAmountBytes(offset + n), capacityBytes);//range in native memory?
-            RangeCheck.rangeCheckBound(                    0,          toAmountBytes(n), length);       //range in array?
+            RangeCheck.checkBound(toAmountBytes(offset), toAmountBytes(offset + n), capacityBytes);//range in native memory?
+            RangeCheck.checkBound(                    0,          toAmountBytes(n), length);       //range in array?
             copyMemory(null, address() + toAmountBytes(offset), array, 16, length);
         }
     }
@@ -284,15 +284,15 @@ public abstract class MemoryAddress<M extends MemoryAddress<M, A>, A> {
         if(clazz == null)
         {
             int length = getPrimitiveArrayLength(array); //not a primitive exception is handled here
-            RangeCheck.rangeCheckBound(offset, offset + n, capacity());//range in native memory?
-            RangeCheck.rangeCheckBound(     0,          n, length);    //range in array?
+            RangeCheck.checkBound(offset, offset + n, capacity());//range in native memory?
+            RangeCheck.checkBound(     0,          n, length);    //range in array?
             copyMemory(array, 16, null, address() + toAmountBytes(offset), toAmountBytes(length));
         }
         else
         {   //we are dealing with objects encoded in bytes therefore array is in bytes
             int length = getPrimitiveArrayLength(array);
-            RangeCheck.rangeCheckBound(toAmountBytes(offset), toAmountBytes(offset + n), capacityBytes);//range in native memory?
-            RangeCheck.rangeCheckBound(                    0,          toAmountBytes(n), length);       //range in array?
+            RangeCheck.checkBound(toAmountBytes(offset), toAmountBytes(offset + n), capacityBytes);//range in native memory?
+            RangeCheck.checkBound(                    0,          toAmountBytes(n), length);       //range in array?
             copyMemory(array, 16, null, address() + toAmountBytes(offset), length);
         }
     }

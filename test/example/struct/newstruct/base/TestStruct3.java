@@ -5,10 +5,10 @@
  */
 package example.struct.newstruct.base;
 
-import coordinate.memory.layout.LayoutArray;
-import coordinate.memory.layout.LayoutGroup;
-import coordinate.memory.layout.LayoutValue;
-import coordinate.memory.layout.struct.StructBase;
+import coordinate.memory.type.LayoutArray;
+import coordinate.memory.type.LayoutGroup;
+import coordinate.memory.type.LayoutValue;
+import coordinate.memory.type.StructBase;
 
 /**
  *
@@ -47,12 +47,12 @@ public class TestStruct3 {
         }
 
         @Override
-        public void toBuffer() {
+        public void fieldToMemory() {
             
         }
 
         @Override
-        public void fromBuffer() {
+        public void memoryToField() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 

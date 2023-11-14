@@ -13,11 +13,23 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/memlayout/Test.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/example/struct/newstruct/base/TestAny.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutValue.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryRegion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/LayoutMemory.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutGroup.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/memory/layout/LayoutMemory.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/memlayout/Test.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryRegion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/LayoutMemory.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryRegion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/BitUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/LayoutMemory.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryAllocator.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
         </group>
         <group/>
     </open-files>

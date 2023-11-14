@@ -113,7 +113,7 @@ public class NativeFloat extends MemoryAddress<NativeFloat, float[]>{
     
     public NativeFloat fill(float val, long n)
     {
-        RangeCheck.rangeCheckBound(0, n, capacity());
+        RangeCheck.checkBound(0, n, capacity());
         for (long i = 0, len = n; i < len; i++)
             set(i, val);
         return this;

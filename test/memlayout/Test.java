@@ -5,14 +5,14 @@
  */
 package memlayout;
 
-import coordinate.memory.layout.LayoutValue;
-import coordinate.memory.layout.LayoutArray;
-import coordinate.memory.layout.LayoutGroup;
-import coordinate.memory.layout.LayoutMemory;
-import coordinate.memory.layout.LayoutMemory.PathElement;
-import coordinate.memory.layout.struct.StructBase;
-import coordinate.memory.layout.struct.ValueState;
-import java.nio.ByteBuffer;
+import coordinate.memory.type.LayoutValue;
+import coordinate.memory.type.LayoutGroup;
+import coordinate.memory.type.LayoutMemory.PathElement;
+import coordinate.memory.type.MemoryStruct;
+import coordinate.memory.type.MemoryStructFactory.Int32;
+import coordinate.memory.type.StructBase;
+import coordinate.memory.type.ValueState;
+import coordinate.utility.RangeLong;
 
 /**
  *
@@ -21,59 +21,45 @@ import java.nio.ByteBuffer;
 public class Test {
     public static void main(String... args)
     {
-        LayoutMemory group = LayoutGroup.groupLayout(
-                LayoutValue.JAVA_BYTE.withId("c"),
-                LayoutArray.arrayLayout(2, LayoutValue.JAVA_INT).withId("i"),
-                LayoutValue.JAVA_LONG.withId("v")
-        );
+        test3();
+    }
         
-        System.out.println(group);
+    public static void test1()
+    {        
+        MemoryStruct<Int32> intArray = new MemoryStruct(new Int32(), 100);        
         
-        LayoutMemory sequence = LayoutArray.arrayLayout(5, group);
-        ByteBuffer buffer = ByteBuffer.allocate(sequence.byteSizeAggregate());
+        ValueState state = intArray.getState(
+                PathElement.sequenceElement(), 
+                PathElement.groupElement("value"));
         
-        ValueState i2 = sequence.valueState(buffer, 
-                    PathElement.sequenceElement(),
-                    PathElement.groupElement("i"),
-                    PathElement.sequenceElement(0)
-                );
-        for(int i = 0; i<i2.length(); i++)
-            i2.set(i, 5);
+        state.forEachSet(intArray.getMemory(), i -> (int)i);            
+        state.set(intArray.getMemory(), 5, 1000000);
         
-        for(int i = 0; i<i2.length(); i++)
-            System.out.println(i2.get(i));
+        System.out.println(intArray.getString(new RangeLong(0, 50)));
         
-        LayoutMemory pointLayout = LayoutGroup.groupLayout(
-                LayoutValue.JAVA_INT.withId("x"),
-                LayoutValue.JAVA_INT.withId("y"),
-                LayoutValue.JAVA_INT.withId("z")
-        );
-        
-        LayoutMemory cellLayout = LayoutGroup.groupLayout(
-                pointLayout.withId("min"),
-                LayoutValue.JAVA_INT.withId("begin"),
-                pointLayout.withId("max"),
-                LayoutValue.JAVA_INT.withId("end")
-        );
-        
-        //trying to prove that point(x, y, z) of int values added int values in cellLayout is similar to point(x, y, z, w) series layout
-        System.out.println(cellLayout);
-        
-        /*
-        LayoutMemory sequence = LayoutArray.arrayLayout(5, group);
-        
-        LayoutMemory mem = sequence.select(
-                PathElement.sequenceElement(4),
-                PathElement.groupElement("v"));
-        System.out.println(mem.offset());
-        
-        Josto josto = new Josto();
-        josto.i = 3000;
-        josto.v = 400L;
-        josto.toBuffer();
-        System.out.println(josto.iState.get());
-        System.out.println(josto.vState.get());
-        */
+        MemoryStruct<Int32> subArray = intArray.offsetIndex(50);        
+        subArray.set(5, new Int32(5));
+        System.out.println(subArray);
+        System.out.println(intArray);
+    }
+    
+    public static void test2()
+    {
+        MemoryStruct<Josto> array = new MemoryStruct(new Josto(), 10);   
+        ValueState state = array.getState(
+                PathElement.sequenceElement(), 
+                PathElement.groupElement("i"));
+        state.forEachSet(array.getMemory(), i -> 22343); 
+                
+        System.out.println(array.get(5));        
+        System.out.println(array.toString());
+    }
+    
+    public static void test3()
+    {
+        MemoryStruct<Int32> intArray = new MemoryStruct(new Int32(), 100);   
+        //intArray.getMemory().fill((byte)1);
+        System.out.println(intArray);
     }
     
     public static class Josto extends StructBase<Josto>
@@ -90,17 +76,17 @@ public class Test {
         public Josto(){}
 
         @Override
-        public void toBuffer() {
-            cState.set(c);
-            iState.set(i);
-            vState.set(v);
+        public void fieldToMemory() {
+            cState.set(memory(), c); 
+            iState.set(memory(), i);
+            vState.set(memory(), v);
         }
 
         @Override
-        public void fromBuffer() {
-            c = (byte) cState.get();
-            i = (int) iState.get();
-            v = (long) vState.get();
+        public void memoryToField() {
+            c = (byte)  cState.get(memory());
+            i = (int)   iState.get(memory());
+            v = (long)  vState.get(memory());
         }
 
         @Override
@@ -128,7 +114,16 @@ public class Test {
             cState = valueState(PathElement.groupElement("c"));
             iState = valueState(PathElement.groupElement("i"));
             vState = valueState(PathElement.groupElement("v"));
-        }
+        }  
         
-    }
+        @Override
+        public String toString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.append("(c = ").append(c);
+            builder.append(" i = ").append(i);
+            builder.append(" v = ").append(v).append(")");
+            return builder.toString();
+        }
+    }    
 }

@@ -47,7 +47,7 @@ public class RangeCheck {
     }    
     
     //Size should encompass the fromIndex and toIndex 
-    public static final void rangeCheckBound(long fromIndex, long toIndex, long size) {
+    public static final void checkBound(long fromIndex, long toIndex, long size) {
         if (fromIndex < 0)
             throw new IndexOutOfBoundsException("fromIndex is less than zero " + fromIndex);
         if (toIndex > size)
@@ -55,6 +55,20 @@ public class RangeCheck {
         if (fromIndex > toIndex)
             throw new IllegalArgumentException("fromIndex(" + fromIndex +
                                                ") > toIndex(" + toIndex + ")");
+    }
+    
+    public static final void indexCheckBound(long index, long fromIndex, long toIndex) {
+        if (fromIndex < 0)
+            throw new IndexOutOfBoundsException("fromIndex is less than zero " + fromIndex);
+        if (fromIndex > toIndex)
+            throw new IllegalArgumentException("fromIndex(" + fromIndex +
+                                               ") > toIndex(" + toIndex + ")");
+        if (index >= toIndex)
+            throw new IllegalArgumentException("index(" + index +
+                                               ") >= toIndex(" + toIndex + ")");
+        if (index < fromIndex)
+            throw new IllegalArgumentException("index " +index+ " not in range of (" + fromIndex +
+                                               "," + toIndex + ")");
     }
     
     public static final boolean isRangeInBound(long index, long fromIndex, long toIndex) {

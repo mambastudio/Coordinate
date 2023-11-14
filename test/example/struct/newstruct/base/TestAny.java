@@ -5,8 +5,11 @@
  */
 package example.struct.newstruct.base;
 
-import coordinate.memory.layout.struct.ValueState;
-import java.nio.ByteBuffer;
+import coordinate.memory.type.LayoutMemory.PathElement;
+import static coordinate.memory.type.LayoutValue.JAVA_FLOAT;
+import coordinate.memory.type.MemoryAllocator;
+import coordinate.memory.type.MemoryRegion;
+import coordinate.memory.type.ValueState;
 
 /**
  *
@@ -15,13 +18,11 @@ import java.nio.ByteBuffer;
 public class TestAny {
     public static void main(String... args)
     {
-        //new ConcreteClassA();
-       // new ConcreteClassB();
-        ByteBuffer buffer = ByteBuffer.allocate(10);
-        ValueState x = ValueState.valueState(float.class, 0, 0,0, buffer);
-        x.set(3f);
+        MemoryRegion carrier = MemoryAllocator.allocateHeap(10, 4);
+        ValueState x = ValueState.valueState(float.class, 0, 10, 4);
+        x.set(carrier, 3, 13f);
         
-        float value = (float) x.get();
+        float value = (float) x.get(carrier, 3);
         System.out.println(value);
     }
     

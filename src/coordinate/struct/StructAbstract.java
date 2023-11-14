@@ -5,8 +5,8 @@
  */
 package coordinate.struct;
 
-import coordinate.memory.layout.LayoutMemory.PathElement;
-import coordinate.memory.layout.struct.ValueState;
+import coordinate.memory.type.LayoutMemory.PathElement;
+import coordinate.memory.type.ValueState;
 import coordinate.struct.refl.StructField;
 import coordinate.utility.Value1Di;
 import java.util.Arrays;
