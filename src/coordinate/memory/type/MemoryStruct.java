@@ -54,6 +54,15 @@ public final class MemoryStruct<T extends StructBase> {
         this.abstractT = t;
     }
     
+    public MemoryStruct(T t, long address, long size)
+    {        
+        Objects.requireNonNull(t);
+        RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
+        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
+        this.memory = MemoryAllocator.allocateNativeAddress(memoryLayout, address);
+        this.abstractT = t;
+    }
+    
     private MemoryStruct(MemoryStruct<T> m, long offsetIndex)
     {
         Objects.requireNonNull(m);
@@ -89,7 +98,7 @@ public final class MemoryStruct<T extends StructBase> {
             set(i, function.apply(get(i), i));
     }
     
-    public<V> void forEachSet(RangeLong range, BiObjLongFunction<T> function)
+    public void forEachSet(RangeLong range, BiObjLongFunction<T> function)
     {
         RangeCheckArray.validateRangeSize(range.low(), range.high(), size());        
         for(long i = range.low(); i < range.high(); i++)

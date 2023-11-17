@@ -51,6 +51,11 @@ public class MemoryAllocator {
         return new MemoryNativeImpl(layout, initialise);
     }
     
+    public static MemoryRegion allocateNativeAddress(LayoutMemory layout, long address)
+    {        
+        return new MemoryNativeAddressImpl(address, layout.byteSizeAggregate());
+    }
+    
     protected static class MemoryHeapImpl implements MemoryRegion<MemoryHeapImpl>
     {                
         private ByteBuffer buffer;
@@ -247,6 +252,225 @@ public class MemoryAllocator {
         public void dispose() {
             throw new UnsupportedOperationException("this is a heap buffer and not native"); //To change body of generated methods, choose Tools | Templates.
         }    
+    }
+    
+    protected static class MemoryNativeAddressImpl implements MemoryRegion<MemoryNativeAddressImpl>  
+    {
+        private long address;
+        private long capacityBytes; 
+
+        //buffer fields
+        protected static final Field addressField, capacityField;
+        static {
+        try {
+                addressField = Buffer.class.getDeclaredField("address");
+                addressField.setAccessible(true);
+                capacityField = Buffer.class.getDeclaredField("capacity");
+                capacityField.setAccessible(true);
+
+            } catch (NoSuchFieldException e) {
+                throw new AssertionError(e);
+            }
+        }
+        
+        private MemoryNativeAddressImpl(long address, long capacityBytes)
+        {
+            RangeCheckArray.validateIndexSize(capacityBytes, Long.MAX_VALUE);
+            this.address = address;
+            this.capacityBytes = capacityBytes;            
+            initSweeper();
+        }
+                
+        private MemoryNativeAddressImpl(MemoryNativeAddressImpl memory, long byteOffset)
+        {
+            RangeCheckArray.validateIndexSize(byteOffset, memory.byteCapacity());
+            this.address = memory.address(byteOffset);
+            this.capacityBytes = memory.capacityBytes - byteOffset;
+            initSweeper();
+        }
+        
+        private MemoryNativeAddressImpl(MemoryNativeAddressImpl memory, long byteOffset, long byteAlignment)
+        {
+            RangeCheckArray.validateIndexSize(byteOffset, memory.byteCapacity());
+            RangeCheckArray.validateIndexSize(byteOffset + byteAlignment - 1, memory.byteCapacity());
+            this.address = memory.address(byteOffset);
+            this.capacityBytes = byteAlignment;
+            initSweeper();
+        }
+        
+        private void initSweeper()
+        {
+            //For garbage collection
+            Sweeper.getSweeper().register(this, ()->{
+                System.out.println("memory region disposing");
+                dispose();
+            });
+        }
+        
+        @Override
+        public boolean isNative() {
+            return true;
+        }
+        
+        @Override
+        public long byteCapacity() {
+            return capacityBytes;
+        }
+
+        @Override
+        public MemoryNativeAddressImpl offset(long offset) {
+            return new MemoryNativeAddressImpl(this, offset);
+        }
+        
+        @Override
+        public MemoryNativeAddressImpl offset(long offset, long byteAlignment) {
+            return new MemoryNativeAddressImpl(this, offset, byteAlignment);
+        }
+        
+        @Override
+        public void copyFrom(MemoryRegion m, long n) {
+            RangeCheckArray.validateRangeSize(0, n,  m.byteCapacity());
+            RangeCheckArray.validateRangeSize(0, n,  byteCapacity());
+            if(m.isNative())                                   
+                copyMemory(null, m.address(), null, address(), n);               
+            else
+                for(long i = 0; i < n; i++)
+                    set(LayoutValue.JAVA_BYTE, i, m.get(LayoutValue.JAVA_BYTE, i));
+        }
+
+        @Override
+        public void copyTo(MemoryRegion m, long n) {
+            RangeCheckArray.validateRangeSize(0, n,  m.byteCapacity());
+            RangeCheckArray.validateRangeSize(0, n,  byteCapacity());
+            if(m.isNative())                                   
+                copyMemory(null, address(), null, m.address(), n);      
+            else
+                for(long i = 0; i < n; i++)
+                    m.set(LayoutValue.JAVA_BYTE, i, get(LayoutValue.JAVA_BYTE, i));
+        }
+
+        @Override
+        public final void fill(byte value) {
+            long remaining = capacityBytes % 8;
+            
+            // Fill the aligned part efficiently
+            getUnsafe().setMemory(address, capacityBytes - remaining, value);
+
+            // Fill the remaining unaligned bytes individually
+            for (int i = 0; i < remaining; i++) {
+                getUnsafe().setMemory(address + capacityBytes - remaining + i, 1, value);
+            }
+        }
+
+        @Override
+        public void swap(MemoryNativeAddressImpl m) {
+            long tempAddress = address;
+            long tempCapacityBytes = capacityBytes;
+
+            address = m.address;
+            capacityBytes = m.capacityBytes;
+            m.address = tempAddress;
+            m.capacityBytes = tempCapacityBytes;
+        }
+
+        @Override
+        public long address() {
+            return address;
+        }
+
+        @Override
+        public long address(long offset) {
+            return address() + offset;
+        }
+
+        @Override
+        public float get(LayoutValue.OfFloat layout, long offset) {
+            return getUnsafe().getFloat(address(offset));
+        }
+
+        @Override
+        public byte get(LayoutValue.OfByte layout, long offset) {
+            return getUnsafe().getByte(address(offset));
+        }
+
+        @Override
+        public boolean get(LayoutValue.OfBoolean layout, long offset) {
+            return getUnsafe().getByte(address(offset))>0;
+        }
+
+        @Override
+        public char get(LayoutValue.OfChar layout, long offset) {
+            return getUnsafe().getChar(address(offset));
+        }
+
+        @Override
+        public short get(LayoutValue.OfShort layout, long offset) {
+            return getUnsafe().getShort(address(offset));
+        }
+
+        @Override
+        public int get(LayoutValue.OfInteger layout, long offset) {
+            return getUnsafe().getInt(address(offset));
+        }
+
+        @Override
+        public long get(LayoutValue.OfLong layout, long offset) {
+            return getUnsafe().getLong(address(offset));
+        }
+
+        @Override
+        public double get(LayoutValue.OfDouble layout, long offset) {
+            return getUnsafe().getDouble(address(offset));
+        }
+
+        @Override
+        public void set(LayoutValue.OfFloat layout, long offset, float value) {            
+            getUnsafe().putFloat(address(offset), value);
+        }
+
+        @Override
+        public void set(LayoutValue.OfByte layout, long offset, byte value) {
+            getUnsafe().putByte(address(offset), value);
+        }
+
+        @Override
+        public void set(LayoutValue.OfBoolean layout, long offset, boolean value) {
+            getUnsafe().putByte(address(offset), (byte) (value ? 1 : 0));
+        }
+
+        @Override
+        public void set(LayoutValue.OfChar layout, long offset, char value) {
+            getUnsafe().putChar(address(offset), value);
+        }
+
+        @Override
+        public void set(LayoutValue.OfShort layout, long offset, short value) {
+            getUnsafe().putShort(address(offset), value);
+        }
+
+        @Override
+        public void set(LayoutValue.OfInteger layout, long offset, int value) {           
+            getUnsafe().putInt(address(offset), value);           
+        }
+
+        @Override
+        public void set(LayoutValue.OfLong layout, long offset, long value) {
+            getUnsafe().putLong(address(offset), value);
+        }
+
+        @Override
+        public void set(LayoutValue.OfDouble layout, long offset, double value) {
+            getUnsafe().putDouble(address(offset), value);            
+        }
+
+        @Override
+        public void dispose() {
+            if(address()!=0)
+            {
+                getUnsafe().freeMemory(address());
+                address = 0;
+            }
+        }  
     }
     
     protected static class MemoryNativeImpl implements MemoryRegion<MemoryNativeImpl>  

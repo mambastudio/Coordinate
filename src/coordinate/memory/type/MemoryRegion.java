@@ -14,7 +14,10 @@ public interface MemoryRegion<M extends MemoryRegion>{
     public long byteCapacity();
             
     public M offset(long byteOffset);
-    public M offset(long byteOffset, long byteAlignment); 
+    default M offset(long byteOffset, long byteAlignment)
+    {
+        throw new UnsupportedOperationException("This method is not implemented");
+    }
     public void copyFrom(MemoryRegion m, long byteAlignment);
     public void copyTo(MemoryRegion m, long byteAlignment);
             
