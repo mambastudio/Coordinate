@@ -79,5 +79,5 @@ public interface MemoryRegion<M extends MemoryRegion>{
     default void setAtIndex(LayoutValue.OfLong layout,      long index, long    value){set(layout, index * layout.byteSizeElement(), value);}    
     default void setAtIndex(LayoutValue.OfDouble layout,    long index, double  value){set(layout, index * layout.byteSizeElement(), value);} 
 
-    
+    default void setAtIndex(LayoutValue.OfInteger layout,  long index, int[] values){ for(int i = 0; i<values.length; i++) setAtIndex(layout, i + index, values[i]);}
 }
