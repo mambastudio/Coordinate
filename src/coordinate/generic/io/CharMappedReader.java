@@ -14,6 +14,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.nio.ch.DirectBuffer;
@@ -113,19 +114,25 @@ public class CharMappedReader {
             else
                 return 0;
     }
-    
+       
     public String getToken()
     {
         StringBuilder builder = new StringBuilder();
         if(goToStartChar())
             while(hasRemaining() && !isSpace(peekChar()))
-                builder.append(getChar());
+                builder.append(getChar()); 
         if(builder.length()>0)
             return builder.toString();
         else 
             return null;
     }
     
+    public boolean hasNextToken()
+    {
+        return peekToken() != null;
+    }
+    
+    //expensive.. try to avoid it
     public String peekToken()
     {
         int previousPos = buffer.position();
@@ -189,7 +196,7 @@ public class CharMappedReader {
     
     public boolean isSpace(char c)
     {
-        return (Character.isWhitespace(c)) || (c == '\0');
+        return (Character.isWhitespace(c) || c == '/');
     }
     
     public char peekChar()
@@ -210,7 +217,7 @@ public class CharMappedReader {
         int sign = 1;
         boolean end_not_reached;
         
-        int read = 0;
+        int readCountSuccess = 0;
 
         if (c == '+' || c == '-') {
             if (c == '-') sign = -1;
@@ -223,12 +230,12 @@ public class CharMappedReader {
             value *= 10;
             value += (int)(c - '0');
             c = getChar();
-            read++;
+            readCountSuccess++;
             end_not_reached = buffer.position() <= s_end;
         }
-        if(read != 0)
+        if(readCountSuccess != 0)
             result[0] = value * sign;
-        return read != 0;
+        return readCountSuccess != 0;
     }
             
     public void goToStartDigit()
@@ -241,7 +248,7 @@ public class CharMappedReader {
         else
             return;
                 
-        while(Character.isWhitespace(c) || !Character.isDigit(c))
+        while(isSpace(c) || !Character.isDigit(c))
         {            
             if((c == '-') || (c == '+'))
                 if(Character.isDigit(peekChar()))
@@ -264,7 +271,7 @@ public class CharMappedReader {
             if(buffer.hasRemaining())
             {
                 char c = peekChar();
-                if(!Character.isWhitespace(c) || c == 0)
+                if(!(isSpace(c)))
                 {                    
                     //go back one step                   
                     return true;
@@ -336,7 +343,6 @@ public class CharMappedReader {
                     getChar(); //read away \n
                     return;
                 }
-            
         }
         
     }
@@ -348,7 +354,7 @@ public class CharMappedReader {
             char c  = getChar();            
             if (c == 0) //'\0'
                 return;
-            if (Character.isWhitespace(c))         
+            if (isSpace(c))         
                 return;         
         }     
     }

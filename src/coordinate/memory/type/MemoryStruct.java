@@ -7,7 +7,6 @@ package coordinate.memory.type;
  */
 
 
-import coordinate.memory.type.LayoutMemory.PathElement;
 import coordinate.memory.type.MemoryAllocator.MemoryNativeImpl;
 import coordinate.utility.RangeCheckArray;
 import coordinate.utility.RangeLong;
@@ -26,7 +25,7 @@ import java.util.logging.Logger;
  */
 public final class MemoryStruct<T extends StructBase> {
     private final MemoryRegion memory;
-    private final LayoutMemory memoryLayout;
+    private final long size;    
     private final T abstractT;
     private final int maximumStringCount = 1000;
     
@@ -40,56 +39,70 @@ public final class MemoryStruct<T extends StructBase> {
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
-        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
-        this.memory = MemoryAllocator.allocateNative(this.memoryLayout);
+        this.memory = MemoryAllocator.allocateNative(size, t.sizeOf());
         this.abstractT = t;
+        this.size = size;
     }
     
     public MemoryStruct(T t, long size, boolean initialise)
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
-        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
-        this.memory = MemoryAllocator.allocateNative(this.memoryLayout, initialise);
+        this.memory = MemoryAllocator.allocateNative(size, t.sizeOf(), initialise);
         this.abstractT = t;
+        this.size = size;
     }
     
-    public MemoryStruct(T t, long address, long size)
+    public MemoryStruct(T t, MemoryRegion memory)
+    {        
+        Objects.requireNonNull(t);
+        Objects.requireNonNull(memory);
+        this.memory = memory;
+        this.abstractT = t;
+        if((memory.byteCapacity() % t.sizeOf()) != 0)
+            throw new UnsupportedOperationException("memory region size is not a multiple of size of struct");
+        this.size = memory.byteCapacity() / t.sizeOf();
+    }
+    
+    public MemoryStruct(T t, long size, long address)
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
-        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
-        this.memory = MemoryAllocator.allocateNativeAddress(memoryLayout, address);
+        this.memory = MemoryAllocator.allocateNativeAddress(t.sizeOf() * size, address);
         this.abstractT = t;
+        this.size = size;
     }
     
     private MemoryStruct(MemoryStruct<T> m, long offsetIndex)
     {
         Objects.requireNonNull(m);
-        RangeCheckArray.validateIndexSize(offsetIndex, m.size());  
-        
-        //arraySize = m.size() - offsetIndex
-        this.memoryLayout = LayoutArray.arrayLayout(m.memoryLayout.elementCount() - offsetIndex, m.abstractT.getLayout());
-        //byteOffset = m.offsetIndex(PathElement.sequenceElement(offsetIndex));
-        this.memory = m.memory.offset(m.memoryLayout.offset(PathElement.sequenceElement(offsetIndex)), memoryLayout.byteSizeAggregate());
-        //all structs have a copy method
-        this.abstractT = (T) m.abstractT.copy();        
+        RangeCheckArray.validateIndexSize(offsetIndex, m.size());        
+        this.memory = m.memory.offset(offsetIndex * m.abstractT.sizeOf());
+        this.size = m.size() - offsetIndex;
+        this.abstractT = (T) m.abstractT.newStruct();        
+    }
+    
+    public static<T extends StructBase<T>> MemoryStruct<T> allocateHeap(T t, long size)
+    {
+        MemoryRegion memory = MemoryAllocator.allocateHeap(LayoutArray.arrayLayout(size, t.getLayout()));
+        return new MemoryStruct(t, memory);
+    }
+    
+    public static<T extends StructBase<T>> MemoryStruct<T> allocateNative(T t, long size, boolean initialised)
+    {
+        return new MemoryStruct(t, size, initialised);
     }
         
     public T get(long index)
-    {        
-        LayoutMemory structLayout = memoryLayout.select(LayoutMemory.PathElement.sequenceElement(index));            
-        MemoryRegion mm = memory.offset(structLayout.offset(), structLayout.byteSizeAggregate());        
-        T newT = (T) abstractT.newInstance();
-        newT.putMemory(mm);
+    {                        
+        T newT = (T) abstractT.newStruct();
+        newT.memoryToField(offsetIndex(index).getMemory());
         return newT;
     }
     
     public void set(long index, T newT)
     {
-        LayoutMemory structLayout = memoryLayout.select(PathElement.sequenceElement(index));        
-        MemoryRegion mm = memory.offset(structLayout.offset(), structLayout.byteSizeAggregate());
-        newT.updateMemory().copyTo(mm, mm.byteCapacity());
+        newT.fieldToMemory(offsetIndex(index).getMemory());
     }
         
     public void forEachSet(BiObjLongFunction<T> function)
@@ -169,7 +182,7 @@ public final class MemoryStruct<T extends StructBase> {
     
     public MemoryStruct<T> copy()
     { 
-        MemoryStruct<T> mem = new MemoryStruct(abstractT.copy(), size(), false);
+        MemoryStruct<T> mem = new MemoryStruct(abstractT.newStruct(), size(), false);
         copyTo(mem);
         return mem;
     }
@@ -190,17 +203,7 @@ public final class MemoryStruct<T extends StructBase> {
     
     public long size()
     {
-        return memoryLayout.elementCount();
-    }
-    
-    public LayoutMemory getStructLayout()
-    {
-        return memoryLayout.select(PathElement.sequenceElement());
-    }
-    
-    public ValueState getState(PathElement... elements)
-    {
-        return memoryLayout.valueState(elements);
+        return size;
     }
     
     public void dispose()
@@ -220,7 +223,7 @@ public final class MemoryStruct<T extends StructBase> {
     
     public T getStructBase()
     {
-        return (T) abstractT.copy();
+        return (T) abstractT.newStruct();
     }
     
     public String getMemoryReadableSize()

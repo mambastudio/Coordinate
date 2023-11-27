@@ -123,7 +123,7 @@ public class SerialAlgorithmInt32 {
         RangeCheckArray.validateRangeSize(0, keysOut.size(),    n);
         RangeCheckArray.validateRangeSize(0, valuesOut.size(),  n);
         
-        //transfer copy to memory
+        //transfer copyStruct to memory
         checkSameByteCapacity(keys.getMemory(), keysOut.getMemory());
         keys.copyTo(keysOut);
         checkSameByteCapacity(values.getMemory(), valuesOut.getMemory());

@@ -96,7 +96,13 @@ public class OBJInfo {
             else if(reader.isCurrentIsolated("usemtl"))
                 usemtl++;
             else if(reader.isCurrentIsolated("f"))
-                f++;
+            {
+                int intCount = reader.countInts();
+                if(intCount == 4 || intCount == 8 || intCount == 12) //means it might be a quad hence break it into two
+                    f+=2;
+                else
+                    f++;
+            }                
             else if(reader.isCurrentIsolated("o"))
                 o++;
             else if(reader.isCurrentIsolated("g"))
@@ -148,7 +154,16 @@ public class OBJInfo {
                     vn++;
                     break;
                 case "f":
-                    f++;
+                    int intCount = 0;
+                    while(parser.peekNextTokenIsNumber())
+                    {
+                        intCount++;
+                        parser.skipTokens(1);
+                    }
+                    if(intCount == 4 || intCount == 8 || intCount == 12) //means it might be a quad hence break it into two
+                        f+=2;
+                    else
+                        f++;
                     break;
                 case "g":
                     g++;

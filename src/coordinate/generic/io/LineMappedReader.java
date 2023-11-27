@@ -42,6 +42,17 @@ public class LineMappedReader extends CharMappedReader {
         buffer.position(previousPos);
         return builder.toString();
     }
+    
+    public String readLineString2()
+    {
+        int end = length_until_newline();
+        if(end == 0)
+            return null;
+        StringBuilder builder = new StringBuilder(end);
+        for(int i = 0; i<end; i++)
+            builder.append(getChar());        
+        return builder.toString();
+    }
         
     public float[] readLineFloatArray()
     {
@@ -95,7 +106,25 @@ public class LineMappedReader extends CharMappedReader {
         
         buffer.position(previousPos);
         return list.trim();
-    }    
+    }  
+    
+    
+    public int countInts()
+    {
+        int previousPos = buffer.position();
+        
+        int limit = getEndOfLinePosition();
+        int count = 0;
+        while(position() < limit)
+        {
+            boolean read = parseInteger(limit, new int[1]);
+            if(read)
+                count++;
+        }
+        
+        buffer.position(previousPos);
+        return count;
+    }
     
     public int length_until_space() 
     {

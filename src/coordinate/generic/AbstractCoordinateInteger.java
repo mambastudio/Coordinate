@@ -24,8 +24,10 @@ public interface AbstractCoordinateInteger extends AbstractCoordinate {
                 return get('y');
             case 2:
                 return get('z');
-            default:
+            case 3:
                 return get('w');
+            default:
+                throw new UnsupportedOperationException("coordinate is not defined");
         }
     }
      

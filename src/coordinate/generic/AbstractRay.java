@@ -10,8 +10,9 @@ package coordinate.generic;
  * @author user
  * @param <S>
  * @param <V>
+ * @param <R>
  */
-public interface AbstractRay<S extends SCoord, V extends VCoord> 
+public interface AbstractRay<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V, R>> 
 {
     public void set(float ox, float oy, float oz, float dx, float dy, float dz);
     public void set(S o, V d);    
@@ -28,6 +29,6 @@ public interface AbstractRay<S extends SCoord, V extends VCoord>
         return (getMin() < t) && (t < getMax());    
     }
     
-    public AbstractRay<S, V> copy();
+    public R copy();
       
 }

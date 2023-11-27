@@ -9,6 +9,7 @@ import coordinate.list.CoordinateFloatList;
 import coordinate.list.IntList;
 import coordinate.parser.attribute.GroupT;
 import coordinate.parser.attribute.MaterialT;
+import coordinate.shapes.AlignedBBoxShape;
 import coordinate.shapes.TriangleShape;
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ import java.util.ArrayList;
  * @param <V>
  * @param <T>
  * @param <R>
+ * @param <B>
  * @param <TriShape>
  */
 public abstract class AbstractMesh <
@@ -27,7 +29,8 @@ public abstract class AbstractMesh <
         V extends VCoord, 
         T extends AbstractCoordinateFloat, 
         R extends AbstractRay<S, V>,
-        TriShape extends TriangleShape<S, V, R>>
+        B extends AlignedBBoxShape<S, V, R, B>,
+        TriShape extends TriangleShape<S, V, R, B>>
 {    
     public enum MeshType{FACE, FACE_NORMAL, FACE_UV_NORMAL, FACE_UV};
     

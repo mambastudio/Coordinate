@@ -19,7 +19,7 @@ public class SerialAlgorithmStruct <S extends StructBase>{
     public S reduce(MemoryStruct<S> values, long n, MemoryStruct<S> result, BinaryOperator<S> f) {
         RangeCheckArray.validateIndexSize(n, Long.MAX_VALUE);
         RangeCheckArray.validateRangeSize(0, n, values.size());
-        S res = (S) values.get(0).newInstance();
+        S res = (S) values.get(0).newStruct();
         for(long i = 0; i<n; i++)
             res = f.apply(res, values.get(i));
         result.set(0, res); //result is one value

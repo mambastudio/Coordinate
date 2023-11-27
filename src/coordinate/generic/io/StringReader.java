@@ -82,7 +82,7 @@ public class StringReader {
     
     public void skipTokens(int value)
     {
-        String string = null;
+        String string;
         
         for(int i = 0; i<value; i++)
         {

@@ -96,63 +96,7 @@ public class OBJParser implements AbstractParser{
        info = new OBJInfo();
        info.readAttributesString(string);
     }
-    
-    public void readAttributes(String uri)
-    {
-        readAttributes(new File(uri).toURI());
-    }
-    
-    public void readAttributes(URI uri)
-    {
-        readAttributes(new StringReader(uri));
-    }
-    
-    public void readAttributes(StringReader parser)
-    {
-        int v = 0, vt = 0, vn = 0, f = 0, g = 0, o = 0, usemtl = 0;        
-                        
-        while(parser.hasNext())
-        {
-            String currentToken = parser.getNextToken();            
-            switch (currentToken) {
-                case "v":
-                    v++;
-                    break;                
-                case "vt":
-                    vt++;
-                    break;
-                case "vn":
-                    vn++;
-                    break;
-                case "f":
-                    f++;
-                    break;
-                case "g":
-                    g++;
-                    break;  
-                case "o":
-                    o++;
-                    break;
-                case "usemtl":
-                    usemtl++;
-                    break;
-                default:                    
-                    break;
-            }                
-        }       
         
-        StringBuilder attributesString = new StringBuilder();
-        attributesString.append("vertices              ").append(v).append("\n");
-        attributesString.append("texture vertices      ").append(vt).append("\n");
-        attributesString.append("normal vertices       ").append(vn).append("\n");
-        attributesString.append("faces                 ").append(f).append("\n");
-        attributesString.append("material              ").append(usemtl).append("\n");
-        attributesString.append("groups                ").append(g).append("\n");
-        attributesString.append("objects               ").append(o).append("\n");
-        
-        System.out.println(attributesString);
-    }
-    
     private void read(StringReader parser, AbstractMesh data)
     {
         this.mesh = data;   

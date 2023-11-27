@@ -5,10 +5,9 @@
  */
 package example.struct.newstruct.base;
 
-import coordinate.memory.type.LayoutArray;
-import coordinate.memory.type.LayoutGroup;
-import coordinate.memory.type.LayoutValue;
-import coordinate.memory.type.StructBase;
+import coordinate.memory.type.MemoryStruct;
+import coordinate.memory.type.MemoryStructFactory.Int32;
+import coordinate.utility.Timer;
 
 /**
  *
@@ -17,49 +16,19 @@ import coordinate.memory.type.StructBase;
 public class TestStruct3 {
     public static void main(String... args)
     {
-        
+        test1();
     }
     
-    public static class S1 extends StructBase<S1>
+    
+    public static void test1()
     {
-        public char c;
-        public int[] i = new int[2];
-        public long v;
+        long size = 50_000_000L;
         
-        
-        @Override
-        public S1 newInstance() {
-            return new S1();
-        }
-
-        @Override
-        public S1 copy() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        protected LayoutGroup initLayout() {
-            return LayoutGroup.groupLayout(
-                    LayoutValue.JAVA_BYTE.withId("c"),
-                    LayoutArray.arrayLayout(2, LayoutValue.JAVA_INT).withId("i"),
-                    LayoutValue.JAVA_LONG.withId("v")
-            );
-        }
-
-        @Override
-        public void fieldToMemory() {
-            
-        }
-
-        @Override
-        public void memoryToField() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        protected void initValueStates() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
+        MemoryStruct<Int32> mem = new MemoryStruct(new Int32(), size);
+        System.out.println(Timer.timeThis(()->{
+            for(long i = 0; i < mem.size(); i++)
+                mem.set(i, new Int32(1));
+        }));        
     }
+    
 }

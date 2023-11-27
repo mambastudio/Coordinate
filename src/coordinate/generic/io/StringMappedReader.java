@@ -15,6 +15,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,7 @@ public class StringMappedReader {
     
     private FileChannel channel;
     private MappedByteBuffer buffer;
+    private String delimiter = "";
        
     public StringMappedReader(String directoryPath, String fileName)
     {
@@ -44,6 +46,13 @@ public class StringMappedReader {
         } catch (IOException ex) {
             Logger.getLogger(StringMappedReader.class.getName()).log(Level.SEVERE, null, ex);
         }               
+    }
+    
+    public StringMappedReader(String delimiter, String directoryPath, String fileName)
+    {
+        this(directoryPath, fileName);
+        Objects.requireNonNull(delimiter);
+        this.delimiter = delimiter;
     }
     
     public StringMappedReader(URI uri)
@@ -62,28 +71,38 @@ public class StringMappedReader {
         }          
     }
     
+    public StringMappedReader(String delimiter, URI uri)
+    {
+        this(uri);
+        this.delimiter = delimiter;
+    }
+    
     public String getNextToken()
     {
         goToStartToken();
-        String token = "";
+        char[] buf = new char[500];
+        int index = 0;
         while(true)
         {
             if(buffer.hasRemaining())
             {
-                char c = (char)buffer.get();
-                if(Character.isWhitespace(c))
+                char c = (char)buffer.get();                
+                if(Character.isWhitespace(c) || delimiter.contains(""+c))
                     break;
-                else
-                    token += c;
+                else{
+                    buf[index] = c;
+                    index++;
+                }
+                
             }
             else
                 break;
         }            
         
-        if(token.equals(""))
+        if(index == 0)
             return null;
         else
-            return token;
+            return new String(buf, 0, index);
     }
     
     public String getNextLine()
@@ -104,10 +123,7 @@ public class StringMappedReader {
                 break;
         }            
         
-        if(token.equals(""))
-            return null;
-        else
-            return token;
+        return token;
     }
     
     public void goToStartToken()
@@ -270,7 +286,7 @@ public class StringMappedReader {
     
     public void skipTokens(int value)
     {
-        String string = null;
+        String string;
         
         for(int i = 0; i<value; i++)
         {
@@ -300,6 +316,28 @@ public class StringMappedReader {
             string = getNextToken();
         buffer.position(position);
         return string;
+    }
+    
+    public String peekNextLine()
+    {
+        goToStartToken();
+        int position = buffer.position(); 
+        String token = "";
+        while(true)
+        {
+            if(buffer.hasRemaining())
+            {
+                char c = (char)buffer.get();
+                if(c == '\n' || c == '\r')
+                    break;
+                else
+                    token += c;
+            }
+            else
+                break;
+        }            
+        buffer.position(position);
+        return token;
     }
     
     public char peekNextChar(int skip)
