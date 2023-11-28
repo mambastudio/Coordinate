@@ -18,7 +18,29 @@ import coordinate.utility.Timer;
 public class TestStringMappedFile {
     public static void main(String... args)
     {
-        performance();
+        testOBJLine();
+    }
+    
+    public static void testOBJLine()
+    {
+        LineMappedReader reader = new LineMappedReader("C:\\Users\\user\\Documents\\3D Scenes\\box", 
+                "box2.obj");
+                
+        String line;
+        while(true)
+        {
+
+            line = reader.readLineString3();            
+            if(line == null)
+                break;
+            if(line.contains("f "))
+            {
+                System.out.println(line);
+                System.out.println(reader.my_atoi(line.substring(2)));
+            }
+
+        }
+        
     }
     
     public static void testCharMapped()
@@ -57,7 +79,7 @@ public class TestStringMappedFile {
                 "96_Ferrari_550_Maranello.obj");
         Timer timer3 = Timer.timeThis(()->{
             
-            while(reader3.readLineString2() != null) {
+            while(reader3.readLineString3() != null) {
             }
         });
         System.out.println(timer3);

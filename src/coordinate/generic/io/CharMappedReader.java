@@ -114,6 +114,11 @@ public class CharMappedReader {
             else
                 return 0;
     }
+    
+    public char getChar(int position)
+    {
+        return (char) buffer.get(position);        
+    }
        
     public String getToken()
     {
@@ -146,6 +151,14 @@ public class CharMappedReader {
         if(size > 0)
             for(int i = 0; i<size; i++)
                 getToken();
+    }
+    
+    public String skipSpace(String str)
+    {
+        int i = 0;
+        while(Character.isSpaceChar(str.charAt(i)))
+            i++;
+        return str.substring(i);
     }
     
    
@@ -207,6 +220,41 @@ public class CharMappedReader {
         return c;
     }
     
+    //http://stackoverflow.com/questions/5710091/how-does-atoi-function-in-c-work
+    public int my_atoi(String str) {
+        int value = 0;
+        int sign = 1;
+        int c = 0;
+        if (str.charAt(c) == '+' || str.charAt(c) == '-') {
+          if (str.charAt(c) == '-') sign = -1;
+              c++;
+        }
+        while (((str.charAt(c)) >= '0') && (str.charAt(c) <= '9')) {  // isdigit(*c)
+          value *= 10;
+          value += (int)(str.charAt(c) - '0');
+          c++;
+        }
+        return value * sign;
+    }
+    
+    // http://stackoverflow.com/questions/5710091/how-does-atoi-function-in-c-work
+    public int my_atoi(String str, int[] endIndex) {
+        int value = 0;
+        int sign = 1;
+        int c = 0;
+        if (str.charAt(c) == '+' || str.charAt(c) == '-') {
+          if (str.charAt(c) == '-') sign = -1;
+              c++;
+        }
+        while (((str.charAt(c)) >= '0') && (str.charAt(c) <= '9')) {  // isdigit(*c)
+          value *= 10;
+          value += (int)(str.charAt(c) - '0');
+          c++;
+        }
+        endIndex[0] = c;
+        return value * sign;
+    }
+    
     // http://stackoverflow.com/questions/5710091/how-does-atoi-function-in-c-work
     public boolean parseInteger(int s_end, int[] result) {          
         char c = getChar();
@@ -237,7 +285,7 @@ public class CharMappedReader {
             result[0] = value * sign;
         return readCountSuccess != 0;
     }
-            
+       
     public void goToStartDigit()
     {
         
@@ -305,26 +353,33 @@ public class CharMappedReader {
         return buffer.hasRemaining();
     }
     
-    public boolean isNextEndOfLine()
-    {
-        int previousPosition = buffer.position();
-        char c  = getChar();
-        boolean isEnd = isEndOfLine(c);
-        buffer.position(previousPosition);
-        return isEnd;
-    }
-    
     protected boolean isEndOfLine(char c)
     {        
-        char pc = peekChar();
-        if (c == 0) //'\0' also has no remaining      
-            return true;        
-        if (c == '\n') // this includes \r\n
-            return true;        
-        if (c == '\r') 
-            if (pc != '\n')   // detect only \r case
-                return true;
-        return false;
+        return (c == '\r' || c == '\n' || c == '\0');
+    }
+    
+    protected void skipSpace()
+    {
+        if(!hasRemaining())
+            return;
+        int position = buffer.position();
+        char c = getChar(position);        
+        while (c == ' ' || c == '\t') {
+            c = getChar(++position);
+        }
+        buffer.position(position);
+    }
+    
+    protected void skipSpaceAndCarriageReturn()
+    {
+        if(!hasRemaining())
+            return;
+        int position = buffer.position();
+        char c = getChar(position);
+        while (c == ' ' || c == '\t' || c == '\r') {
+            c = getChar(++position);
+        }
+        buffer.position(position);
     }
     
     public void goToEndLine()

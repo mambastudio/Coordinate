@@ -42,15 +42,22 @@ public class LineMappedReader extends CharMappedReader {
         buffer.position(previousPos);
         return builder.toString();
     }
-    
-    public String readLineString2()
-    {
-        int end = length_until_newline();
-        if(end == 0)
+        
+    public String readLineString3()
+    {        
+        StringBuilder builder = new StringBuilder(); //don't implement custom cache, this solves everything
+        if(!hasRemaining())
             return null;
-        StringBuilder builder = new StringBuilder(end);
-        for(int i = 0; i<end; i++)
-            builder.append(getChar());        
+        skipSpaceAndCarriageReturn(); //go the next non-space character
+        while(true)
+        {
+            char c = getChar();     
+            if(isEndOfLine(c))           
+                break;                  
+            builder.append(c);                   
+        }
+        if(builder.length() == 0) //if line is empty, go to the next one
+            return readLineString3();
         return builder.toString();
     }
         
