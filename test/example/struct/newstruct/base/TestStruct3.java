@@ -16,7 +16,7 @@ import coordinate.utility.Timer;
 public class TestStruct3 {
     public static void main(String... args)
     {
-        test1();
+        test2();
     }
     
     
@@ -29,6 +29,19 @@ public class TestStruct3 {
             for(long i = 0; i < mem.size(); i++)
                 mem.set(i, new Int32(1));
         }));        
+    }
+    
+    public static void test2()
+    {
+        long size = 500L;
+        MemoryStruct<Int32> mem = new MemoryStruct(new Int32(), size);
+        for(long i = 0; i < mem.size(); i++)
+            mem.set(i, new Int32(i));
+        
+        MemoryStruct<Int32> mem2 = new MemoryStruct(new Int32(), size);
+        mem.copyTo(mem2);
+        
+        System.out.println(mem2);
     }
     
 }

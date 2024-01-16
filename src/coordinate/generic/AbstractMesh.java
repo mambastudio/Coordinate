@@ -28,7 +28,7 @@ public abstract class AbstractMesh <
         S extends SCoord, 
         V extends VCoord, 
         T extends AbstractCoordinateFloat, 
-        R extends AbstractRay<S, V>,
+        R extends AbstractRay<S, V, R>,
         B extends AlignedBBoxShape<S, V, R, B>,
         TriShape extends TriangleShape<S, V, R, B>>
 {    

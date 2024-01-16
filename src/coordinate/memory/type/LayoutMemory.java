@@ -20,8 +20,16 @@ import java.util.UUID;
  */
 public abstract class LayoutMemory{
     protected long offset = 0; //byteoffset
+    protected long alignValue = 0; ////either align/byte size value or struct max align/byte value (Kmax)
     
     public abstract long byteSizeAggregate();
+    
+    
+    public long calculateAlignValues()
+    {
+        alignValue = byteSizeElement();
+        return alignValue;
+    }
     
     public long byteSizeElement()
     {

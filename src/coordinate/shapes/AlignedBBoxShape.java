@@ -23,7 +23,7 @@ import coordinate.generic.VCoord;
 public interface AlignedBBoxShape<
         S extends SCoord, 
         V extends VCoord,          
-        R extends AbstractRay<S, V>,        
+        R extends AbstractRay<S, V, R>,        
         B extends AlignedBBoxShape<S, V, R, B>> extends AbstractBound<S, V, R, B>{
         
     default boolean rayIntersectionP(R ray)

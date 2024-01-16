@@ -16,7 +16,7 @@ import coordinate.generic.VCoord;
  * @param <V>
  * @param <R>
  */
-public interface GenericShape<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>> {
+public interface GenericShape<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V, R>> {
     default boolean intersect(R r)
     {
         return false;

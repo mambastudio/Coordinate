@@ -11,7 +11,7 @@ import coordinate.generic.AbstractRay;
  *
  * @author user
  */
-public class Ray implements AbstractRay<Point3f, Vector3f>
+public class Ray implements AbstractRay<Point3f, Vector3f, Ray>
 {
     public Point3f o = null;
     public Vector3f d = null;

@@ -24,7 +24,7 @@ import java.util.Optional;
 public interface TriangleShape<
         S extends SCoord, 
         V extends VCoord, 
-        R extends AbstractRay<S, V>,
+        R extends AbstractRay<S, V, R>,
         B extends AlignedBBoxShape<S, V, R, B>>
      extends GenericShape<S, V, R> 
 {
@@ -50,11 +50,12 @@ public interface TriangleShape<
     {
         if(n1().isPresent() && n2().isPresent() && n3().isPresent())    
         {
-            V n1 = (V) n1().get(), n2 = (V) n1().get(), n3 = (V) n1().get();
+            V n1 = (V) n1().get(), n2 = (V) n2().get(), n3 = (V) n3().get();
             return (V) n1.mul(1 - uv.x - uv.y).add(n2.mul(uv.x).add(n3.mul(uv.y)));
         }          
-        else
+        else{
             return n();
+        }
     }
         
     default V e1()

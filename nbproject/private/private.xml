@@ -2,34 +2,17 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group/>
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructBase.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/AbstractMesh.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/example/struct/newstruct/base/TestStruct3.java</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractTriangleIndex.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJInfo.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/CharMappedReader.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJParser.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/StringReader.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/LineMappedReader.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/TestStringMappedFile.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/StringMappedReader.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJInfo.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/CharMappedReader.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/StringUtility.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJParser.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/StringReader.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/LineMappedReader.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/basic/TestStringMappedFile.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/StringMappedReader.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
         </group>
     </open-files>
 </project-private>

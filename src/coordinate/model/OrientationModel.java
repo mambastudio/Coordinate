@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * @param <R>
  * @param <B>
  */
-public class OrientationModel<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound<S, V, R, B>> 
+public class OrientationModel<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V, R>, B extends AbstractBound<S, V, R, B>> 
 {    
     Class<S> classS = null;
     Class<V> classV = null;

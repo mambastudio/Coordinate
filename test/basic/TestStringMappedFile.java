@@ -9,7 +9,17 @@ import coordinate.generic.io.CharMappedReader;
 import coordinate.generic.io.LineMappedReader;
 import coordinate.generic.io.StringMappedReader;
 import coordinate.generic.io.StringReader;
+import coordinate.list.IntList;
+import coordinate.utility.StringParser;
+import coordinate.utility.StringUtility;
+import static coordinate.utility.StringUtility.getFirstInt;
+import static coordinate.utility.StringUtility.isEndOfLine;
+import static coordinate.utility.StringUtility.my_atoi;
+import static coordinate.utility.StringUtility.skipSpaceAndCarriageReturn;
 import coordinate.utility.Timer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import static coordinate.utility.StringUtility.isEndOfLine;
 
 /**
  *
@@ -19,6 +29,8 @@ public class TestStringMappedFile {
     public static void main(String... args)
     {
         testOBJLine();
+        //String str = "as-345d+";
+        //System.out.println(getFirstInt(str, new int[1]));
     }
     
     public static void testOBJLine()
@@ -29,18 +41,70 @@ public class TestStringMappedFile {
         String line;
         while(true)
         {
-
             line = reader.readLineString3();            
             if(line == null)
                 break;
-            if(line.contains("f "))
-            {
-                System.out.println(line);
-                System.out.println(reader.my_atoi(line.substring(2)));
+            ArrayList<index_t> f = new ArrayList(8);
+            StringParser parser = new StringParser(line);
+            if(parser.contains("f "))
+            {             
+                while (!parser.isNewLine()) {
+                    index_t vi = parseRawTriple(parser);
+                    parser.skipContinousSpace();
+                    f.add(vi);
+                }                
             }
-
+            if(f.size() > 0)
+                System.out.println(f);
         }
         
+    }
+    
+    private static index_t parseRawTriple(StringParser parser) {               
+        index_t vi = new index_t();  // 0x80000000 = -2147483648 = invalid
+        
+        vi.vertex_index = parser.getFirstInt();
+        parser.skipIfNotSpaceAndChar('/');
+               
+        //read first individual /, and if not present then it is vertex index only, and return
+        if (parser.isNotChar('/')) return vi;
+        parser.incrementPointer();
+                
+        // i//k
+        if (parser.isChar('/')) {            
+            vi.normal_index = parser.getFirstInt();
+            parser.skipIfNotSpaceAndChar('/');
+            return vi;
+        }
+                
+        // i/j/k or i/j
+        vi.texcoord_index = parser.getFirstInt();
+        parser.skipIfNotSpaceAndChar('/');
+        if (parser.isNotChar('/')) 
+            return vi;
+        
+        // i/j/k
+        parser.incrementPointer();  // skip '/'
+        vi.normal_index = parser.getFirstInt();
+        parser.skipIfNotSpaceAndChar('/');
+  
+        return vi;
+    }
+   
+    private static class index_t
+    {
+        public int vertex_index, texcoord_index, normal_index;
+        
+        public index_t()
+        {
+            vertex_index = texcoord_index = normal_index = (int)(0x80000000);
+        }
+        
+        @Override
+        public String toString()
+        {
+            return String.format("(%5d, %5d, %5d)", vertex_index, texcoord_index, normal_index);
+        }
     }
     
     public static void testCharMapped()

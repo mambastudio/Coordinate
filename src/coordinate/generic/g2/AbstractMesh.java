@@ -6,13 +6,13 @@
 package coordinate.generic.g2;
 
 import coordinate.generic.AbstractRay;
-import static coordinate.generic.g2.AbstractMesh.MeshMemoryType.HEAP;
-import static coordinate.generic.g2.AbstractMesh.MeshMemoryType.NATIVE;
-import coordinate.memory.type.MemoryStruct;
+import coordinate.memory.type.MemoryStructFactory.Int32;
+import coordinate.memory.type.StructCache;
 import coordinate.parser.attribute.GroupT;
 import coordinate.parser.attribute.MaterialT;
 import coordinate.shapes.AlignedBBoxShape;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -25,27 +25,41 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <B>
  * @param <TriangleIndex>
  * @param <TriShape>
+ * @param <PointsStruct>
+ * @param <TexCoordsStruct>
+ * @param <NormalssStruct>
+ * @param <FacesStruct>
+ * @param <SizeStruct>
  */
 public abstract class AbstractMesh<
         S extends AbstractSCoordStruct<S, V, S>, 
-        V extends AbstractVCoordStruct<S, V, V>, 
         T extends AbstractCoordFloatStruct<T>, 
+        V extends AbstractVCoordStruct<S, V, V>,        
         R extends AbstractRay<S, V, R>,
         B extends AlignedBBoxShape<S, V, R, B>,
         TriangleIndex extends AbstractTriangleIndex,
-        TriShape extends AbstractTriangleStruct<S, V, R, B, TriShape>> {
+        TriShape extends AbstractTriangleStruct<S, V, R, B, TriShape>,
+        
+        PointsStruct extends StructCache<S, ?>,
+        TexCoordsStruct extends StructCache<T, ?>,
+        NormalssStruct extends StructCache<V, ?>,
+        FacesStruct extends StructCache<TriangleIndex, ?>,
+        SizeStruct extends StructCache<Int32, ?>> {
     
     public enum MeshType{FACE, FACE_NORMAL, FACE_UV_NORMAL, FACE_UV};
     public enum MeshMemoryType{HEAP, NATIVE};
     
-    protected final MeshMemoryType memoryType;
+    public static int invalid = 0x80000000; //0x80000000 = -2147483648 = invalid
     
-    protected MemoryStruct<TriangleIndex> triangleFaces;
+    protected final MeshMemoryType memoryType;    
     
-    protected MemoryStruct<S> points = null;
-    protected MemoryStruct<V> normals = null;
-    protected MemoryStruct<T> texcoords = null;
-    
+    //what the mesh entail (for gpu)
+    protected PointsStruct points = null;
+    protected TexCoordsStruct texcoords = null;
+    protected NormalssStruct normals = null;    
+    protected FacesStruct triangleFaces = null;
+    protected SizeStruct size = null;
+        
     protected ArrayList<MaterialT> materials;
     protected ArrayList<GroupT> groups;
     
@@ -54,6 +68,8 @@ public abstract class AbstractMesh<
     protected final AtomicLong normalsCount;
     protected final AtomicLong texcoordsCount;
     
+    private boolean isFree = false;
+        
     protected AbstractMesh(MeshMemoryType memoryType)
     {
         this.memoryType = memoryType;  
@@ -75,22 +91,40 @@ public abstract class AbstractMesh<
     }
     
     public void initCoordList(S s, T t, V n, TriangleIndex tFaces,
-            long sizeP, long sizeT, long sizeN, long sizeF)
+            PointsStruct points, TexCoordsStruct texcoords, 
+            NormalssStruct normals, FacesStruct triangleFaces,
+            SizeStruct size)           
     {
-        if(memoryType == HEAP)
-        {
-            points = MemoryStruct.allocateHeap(s, sizeP);
-            normals = MemoryStruct.allocateHeap(n, sizeN);
-            texcoords = MemoryStruct.allocateHeap(t, sizeT);
-            triangleFaces = MemoryStruct.allocateHeap(tFaces, sizeF);
-        }
-        else if(memoryType == NATIVE)
-        {
-            points = MemoryStruct.allocateNative(s, sizeP, false);
-            normals = MemoryStruct.allocateNative(n, sizeN, false);
-            texcoords = MemoryStruct.allocateNative(t, sizeT, false);
-            triangleFaces = MemoryStruct.allocateNative(tFaces, sizeF, false);
-        }        
+        this.points = points;
+        this.normals = normals;
+        this.texcoords = texcoords;
+        this.triangleFaces = triangleFaces;
+        this.size = size;
+    }
+    
+    public PointsStruct getPoints()
+    {
+        return points;
+    }
+    
+    public TexCoordsStruct getTexCoords()
+    {
+        return texcoords;
+    }
+    
+    public NormalssStruct getNormals()
+    {
+        return normals;
+    }
+    
+    public FacesStruct getFaces()
+    {
+        return triangleFaces;
+    }
+    
+    public SizeStruct getMeshSize()
+    {
+        return size;
     }
         
     public abstract void addPoint(S p);
@@ -101,9 +135,9 @@ public abstract class AbstractMesh<
     public abstract void addTexCoord(float... values);
     public abstract TriShape getTriangle(int index);    
     public abstract B getBounds();
+    public abstract B getBound(int primID);
     public abstract void addTriangle(int vert1, int vert2, int vert3, int uv1, int uv2, int uv3, int norm1, int norm2, int norm3, int data);
    
-        
     //Mesh face handling section        
     public void add(MeshType type, int group, int material, int... values)
     {
@@ -111,6 +145,16 @@ public abstract class AbstractMesh<
         data = data | material;
         data = data | (group << 16);       
                 
+        //for handling negative values or otherwise transform to index zero-base
+        values[0] = fixIndex(values[0], pointsCount.intValue());
+        values[1] = fixIndex(values[1], pointsCount.intValue());
+        values[2] = fixIndex(values[2], pointsCount.intValue());
+        values[3] = fixIndex(values[3], texcoordsCount.intValue());
+        values[4] = fixIndex(values[4], texcoordsCount.intValue());
+        values[5] = fixIndex(values[5], texcoordsCount.intValue());
+        values[6] = fixIndex(values[6], normalsCount.intValue());
+        values[7] = fixIndex(values[7], normalsCount.intValue());
+        values[8] = fixIndex(values[8], normalsCount.intValue());
         
         switch(type)
         {
@@ -130,11 +174,19 @@ public abstract class AbstractMesh<
                 break;
             }
             case FACE_NORMAL:
-            {
-                addTriangle(values[0], values[1], values[2], -1, -1, -1, values[3], values[4], values[5], data);
+            {                
+                addTriangle(values[0], values[1], values[2], -1, -1, -1, values[6], values[7], values[8], data);
                 break;
             }
         }
+    }
+    
+    // Make index zero-base, and also support relative index.
+    private int fixIndex(int idx, int n) {
+        if(idx == 0x80000000) return idx;
+        if (idx > 0) return idx - 1;
+        if (idx == 0) return 0;
+        return n + idx;  // negative value = relative
     }
     
     public void printGroupAndMaterial(int data)
@@ -185,7 +237,7 @@ public abstract class AbstractMesh<
     }
     
     public V getNormal1(int primID)
-    {
+    {        
         return normals.get(triangleFaces.get(primID).n_123.get('x'));
     }
 
@@ -219,5 +271,19 @@ public abstract class AbstractMesh<
         return triangleFaces.get(index).toString();
     }
     
+    public boolean isFree()
+    {
+        return isFree;
+    }
     
+    public void free()
+    {
+        points.free();
+        texcoords.free();
+        normals.free();    
+        triangleFaces.free();
+        size.free();
+        
+        isFree = true;
+    }
 }

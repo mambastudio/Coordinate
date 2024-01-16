@@ -16,7 +16,7 @@ import static java.lang.Math.min;
  * @param <R>
  * @param <B>
  */
-public interface AbstractBound<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>, B extends AbstractBound> {
+public interface AbstractBound<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V, R>, B extends AbstractBound> {
     public B include(S s);
     public S getCenter(); 
     public float getCenter(int dim);

@@ -6,9 +6,12 @@
 package coordinate.memory.type.algorithm;
 
 import coordinate.memory.type.MemoryStruct;
+import coordinate.memory.type.MemoryStructFactory;
 import coordinate.memory.type.StructBase;
 import coordinate.utility.RangeCheckArray;
 import java.util.function.BinaryOperator;
+import java.util.function.IntUnaryOperator;
+import java.util.function.UnaryOperator;
 
 /**
  *
@@ -24,5 +27,13 @@ public class SerialAlgorithmStruct <S extends StructBase>{
             res = f.apply(res, values.get(i));
         result.set(0, res); //result is one value
         return res;
+    }
+    
+    public MemoryStruct<S> transform(MemoryStruct<S> values, UnaryOperator<S> f) {
+        RangeCheckArray.validateIndexAboveZero(values.size());        
+        MemoryStruct<S> results = new MemoryStruct(values.getStructBase(), values.size());
+        for(long i = 0; i<values.size(); i++)
+            results.set(i, f.apply(values.get(i)));
+        return results;
     }
 }

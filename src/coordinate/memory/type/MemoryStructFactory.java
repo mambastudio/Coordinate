@@ -14,14 +14,15 @@ import coordinate.memory.type.LayoutMemory.PathElement;
  */
 public class MemoryStructFactory {
     
-    public final static class Int32 implements StructBase<Int32>
+    public static class Int32 implements StructBase<Int32>
     {
         private static final LayoutMemory layout = LayoutGroup.groupLayout(LayoutValue.JAVA_INT.withId("value"));
         private static final ValueState valueState = layout.valueState(PathElement.groupElement("value"));
         
         private int value; 
                 
-        public Int32(int value) {this.value = value;}        
+        public Int32(int value) {this.value = value;}   
+        public Int32(long value) {this.value = Math.toIntExact(value);}
         public Int32(){}
         
         public int value(){return value;}        

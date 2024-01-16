@@ -20,19 +20,13 @@ import java.util.function.Consumer;
  * struct API independently
  * 
  */
-public final class LayoutGroup extends LayoutMemory{
-    private final LinkedHashMap<String, LayoutMemory> fields = new LinkedHashMap();  
-    private long   fieldMaxBytes;
-    
-    private long byteSize;
+public class LayoutGroup extends LayoutMemory{
+    protected final LinkedHashMap<String, LayoutMemory> fields = new LinkedHashMap();  
+   
+    protected long byteSize;
     
     private final String name;
-    
-    private LayoutGroup()
-    {
-        this.name = UUID.randomUUID().toString();
-    }
-    
+        
     private LayoutGroup(String name)
     {
         this.name = name;
@@ -40,12 +34,31 @@ public final class LayoutGroup extends LayoutMemory{
     
     public static LayoutGroup groupLayout(LayoutMemory... memoryLayouts)
     {
-        LayoutGroup group = new LayoutGroup();
-        for(LayoutMemory memoryLayout : memoryLayouts)
-            group.fields.put(memoryLayout.getId(), memoryLayout);
+        return createGroup(UUID.randomUUID().toString(), memoryLayouts);
+    }
+    
+    public static LayoutGroup groupValueLayout(LayoutMemory... memoryLayouts)
+    {
+        return createGroupValue(UUID.randomUUID().toString(), memoryLayouts);
+    }
+    
+    private static LayoutGroup createGroup(String name, LayoutMemory... memoryLayouts)
+    {
+        LayoutGroup group = new LayoutGroup(name);
+        for(LayoutMemory memoryLayout : memoryLayouts)        
+            group.fields.put(memoryLayout.getId(), memoryLayout);    
         
-        group.init();
+        group.init();        
+        return group;
+    }
+    
+    private static LayoutGroup createGroupValue(String name, LayoutMemory... memoryLayouts)
+    {
+        LayoutGroupValue group = new LayoutGroupValue(name);
+        for(LayoutMemory memoryLayout : memoryLayouts)        
+            group.fields.put(memoryLayout.getId(), memoryLayout);    
         
+        group.init();        
         return group;
     }
     
@@ -59,43 +72,39 @@ public final class LayoutGroup extends LayoutMemory{
         return fields.get(name);
     }
     
-    private static LayoutGroup createGroup(String name, LayoutMemory... memoryLayouts)
+    protected void init()
     {
-        LayoutGroup group = new LayoutGroup(name);
-        for(LayoutMemory memoryLayout : memoryLayouts)
-        {
-            group.fields.put(memoryLayout.getId(), memoryLayout);
-        }
-        
-        group.init();
-        
-        return group;
-    }
-    
-    private void init()
-    {
-        calculateMaxByteSize();
+        calculateAlignValues();
         calculateFieldOffsets();    
     }
     
-    private void calculateMaxByteSize()
+    /**
+     * For structs, we find the maximum field value, to know the offset of fields and 
+     * struct size calculation
+     * 
+     * @return 
+     **/
+    @Override
+    public long calculateAlignValues()
     {
         layoutIterator((memlayout)->{
-            fieldMaxBytes = memlayout.byteSizeAggregate() > fieldMaxBytes ? memlayout.byteSizeAggregate() : fieldMaxBytes;
-        });       
+            long tempAlignValue = memlayout.calculateAlignValues();            
+            alignValue = tempAlignValue > alignValue ? tempAlignValue : alignValue; //calculate max value
+        });
+        return alignValue;
     }
     
-    private void calculateFieldOffsets()
-    {       
-        
+    protected void calculateFieldOffsets()
+    {         
         AtomicLong currentOffset = new AtomicLong();      
         layoutIterator((memlayout)->{
-            currentOffset.set(this.computeAlignmentOffset(currentOffset.get(), memlayout.byteSizeElement()));            
-            memlayout.offset = currentOffset.get();
+            currentOffset.set(this.computeAlignmentOffset(currentOffset.get(), memlayout.calculateAlignValues()));            
+            memlayout.offset = currentOffset.get();            
             currentOffset.addAndGet(memlayout.byteSizeAggregate());  
         });        
-        byteSize = computeAlignmentOffset(currentOffset.get(), fieldMaxBytes);
+        byteSize = computeAlignmentOffset(currentOffset.get(), alignValue);
     }
+    
 
     @Override
     public long byteSizeAggregate() {
@@ -104,6 +113,12 @@ public final class LayoutGroup extends LayoutMemory{
 
     @Override
     public LayoutMemory withId(String name) {
+        LayoutMemory[] layoutMems = getFields();
+        return createGroup(name, layoutMems);
+    }
+    
+    protected LayoutMemory[] getFields()
+    {
         LayoutMemory[] layoutMems = new LayoutMemory[fields.size()];
         int i = 0;
         for(String string : fields.keySet())
@@ -111,8 +126,7 @@ public final class LayoutGroup extends LayoutMemory{
             layoutMems[i] = fields.get(string);
             i++;
         }
-            
-        return createGroup(name, layoutMems);
+        return layoutMems;
     }
 
     @Override
@@ -148,5 +162,27 @@ public final class LayoutGroup extends LayoutMemory{
         builder.append("size    : ").append(byteSizeAggregate());
         return builder.toString();
     }
-
+    
+    //this accomodates the various native primitives such as in opencl (float4, float2, int2, etc.)
+    public static class LayoutGroupValue extends LayoutGroup
+    {
+        private LayoutGroupValue(String name)
+        {
+            super(name);
+        }  
+        
+        @Override
+        protected void calculateFieldOffsets()
+        {
+            super.calculateFieldOffsets();
+            //just requires tweaking here
+            this.alignValue = this.byteSize; 
+        }
+        
+        @Override
+        public LayoutMemory withId(String name) {
+            LayoutMemory[] layoutMems = getFields();
+            return createGroupValue(name, layoutMems);
+        }
+    }
 }

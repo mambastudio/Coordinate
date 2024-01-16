@@ -13,7 +13,12 @@ package coordinate.memory.type;
 public interface MemoryRegion<M extends MemoryRegion>{     
     public long byteCapacity();
             
-    public M offset(long byteOffset);    
+    public M offset(long byteOffset);  
+    public M offset(long byteOffset, long byteSize);
+    default M offset(long byteOffset, LayoutMemory layout){return offset(byteOffset, layout.byteSizeAggregate());}
+    default M offsetIndex(long index, LayoutMemory layout){return offset(index * layout.byteSizeAggregate());}
+    default M offsetIndexSegment(long index, LayoutMemory layout){return offset(index * layout.byteSizeAggregate(), layout.byteSizeAggregate());}
+    
     public void copyFrom(MemoryRegion m, long byteCapacity);
     public void copyTo(MemoryRegion m, long byteCapacity);
     
@@ -41,23 +46,23 @@ public interface MemoryRegion<M extends MemoryRegion>{
         
     public void dispose();
         
-    public float    get(LayoutValue.OfFloat layout,    long offset);
-    public byte     get(LayoutValue.OfByte layout,     long offset);
-    public boolean  get(LayoutValue.OfBoolean layout,  long offset);
-    public char     get(LayoutValue.OfChar layout,     long offset);
-    public short    get(LayoutValue.OfShort layout,    long offset);
-    public int      get(LayoutValue.OfInteger layout,  long offset);
-    public long     get(LayoutValue.OfLong layout,     long offset);
-    public double   get(LayoutValue.OfDouble layout,   long offset);
+    public float            get(LayoutValue.OfFloat layout,    long offset);
+    public byte             get(LayoutValue.OfByte layout,     long offset);
+    public boolean          get(LayoutValue.OfBoolean layout,  long offset);
+    public char             get(LayoutValue.OfChar layout,     long offset);
+    public short            get(LayoutValue.OfShort layout,    long offset);
+    public int              get(LayoutValue.OfInteger layout,  long offset);
+    public long             get(LayoutValue.OfLong layout,     long offset);
+    public double           get(LayoutValue.OfDouble layout,   long offset);
     
-    default float    getAtIndex(LayoutValue.OfFloat layout,    long index){return get(layout, index * layout.byteSizeElement());}
-    default byte     getAtIndex(LayoutValue.OfByte layout,     long index){return get(layout, index * layout.byteSizeElement());}
-    default boolean  getAtIndex(LayoutValue.OfBoolean layout,  long index){return get(layout, index * layout.byteSizeElement());}
-    default char     getAtIndex(LayoutValue.OfChar layout,     long index){return get(layout, index * layout.byteSizeElement());}
-    default short    getAtIndex(LayoutValue.OfShort layout,    long index){return get(layout, index * layout.byteSizeElement());}
-    default int      getAtIndex(LayoutValue.OfInteger layout,  long index){return get(layout, index * layout.byteSizeElement());}
-    default long     getAtIndex(LayoutValue.OfLong layout,     long index){return get(layout, index * layout.byteSizeElement());}
-    default double   getAtIndex(LayoutValue.OfDouble layout,   long index){return get(layout, index * layout.byteSizeElement());}
+    default float           getAtIndex(LayoutValue.OfFloat layout,    long index){return get(layout, index * layout.byteSizeElement());}
+    default byte            getAtIndex(LayoutValue.OfByte layout,     long index){return get(layout, index * layout.byteSizeElement());}
+    default boolean         getAtIndex(LayoutValue.OfBoolean layout,  long index){return get(layout, index * layout.byteSizeElement());}
+    default char            getAtIndex(LayoutValue.OfChar layout,     long index){return get(layout, index * layout.byteSizeElement());}
+    default short           getAtIndex(LayoutValue.OfShort layout,    long index){return get(layout, index * layout.byteSizeElement());}
+    default int             getAtIndex(LayoutValue.OfInteger layout,  long index){return get(layout, index * layout.byteSizeElement());}
+    default long            getAtIndex(LayoutValue.OfLong layout,     long index){return get(layout, index * layout.byteSizeElement());}
+    default double          getAtIndex(LayoutValue.OfDouble layout,   long index){return get(layout, index * layout.byteSizeElement());}
     
     public void set(LayoutValue.OfFloat layout,     long offset, float   value);
     public void set(LayoutValue.OfByte layout,      long offset, byte    value);
@@ -76,6 +81,6 @@ public interface MemoryRegion<M extends MemoryRegion>{
     default void setAtIndex(LayoutValue.OfInteger layout,   long index, int     value){set(layout, index * layout.byteSizeElement(), value);}
     default void setAtIndex(LayoutValue.OfLong layout,      long index, long    value){set(layout, index * layout.byteSizeElement(), value);}    
     default void setAtIndex(LayoutValue.OfDouble layout,    long index, double  value){set(layout, index * layout.byteSizeElement(), value);} 
-
+    
     default void setAtIndex(LayoutValue.OfInteger layout,  long index, int[] values){ for(int i = 0; i<values.length; i++) setAtIndex(layout, i + index, values[i]);}
 }

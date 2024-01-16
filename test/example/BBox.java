@@ -13,32 +13,27 @@ import static java.lang.Math.max;
  *
  * @author user
  */
-public class BBox extends AlignedBBoxShape<Point3f, Vector3f, Ray, BBox>
+public class BBox implements AlignedBBoxShape<Point3f, Vector3f, Ray, BBox>
 {
-    
-    
+    Point3f minimum, maximum;
     public BBox() 
-    {
-        super(
-            new Point3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY),
-            new Point3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY)
-        );
-        
+    {        
+        minimum = new Point3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+        maximum = new Point3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
     }
         
     public BBox(Point3f p1, Point3f p2) 
     {
-        super(
-            new Point3f(min(p1.x, p2.x), min(p1.y, p2.y), min(p1.z, p2.z)),
-            new Point3f(max(p1.x, p2.x), max(p1.y, p2.y), max(p1.z, p2.z))
-        );
+        minimum = new Point3f(min(p1.x, p2.x), min(p1.y, p2.y), min(p1.z, p2.z));
+        maximum = new Point3f(max(p1.x, p2.x), max(p1.y, p2.y), max(p1.z, p2.z));
+       
     }
     
     public BBox(float x1, float y1, float z1, float x2, float y2, float z2) {
-        super(
-            new Point3f(min(x1, x2), min(y1, y2), min(z1, z2)),
-            new Point3f(max(x1, x2), max(y1, y2), max(z1, z2))
-        );
+        
+        minimum = new Point3f(min(x1, x2), min(y1, y2), min(z1, z2));
+        maximum = new Point3f(max(x1, x2), max(y1, y2), max(z1, z2));
+        
     }
     
     @Override

@@ -60,6 +60,7 @@ public class LineMappedReader extends CharMappedReader {
             return readLineString3();
         return builder.toString();
     }
+    
         
     public float[] readLineFloatArray()
     {

@@ -22,7 +22,7 @@ public class RangeCheckArray {
             throw new IndexOutOfBoundsException("index " + index + " is out of bounds; expected range [" + fromIndex + ", " + toIndex + "] and index should be greater than or equal to zero.");
     }
     
-    public static final void validateRangeSize(long fromIndex, long toIndex, long size) {
+    public static final void validateRangeSize(long fromIndex, long toIndex, long size) {        
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
             throw new IndexOutOfBoundsException("Invalid range: [" + fromIndex + ", " + toIndex + "); expected range [0, " + size + ")");
         }
