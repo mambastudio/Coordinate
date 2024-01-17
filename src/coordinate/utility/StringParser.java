@@ -181,7 +181,7 @@ public class StringParser {
     {
         if(isNewLine() || token.length() > (string.length() - pointer[0]))
             return false;
-        return string.substring(pointer[0], token.length()).contains(token);
+        return string.substring(pointer[0], pointer[0] + token.length()).contains(token);
     }
     
     //http://stackoverflow.com/questions/5710091/how-does-atoi-function-in-c-work
