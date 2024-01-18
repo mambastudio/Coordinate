@@ -18,78 +18,18 @@ import java.nio.file.Paths;
 public class JSONTest {
     public static void main(String... args) throws IOException
     {
-        Path path = Paths.get("C:\\Users\\user\\Documents\\File Examples", "JSON-3.json");
+        Path path = Paths.get("C:\\Users\\jmburu\\Documents\\File Examples", "JSON-1.json");
         test(path);
     }
     
     public static void test(Path path) throws IOException
     {
         BufferedReader reader = Files.newBufferedReader(path);
-        skipNextUntil(reader, '{');
-        readObject(0, reader);
-           
-    }
-    
-    public static void readObject(int indent, BufferedReader reader) throws IOException
-    {
-        while(hasNext(reader))
-        {   
-            char c = nextChar(reader);
-            if(c == '{')
-            {               
-                while(hasNext(reader))
-                {
-                    String key = parseKey(indent, reader);                    
-                    skipNextBeyond(reader, ':'); //:              
-                    String value = parseValue(indent, reader);                    
-                    System.out.println(key+ " " +value);
-                    if(isNext(reader, ','))
-                        skipSpaceAndBeyond(reader, ',');
-                    if(isNext(reader, '}'))
-                        break;
-                }
-            }                   
-        }
-    }
-    
-    public static String parseKey(int indent, BufferedReader reader) throws IOException
-    {
         skipSpace(reader);
-        String key = readQuotes(reader);
-        key = getSpace(indent) + key;
-        skipSpace(reader);
-        return key;
+        JSONObject object = readObject(reader);
+        System.out.println(object);
     }
-    
-    public static String parseValue(int indent, BufferedReader reader) throws IOException
-    {
-        skipSpace(reader);
-        StringBuilder builder = new StringBuilder();
-        while(hasNext(reader))
-        {
-            if(isNext(reader, ',') || isNext(reader, '}') || isNextNewLine(reader))
-                break;            
-            if(isDigit(peekNext(reader)))
-            {
-                double value = readNumber(reader);
-                builder.append(value);
-            }
-            if(isNext(reader, '"'))
-            {
-                String value = readQuotes(reader);
-                builder.append(value);
-            }
-            else if(isNext(reader, '{'))
-            {
-                readObject(indent + 5, reader);
-            }
-            else
-                builder.append(nextChar(reader));
-        }
-        skipSpace(reader);
-        return getSpace(indent) + builder.toString();
-    }
-    
+        
     public static double readNumber(BufferedReader reader) throws IOException
     {
         skipSpaceAndBeyond(reader, ' ');
@@ -100,14 +40,7 @@ public class JSONTest {
         skipSpaceAndBeyond(reader, ' ');
         return value[0];
     }
-    
-    public static void readString(BufferedReader reader) throws IOException
-    {
-        String string = readQuotes(reader);
-        System.out.println("-" +string);
-    }
-    
-    
+        
     public static String readQuotes(BufferedReader reader) throws IOException
     {
         skipSpaceAndBeyond(reader, '"');
@@ -116,6 +49,66 @@ public class JSONTest {
             builder.append(nextChar(reader));   
         skipSpaceAndBeyond(reader, '"');
         return builder.toString();
+    }
+    
+    public static JSONObject readObject(BufferedReader reader) throws IOException
+    {
+        JSONObject object = new JSONObject();
+        if(isNext(reader, '{'))
+            skipSpaceAndBeyond(reader, '{');
+        while(hasNext(reader) && !isNext(reader, '}'))
+        {
+            String key = parseKey(reader); 
+            skipNextBeyond(reader, ':'); //:  
+            JSONValue value = parseValue(reader);                    
+            object.put(key, value);
+            if(isNext(reader, ','))
+                skipSpaceAndBeyond(reader, ',');
+        }
+        skipSpaceAndBeyond(reader, '}');
+        return object;
+    }
+        
+    public static JSONArray readArray(BufferedReader reader) throws IOException
+    {
+        JSONArray array = new JSONArray();
+        if(isNext(reader, '['))
+            skipSpaceAndBeyond(reader, '[');
+        while(hasNext(reader) && !isNext(reader, ']'))
+        {
+            JSONValue value = parseValue(reader);
+            array.add(value);            
+            if(isNext(reader, ','))
+                skipSpaceAndBeyond(reader, ',');
+        }
+        skipSpaceAndBeyond(reader, ']');
+        return array;
+    }
+    
+    public static String parseKey(BufferedReader reader) throws IOException
+    {
+        skipSpace(reader);
+        String key = readQuotes(reader);
+        skipSpace(reader);
+        return key;
+    }
+    
+    public static JSONValue parseValue(BufferedReader reader) throws IOException
+    {
+        skipSpace(reader);
+        JSONValue value;
+        if(isNext(reader, '"'))
+            value = new JSONString(readQuotes(reader));
+        else if(isNextDigit(reader))
+            value = new JSONNumber(readNumber(reader));
+        else if(isNext(reader, '{'))
+            value = readObject(reader);
+        else if(isNext(reader, '['))        
+            value = readArray(reader);        
+        else
+            value = null;
+        skipSpace(reader);
+        return value;
     }
     
     public static void skipNext(BufferedReader reader) throws IOException
@@ -165,6 +158,16 @@ public class JSONTest {
         reader.mark(1);
         boolean isNext = false;
         if(hasNext(reader) && nextChar(reader) == c)
+            isNext = true;
+        reader.reset();
+        return isNext;
+    }
+    
+    public static boolean isNextDigit(BufferedReader reader) throws IOException
+    {
+        reader.mark(1);
+        boolean isNext = false;
+        if(hasNext(reader) && isDigit(nextChar(reader)))
             isNext = true;
         reader.reset();
         return isNext;

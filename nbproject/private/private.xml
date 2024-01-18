@@ -5,7 +5,6 @@
         <group/>
         <group/>
         <group/>
-        <group/>
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
         </group>
@@ -22,6 +21,17 @@
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/StringParser.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/io/CharReader.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONTest.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONArray.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/io/StringReader.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONString.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONObject.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONValue.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONParser.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONNumber.java</file>
         </group>
     </open-files>
 </project-private>
