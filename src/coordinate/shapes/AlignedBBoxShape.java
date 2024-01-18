@@ -20,24 +20,16 @@ import coordinate.generic.VCoord;
  * @param <R> 
  * @param <B>
  */
-public abstract class AlignedBBoxShape<
+public interface AlignedBBoxShape<
         S extends SCoord, 
         V extends VCoord,          
-        R extends AbstractRay<S, V>,        
-        B extends AlignedBBoxShape<S, V, R, B>> implements AbstractBound<S, V, R, B>{
-    public S minimum;
-    public S maximum;
-    
-    protected AlignedBBoxShape(S min, S max)
+        R extends AbstractRay<S, V, R>,        
+        B extends AlignedBBoxShape<S, V, R, B>> extends AbstractBound<S, V, R, B>{
+        
+    default boolean rayIntersectionP(R ray)
     {
-        this.minimum = min;
-        this.maximum = max;
-    }
-    
-    public final boolean rayIntersectionP(R ray)
-    {
-        V t0 = (V) minimum.sub(ray.getOrigin()).div(ray.getInverseDirection());
-        V t1 = (V) maximum.sub(ray.getOrigin()).div(ray.getInverseDirection());
+        V t0 = (V) getMinimum().sub(ray.getOrigin()).div(ray.getInverseDirection());
+        V t1 = (V) getMaximum().sub(ray.getOrigin()).div(ray.getInverseDirection());
         
         V tmin = (V) V.min3(t0, t1), tmax = (V) V.max3(t0, t1);
         

@@ -5,6 +5,7 @@
  */
 package coordinate.memory.type;
 
+import coordinate.utility.RangeCheck;
 import coordinate.utility.RangeCheckArray;
 import java.util.Objects;
 import java.util.function.LongFunction;
@@ -143,6 +144,17 @@ public class ValueState {
             }
         }
         return false;
+    }
+    
+    public ValueState copyState()
+    {
+        return copyState(arrayLength);
+    }
+    
+    public ValueState copyState(long size)
+    {
+        RangeCheck.rangeAboveZero(size);
+        return new ValueState(carrier, byteOffset, size, arrayElementSize);
     }
     
     //we don't have any use of value byte size here, hence omitted

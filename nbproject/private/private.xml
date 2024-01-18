@@ -6,5 +6,22 @@
         <group/>
         <group/>
         <group/>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/json/JSONTest.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/StringParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
+        </group>
     </open-files>
 </project-private>

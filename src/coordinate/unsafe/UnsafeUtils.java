@@ -134,7 +134,7 @@ public class UnsafeUtils {
     
     public static void copyMemory(Object src, long srcAddress, Object dest, long destAddress, long length)
     {
-        long bytesToCopy = length - (length % 8);
+        long bytesToCopy = length - (length % 8); 
         getUnsafe().copyMemory(src, srcAddress, dest, destAddress, bytesToCopy);
         getUnsafe().copyMemory(src, srcAddress + bytesToCopy, dest, destAddress + bytesToCopy, length - bytesToCopy);
     }

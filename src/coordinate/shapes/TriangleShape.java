@@ -11,6 +11,7 @@ import coordinate.generic.VCoord;
 import coordinate.utility.Value1Df;
 import coordinate.utility.Value2Df;
 import static java.lang.Math.abs;
+import java.util.Optional;
 
 /**
  *
@@ -18,83 +19,68 @@ import static java.lang.Math.abs;
  * @param <S>
  * @param <V>
  * @param <R>
+ * @param <B>
  */
-public abstract class TriangleShape<
+public interface TriangleShape<
         S extends SCoord, 
         V extends VCoord, 
-        R extends AbstractRay<S, V>> implements GenericShape<S, V, R> 
+        R extends AbstractRay<S, V, R>,
+        B extends AlignedBBoxShape<S, V, R, B>>
+     extends GenericShape<S, V, R> 
 {
-    protected final S pp1;
-    protected final S pp2;
-    protected final S pp3;
-    protected V n;
+    public S p1();    
+    public S p2();    
+    public S p3();
     
-    protected V n1, n2, n3;
+    public Optional<V> n1();    
+    public Optional<V> n2();    
+    public Optional<V> n3();
     
-    protected TriangleShape(S p1, S p2, S p3)
+    public B getBound();
+                
+    default V n()
     {
-        this.pp1 = p1; this.pp2 = p2; this.pp3 = p3;
-        this.n = (V) (e1().cross(e2())).normalize();
-    }
-    
-    protected TriangleShape(S p1, S p2, S p3, V n1, V n2, V n3)
-    {
-        this(p1, p2, p3);
-        this.n1 = n1;
-        this.n2 = n2;
-        this.n3 = n3;
-    }
-        
-    public V getNormal()
-    {
-        return n;
-    }
-    
-    public V getNormal(Value2Df uv)
-    {
-        if(n1 != null && n2 != null && n3 != null)            
-            return (V) n1.mul(1 - uv.x - uv.y).add(n2.mul(uv.x).add(n3.mul(uv.y)));          
-        else
-        {
-            V e1 = (V) pp2.sub(pp1);  
-            V e2 = (V) pp3.sub(pp1);
+        V e1 = (V) p2().sub(p1());  
+        V e2 = (V) p3().sub(p1());
 
-            return (V) e1.cross(e2).normalize();
+        return (V) e1.cross(e2).normalize();
+    }
+    
+    default V n(Value2Df uv)
+    {
+        if(n1().isPresent() && n2().isPresent() && n3().isPresent())    
+        {
+            V n1 = (V) n1().get(), n2 = (V) n2().get(), n3 = (V) n3().get();
+            return (V) n1.mul(1 - uv.x - uv.y).add(n2.mul(uv.x).add(n3.mul(uv.y)));
+        }          
+        else{
+            return n();
         }
     }
+        
+    default V e1()
+    {
+        return (V) p2().sub(p1());
+    }
     
-    public abstract V e1();
-    
-    public abstract V e2();
+    default V e2()
+    {
+        return (V) p3().sub(p1());
+    }
     
     @Override
-    public boolean intersect(R r)
+    default boolean intersect(R r)
     {
         return this.intersect(r, null);
     }
     
     @Override
-    public boolean intersect(R r, float[] tuv)
+    default boolean intersect(R r, float[] tuv)
     {
-        return this.mollerIntersection(r, tuv, pp1, pp2, pp3);
+        return this.mollerIntersection(r, tuv, p1(), p2(), p3());
     }
     
-    public S getP1()
-    {
-        return pp1;
-    }
-    
-    public S getP2()
-    {
-        return pp2;
-    }
-    
-    public S getP3()
-    {
-        return pp3;
-    }
-    
-    protected boolean mollerIntersection(R r, float[] tuv, S p1, S p2, S p3)
+    default boolean mollerIntersection(R r, float[] tuv, S p1, S p2, S p3)
     {
         V e1, e2, h, s, q;
         double a, f, b1, b2;
@@ -137,10 +123,10 @@ public abstract class TriangleShape<
             return false;
     }
     
-    public boolean triangleBoxIntersection(
+    default boolean triangleBoxIntersection(
             AlignedBBoxShape<S, V, R, ?> aabb)
     {
-        return triangleBoxIntersection(aabb.getCenter(), aabb.getHalfExtents(), getP1(), getP2(), getP3());
+        return triangleBoxIntersection(aabb.getCenter(), aabb.getHalfExtents(), p1(), p2(), p3());
     }
     
     
@@ -158,13 +144,13 @@ public abstract class TriangleShape<
      * https://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/code/tribox_tam.pdf 
      * 
      */
-    public boolean triangleBoxIntersection(
+    default boolean triangleBoxIntersection(
             S boxcenter, V boxhalfsize, S tv0, S tv1, S tv2) {        
         /*    use separating axis theorem to test overlap between triangle and box */
 	/*    need to test for overlap in these directions: */
 	/*    1) the {x,y,z}-directions (actually, since we use the AABB of the triangle */
 	/*       we do not even need to test these) */
-	/*    2) normal of the triangle */
+	/*    2) n of the triangle */
 	/*    3) crossproduct(edge from tri, {x,y,z}-directin) */
 	/*       this gives 3x3=9 more tests */
         
@@ -242,12 +228,12 @@ public abstract class TriangleShape<
 
 	/* Bullet 2: */
 	/*  test if the box intersects the plane of the triangle */
-	/*  compute plane equation of triangle: normal*x+d=0 */	
+	/*  compute plane equation of triangle: n*x+d=0 */	
         /*  box and triangle overlaps */   
         return planeBoxIntersection(v0,boxhalfsize);
     }
     
-    public void findMinMax(float x0, float x1, float x2, Value1Df min, Value1Df max) {
+    default void findMinMax(float x0, float x1, float x2, Value1Df min, Value1Df max) {
         min.x = max.x = x0;
         if (x1 < min.x)
                 min.x = x1;
@@ -260,7 +246,7 @@ public abstract class TriangleShape<
     }
     
     /*======================== X-tests ========================*/
-    private boolean axisTestX01(
+    default boolean axisTestX01(
             float a, float b, float fa, float fb, 
             S v0, S v2, V boxhalfsize, Value1Df min, Value1Df max)
     {        
@@ -278,7 +264,7 @@ public abstract class TriangleShape<
 	return !(min.x > rad || max.x < -rad);
     }
     
-    private boolean axisTestX2(
+    default boolean axisTestX2(
             float a, float b, float fa, float fb, 
             S v0, S v1, V boxhalfsize, Value1Df min, Value1Df max) 
     {
@@ -297,7 +283,7 @@ public abstract class TriangleShape<
     }
     
     /*======================== Y-tests ========================*/
-    private boolean axisTestY02(
+    default boolean axisTestY02(
             float a, float b, float fa, float fb, 
             S v0, S v2, V boxhalfsize, Value1Df min, Value1Df max)
     {
@@ -315,7 +301,7 @@ public abstract class TriangleShape<
 	return !(min.x > rad || max.x < -rad);
     }
     
-    private boolean axisTestY1(
+    default boolean axisTestY1(
             float a, float b, float fa, float fb, 
             S v0, S v1, V boxhalfsize, Value1Df min, Value1Df max) 
     {
@@ -334,7 +320,7 @@ public abstract class TriangleShape<
     }
     
     /*======================== Z-tests ========================*/
-    private boolean axisTestZ12(
+    default boolean axisTestZ12(
             float a, float b, float fa, float fb, 
             S v1, S v2, V boxhalfsize, Value1Df min, Value1Df max)
     {
@@ -352,7 +338,7 @@ public abstract class TriangleShape<
 	return !(min.x > rad || max.x < -rad);
     }
     
-    private boolean axisTestZ0(
+    default boolean axisTestZ0(
             float a, float b, float fa, float fb, 
             S  v0, S v1, V  boxhalfsize, Value1Df min, Value1Df max) 
     {
@@ -372,28 +358,27 @@ public abstract class TriangleShape<
     
     
     //real-time rendering 4th edition by Tomas et al
-    public boolean planeBoxIntersection(AlignedBBoxShape<S, V, R, ?> aabb)
+    default boolean planeBoxIntersection(AlignedBBoxShape<S, V, R, ?> aabb)
     {
         S c         = aabb.getCenter();
         V h         = aabb.getHalfExtents();        
-        float e     = h.get('x') * Math.abs(n.get('x')) + h.get('y') * Math.abs(n.get('y')) + h.get('z') * Math.abs(n.get('z'));
-        float s     = n.dot(c) - n.dot(getP1()); //c.n + d
+        float e     = h.get('x') * Math.abs(n().get('x')) + h.get('y') * Math.abs(n().get('y')) + h.get('z') * Math.abs(n().get('z'));
+        float s     = TriangleShape.this.n().dot(c) - n().dot(p1()); //c.n + d
                 
         return !(s - e > 0 || s + e < 0);
     }
     
     //if the bounding box center is translated to (0, 0, 0) with v0 of triangle
-    public boolean planeBoxIntersection(S localV0, V halfExtents)
+    default boolean planeBoxIntersection(S localV0, V halfExtents)
     {        
-        float e     = halfExtents.get('x') * Math.abs(n.get('x')) + halfExtents.get('y') * Math.abs(n.get('y')) + halfExtents.get('z') * Math.abs(n.get('z'));
-        float s     = - n.dot(localV0); //c.n + d
+        float e     = halfExtents.get('x') * Math.abs(n().get('x')) + halfExtents.get('y') * Math.abs(n().get('y')) + halfExtents.get('z') * Math.abs(n().get('z'));
+        float s     = - n().dot(localV0); //c.n + d
         
         return !(s - e > 0 || s + e < 0);
     }
-    
-    @Override
-    public String toString()
+       
+    default String getString()
     {
-        return "Tri: p1=" +pp1+ " p2=" +pp2+ " p3=" +pp3;
+        return "Tri: p1=" +p1()+ " p2=" +p2()+ " p3=" +p3();
     }
 }

@@ -5,8 +5,6 @@
  */
 package example.struct.newstruct.base;
 
-import coordinate.memory.type.LayoutMemory.PathElement;
-import static coordinate.memory.type.LayoutValue.JAVA_FLOAT;
 import coordinate.memory.type.MemoryAllocator;
 import coordinate.memory.type.MemoryRegion;
 import coordinate.memory.type.ValueState;

@@ -7,8 +7,8 @@ package coordinate.memory.type;
  */
 
 
-import coordinate.memory.type.LayoutMemory.PathElement;
 import coordinate.memory.type.MemoryAllocator.MemoryNativeImpl;
+import coordinate.utility.RangeCheck;
 import coordinate.utility.RangeCheckArray;
 import coordinate.utility.RangeLong;
 import java.nio.ByteBuffer;
@@ -24,11 +24,11 @@ import java.util.logging.Logger;
  * @author user
  * @param <T>
  */
-public final class MemoryStruct<T extends StructBase> {
-    private final MemoryRegion memory;
-    private final LayoutMemory memoryLayout;
+public final class MemoryStruct<T extends StructBase> implements StructCache<T, MemoryStruct<T>>{
+    private MemoryRegion memory;
+    private long size;    
     private final T abstractT;
-    private final int maximumStringCount = 1000;
+    private final int maximumStringCount = 3000;
     
     public MemoryStruct(T t)
     {
@@ -40,71 +40,97 @@ public final class MemoryStruct<T extends StructBase> {
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
-        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
-        this.memory = MemoryAllocator.allocateNative(this.memoryLayout);
+        this.memory = MemoryAllocator.allocateNative(size, t.sizeOf());
         this.abstractT = t;
+        this.size = size;
+        
+        
     }
     
     public MemoryStruct(T t, long size, boolean initialise)
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
-        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
-        this.memory = MemoryAllocator.allocateNative(this.memoryLayout, initialise);
+        this.memory = MemoryAllocator.allocateNative(size, t.sizeOf(), initialise);
         this.abstractT = t;
+        this.size = size;
     }
     
-    public MemoryStruct(T t, long address, long size)
+    public MemoryStruct(T t, MemoryRegion memory)
+    {        
+        Objects.requireNonNull(t);
+        Objects.requireNonNull(memory);
+        this.memory = memory;
+        this.abstractT = t;
+        if((memory.byteCapacity() % t.sizeOf()) != 0)
+            throw new UnsupportedOperationException("memory region size is not a multiple of size of struct");
+        this.size = memory.byteCapacity() / t.sizeOf();
+    }
+    
+    public MemoryStruct(T t, long size, long address)
     {        
         Objects.requireNonNull(t);
         RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
-        this.memoryLayout = LayoutArray.arrayLayout(size, t.getLayout());
-        this.memory = MemoryAllocator.allocateNativeAddress(memoryLayout, address);
+        this.memory = MemoryAllocator.allocateNativeAddress(t.sizeOf() * size, address);
         this.abstractT = t;
+        this.size = size;
     }
     
-    private MemoryStruct(MemoryStruct<T> m, long offsetIndex)
+    private MemoryStruct(MemoryStruct<T> m, long index)
     {
         Objects.requireNonNull(m);
-        RangeCheckArray.validateIndexSize(offsetIndex, m.size());  
-        
-        //arraySize = m.size() - offsetIndex
-        this.memoryLayout = LayoutArray.arrayLayout(m.memoryLayout.elementCount() - offsetIndex, m.abstractT.getLayout());
-        //byteOffset = m.offsetIndex(PathElement.sequenceElement(offsetIndex));
-        this.memory = m.memory.offset(m.memoryLayout.offset(PathElement.sequenceElement(offsetIndex)), memoryLayout.byteSizeAggregate());
-        //all structs have a copy method
-        this.abstractT = (T) m.abstractT.copy();        
+        RangeCheckArray.validateIndexSize(index, m.size());        
+        this.memory = m.memory.offsetIndex(index, m.abstractT.getLayout());
+        this.size = m.size() - index;
+        this.abstractT = (T) m.abstractT.newStruct();        
     }
-        
-    public T get(long index)
+    
+    public static<T extends StructBase<T>> MemoryStruct<T> allocateHeap(T t, long size)
+    {
+        MemoryRegion memory = MemoryAllocator.allocateHeap(LayoutArray.arrayLayout(size, t.getLayout()));
+        return new MemoryStruct(t, memory);
+    }
+    
+    public static<T extends StructBase<T>> MemoryStruct<T> allocateNative(T t, long size, boolean initialised)
+    {
+        return new MemoryStruct(t, size, initialised);
+    }
+      
+    
+    public void reallocate(long size)
     {        
-        LayoutMemory structLayout = memoryLayout.select(LayoutMemory.PathElement.sequenceElement(index));            
-        MemoryRegion mm = memory.offset(structLayout.offset(), structLayout.byteSizeAggregate());        
-        T newT = (T) abstractT.newInstance();
-        newT.putMemory(mm);
+        if(memory.isNative())
+        {
+            RangeCheckArray.validateIndexSize(size, Long.MAX_VALUE);
+            free();
+            this.memory = MemoryAllocator.allocateNative(size, abstractT.sizeOf());
+            this.size = size;
+        }
+        else
+        {
+            RangeCheckArray.validateIndexSize(size, Integer.MAX_VALUE);
+            free();
+            this.memory = MemoryAllocator.allocateHeap(Math.toIntExact(size), Math.toIntExact(abstractT.sizeOf()));
+            this.size = size;
+        }
+    }
+    
+    @Override
+    public T get(long index)
+    {                        
+        T newT = (T) abstractT.newStruct();
+        newT.memoryToField(offsetIndex(index).getMemory());
         return newT;
     }
     
+    
+    @Override
     public void set(long index, T newT)
     {
-        LayoutMemory structLayout = memoryLayout.select(PathElement.sequenceElement(index));        
-        MemoryRegion mm = memory.offset(structLayout.offset(), structLayout.byteSizeAggregate());
-        newT.updateMemory().copyTo(mm, mm.byteCapacity());
+        newT.fieldToMemory(offsetIndex(index).getMemory());
     }
         
-    public void forEachSet(BiObjLongFunction<T> function)
-    {
-        for(long i = 0; i < size(); i++)
-            set(i, function.apply(get(i), i));
-    }
-    
-    public void forEachSet(RangeLong range, BiObjLongFunction<T> function)
-    {
-        RangeCheckArray.validateRangeSize(range.low(), range.high(), size());        
-        for(long i = range.low(); i < range.high(); i++)
-            set(i, function.apply(get(i), i));
-    }
-    
+    @Override
     public String getString(RangeLong range, Function<T, ?> function)
     {
         RangeCheckArray.validateRangeSize(range.low(), range.high(), size());
@@ -114,6 +140,8 @@ public final class MemoryStruct<T extends StructBase> {
         return joiner.toString();
     }
     
+    
+    @Override
     public String getString(RangeLong range)
     {
         RangeCheckArray.validateRangeSize(range.low(), range.high(), size());
@@ -122,6 +150,7 @@ public final class MemoryStruct<T extends StructBase> {
             joiner.add(""+get(i));
         return joiner.toString();
     }
+    
     
     @Override
     public String toString()
@@ -153,27 +182,66 @@ public final class MemoryStruct<T extends StructBase> {
         return bb;        
     }
     
+    
+    @Override
     public MemoryStruct<T> offsetIndex(long index)
     {        
         return new MemoryStruct(this, index);        
     }
     
+    public MemoryStruct<T> offsetLast()
+    {        
+        return new MemoryStruct(this, size - 1);        
+    }
+    
+    
+    @Override
     public void copyFrom(MemoryStruct<T> m)
     {
         memory.copyFrom(m.memory, m.memory.byteCapacity());
     }
+    
+    public void copyFrom(MemoryStruct<T> m, long n)
+    {
+        memory.copyFrom(m.memory, abstractT.sizeOf() * n);
+    }
+    
+    @Override
     public void copyTo(MemoryStruct<T> m)
     {
         memory.copyTo(m.memory, m.memory.byteCapacity());
     }
     
+    public void copyTo(MemoryStruct<T> m, long n)
+    {
+        memory.copyTo(m.memory, abstractT.sizeOf() * n);
+    }
+    
+     public MemoryStruct<T> fill(T val) {
+        for (long i = 0, len = size(); i < len; i++)
+            set(i, (T) val.copyStruct());
+        return this;
+    }
+    
+    public MemoryStruct<T> fill(T val, long n)
+    {
+        RangeCheck.checkBound(0, n, size());
+        for (long i = 0, len = n; i < len; i++)
+            set(i, (T) val.copyStruct());
+        return this;
+    }
+    
+    @Override
     public MemoryStruct<T> copy()
     { 
-        MemoryStruct<T> mem = new MemoryStruct(abstractT.copy(), size(), false);
+        MemoryStruct<T> mem = new MemoryStruct(abstractT.newStruct(), size(), false);
         copyTo(mem);
         return mem;
     }
     
+    
+    
+    @Override
     public void swapElement(long index1, long index2)
     {
         RangeCheckArray.validateIndexSize(index1, size());
@@ -183,24 +251,29 @@ public final class MemoryStruct<T extends StructBase> {
         set(index2, temp);
     }
     
+    public void swap(MemoryStruct<T> memStruct)
+    {
+        MemoryRegion tempMem = memory;
+        long tempSize = size; 
+        
+        memory = memStruct.memory;
+        size = memStruct.size;
+        
+        memStruct.memory = tempMem;
+        memStruct.size = tempSize;
+    }
+    
+    
+    @Override
     public long address()
     {
         return memory.address();
     }
     
+    @Override
     public long size()
     {
-        return memoryLayout.elementCount();
-    }
-    
-    public LayoutMemory getStructLayout()
-    {
-        return memoryLayout.select(PathElement.sequenceElement());
-    }
-    
-    public ValueState getState(PathElement... elements)
-    {
-        return memoryLayout.valueState(elements);
+        return size;
     }
     
     public void dispose()
@@ -208,51 +281,49 @@ public final class MemoryStruct<T extends StructBase> {
         memory.dispose();
     }
     
+    @Override
     public MemoryRegion getMemory()
     {
         return memory;
     }
-        
-    public interface BiObjLongFunction<V extends StructBase>
-    {
-        V apply(V v, long value);
-    }
     
+    @Override
     public T getStructBase()
     {
-        return (T) abstractT.copy();
+        return (T) abstractT.newStruct();
     }
     
+    
+    @Override
     public String getMemoryReadableSize()
     {
-        return getMemoryReadableSize(abstractT, size());
+        return StructCache.getMemoryReadableSize(abstractT, size());
     }
     
+    @Override
     public long getOffsetByte(long offsetIndex)
     {
         RangeCheckArray.validateIndexSize(offsetIndex, size());
         return offsetIndex * abstractT.sizeOf();
     }
     
-    public static<T extends StructBase> String getMemoryReadableSize(T t, long size)
-    {
-        long bytes = LayoutArray.arrayLayout(size, t.getLayout()).byteSizeAggregate();
-        
-        if (bytes >= 1024 * 1024 * 1024) {
-            // Convert to GB
-            double gb = (double) bytes / (1024 * 1024 * 1024);
-            return String.format("%.2f GB", gb);
-        } else if (bytes >= 1024 * 1024) {
-            // Convert to MB
-            double mb = (double) bytes / (1024 * 1024);
-            return String.format("%.2f MB", mb);
-        } else if (bytes >= 1024) {
-            // Convert to KB
-            double kb = (double) bytes / 1024;
-            return String.format("%.2f KB", kb);
-        } else {
-            // Display in bytes
-            return bytes + " bytes";
-        }
+    @Override
+    public void set(T t) {
+        set(0, t);
+    }
+
+    @Override
+    public T get() {
+        return get(0);
+    }
+
+    @Override
+    public long getByteCapacity() {
+        return memory.byteCapacity();
+    }
+
+    @Override
+    public void free() {
+        memory.dispose();
     }
 }

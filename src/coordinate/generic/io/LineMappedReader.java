@@ -43,6 +43,25 @@ public class LineMappedReader extends CharMappedReader {
         return builder.toString();
     }
         
+    public String readLineString3()
+    {        
+        StringBuilder builder = new StringBuilder(); //don't implement custom cache, this solves everything
+        if(!hasRemaining())
+            return null;
+        skipSpaceAndCarriageReturn(); //go the next non-space character
+        while(true)
+        {
+            char c = getChar();     
+            if(isEndOfLine(c))           
+                break;                  
+            builder.append(c);                   
+        }
+        if(builder.length() == 0) //if line is empty, go to the next one
+            return readLineString3();
+        return builder.toString();
+    }
+    
+        
     public float[] readLineFloatArray()
     {
         int previousPos = buffer.position();
@@ -95,7 +114,25 @@ public class LineMappedReader extends CharMappedReader {
         
         buffer.position(previousPos);
         return list.trim();
-    }    
+    }  
+    
+    
+    public int countInts()
+    {
+        int previousPos = buffer.position();
+        
+        int limit = getEndOfLinePosition();
+        int count = 0;
+        while(position() < limit)
+        {
+            boolean read = parseInteger(limit, new int[1]);
+            if(read)
+                count++;
+        }
+        
+        buffer.position(previousPos);
+        return count;
+    }
     
     public int length_until_space() 
     {

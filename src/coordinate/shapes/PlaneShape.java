@@ -16,7 +16,7 @@ import coordinate.generic.VCoord;
  * @param <V>
  * @param <R>
  */
-public abstract class PlaneShape<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>> implements GenericShape<S, V, R>{
+public abstract class PlaneShape<S extends SCoord, V extends VCoord, R extends AbstractRay<S, V, R>> implements GenericShape<S, V, R>{
     protected V normal;
     protected S center;
     

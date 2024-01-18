@@ -20,7 +20,7 @@ import coordinate.utility.Value3DBoolean;
  * @param <V>
  * @param <R>
  */
-public abstract class OrientedBBoxShape<S extends SCoord<S, V>, V extends VCoord<S, V>, R extends AbstractRay<S, V>> implements GenericShape<S, V, R> {
+public abstract class OrientedBBoxShape<S extends SCoord<S, V>, V extends VCoord<S, V>, R extends AbstractRay<S, V, R>> implements GenericShape<S, V, R> {
     public S center;
     public V radius;
     public V invRadius;

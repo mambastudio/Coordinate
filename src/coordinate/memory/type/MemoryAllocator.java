@@ -19,9 +19,9 @@ import java.nio.ByteOrder;
  * @author user
  */
 public class MemoryAllocator {
-    public static MemoryRegion allocateHeap(int byteCapacity, int byteAlignment)
+    public static MemoryRegion allocateHeap(int capacity, int blockBytes)
     {
-        return new MemoryHeapImpl(byteCapacity, byteAlignment);
+        return new MemoryHeapImpl(capacity, blockBytes);
     }
     
     public static MemoryRegion allocateHeap(LayoutMemory layout)
@@ -31,9 +31,9 @@ public class MemoryAllocator {
         return new MemoryHeapImpl(layout);
     }
     
-    public static MemoryRegion allocateNative(long byteCapacity, long byteAlignment)
+    public static MemoryRegion allocateNative(long capacity, long blockBytes)
     {
-        return new MemoryNativeImpl(byteCapacity, byteAlignment);
+        return new MemoryNativeImpl(capacity, blockBytes);
     }
     
     public static MemoryRegion allocateNative(LayoutMemory layout)
@@ -41,9 +41,9 @@ public class MemoryAllocator {
         return new MemoryNativeImpl(layout);
     }
     
-    public static MemoryRegion allocateNative(long byteCapacity, long byteAlignment, boolean initialise)
+    public static MemoryRegion allocateNative(long capacity, long blockBytes, boolean initialise)
     {
-        return new MemoryNativeImpl(byteCapacity, byteAlignment, initialise);
+        return new MemoryNativeImpl(capacity, blockBytes, initialise);
     }
     
     public static MemoryRegion allocateNative(LayoutMemory layout, boolean initialise)
@@ -51,9 +51,9 @@ public class MemoryAllocator {
         return new MemoryNativeImpl(layout, initialise);
     }
     
-    public static MemoryRegion allocateNativeAddress(LayoutMemory layout, long address)
+    public static MemoryRegion allocateNativeAddress(long byteCapacity, long address)
     {        
-        return new MemoryNativeAddressImpl(address, layout.byteSizeAggregate());
+        return new MemoryNativeAddressImpl(address, byteCapacity);
     }
     
     protected static class MemoryHeapImpl implements MemoryRegion<MemoryHeapImpl>
@@ -70,9 +70,9 @@ public class MemoryAllocator {
             buffer = ByteBuffer.allocate((int) layout.byteSizeAggregate()).order(ByteOrder.nativeOrder());
         }
 
-        private MemoryHeapImpl(int capacity, int alignmentBytes)
+        private MemoryHeapImpl(int capacity, int blockBytes)
         {
-            buffer = ByteBuffer.allocate(capacity * alignmentBytes).order(ByteOrder.nativeOrder());
+            buffer = ByteBuffer.allocate(capacity * blockBytes).order(ByteOrder.nativeOrder());
         }
         
         private MemoryHeapImpl(ByteBuffer buffer)
@@ -98,16 +98,12 @@ public class MemoryAllocator {
             buffer.position((int) offset);
             return new MemoryHeapImpl(buffer.slice());
         }
-        
+                
         @Override
-        public MemoryHeapImpl offset(long offset, long byteAlignment) {
-            RangeCheckArray.validateIndexRange(offset                     , 0, byteCapacity());
-            RangeCheckArray.validateIndexRange(offset + byteAlignment - 1 , 0, byteCapacity());
-            buffer.position((int)  offset);
-            buffer.limit(   (int) (offset + byteAlignment));
-            return new MemoryHeapImpl(buffer.slice());
+        public MemoryHeapImpl offset(long byteOffset, long byteSize) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-
+        
         @Override
         public void copyFrom(MemoryRegion m, long byteCapacity) {
             RangeCheckArray.validateRangeSize(0, byteCapacity, m.byteCapacity());
@@ -252,12 +248,17 @@ public class MemoryAllocator {
         public void dispose() {
             throw new UnsupportedOperationException("this is a heap buffer and not native"); //To change body of generated methods, choose Tools | Templates.
         }    
+
+        @Override
+        public void initSweeper() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
     protected static class MemoryNativeAddressImpl implements MemoryRegion<MemoryNativeAddressImpl>  
     {
         private long address;
-        private long capacityBytes; 
+        private long byteCapacity; 
 
         //buffer fields
         protected static final Field addressField, capacityField;
@@ -273,32 +274,30 @@ public class MemoryAllocator {
             }
         }
         
-        private MemoryNativeAddressImpl(long address, long capacityBytes)
+        private MemoryNativeAddressImpl(long address, long byteCapacity)
         {
-            RangeCheckArray.validateIndexSize(capacityBytes, Long.MAX_VALUE);
+            RangeCheckArray.validateIndexSize(byteCapacity, Long.MAX_VALUE);
             this.address = address;
-            this.capacityBytes = capacityBytes;            
-            initSweeper();
+            this.byteCapacity = byteCapacity; 
         }
                 
         private MemoryNativeAddressImpl(MemoryNativeAddressImpl memory, long byteOffset)
         {
             RangeCheckArray.validateIndexSize(byteOffset, memory.byteCapacity());
             this.address = memory.address(byteOffset);
-            this.capacityBytes = memory.capacityBytes - byteOffset;
-            initSweeper();
+            this.byteCapacity = memory.byteCapacity - byteOffset;
         }
         
-        private MemoryNativeAddressImpl(MemoryNativeAddressImpl memory, long byteOffset, long byteAlignment)
+        private MemoryNativeAddressImpl(MemoryNativeAddressImpl memory, long byteOffset, long byteSize)
         {
-            RangeCheckArray.validateIndexSize(byteOffset, memory.byteCapacity());
-            RangeCheckArray.validateIndexSize(byteOffset + byteAlignment - 1, memory.byteCapacity());
+            RangeCheckArray.validateIndexSize(byteOffset,            memory.byteCapacity());
+            RangeCheckArray.validateRangeSize(byteOffset, byteOffset + byteSize, memory.byteCapacity());
             this.address = memory.address(byteOffset);
-            this.capacityBytes = byteAlignment;
-            initSweeper();
+            this.byteCapacity = byteSize;
         }
-        
-        private void initSweeper()
+                
+        @Override
+        public void initSweeper()
         {
             //For garbage collection
             Sweeper.getSweeper().register(this, ()->{
@@ -314,19 +313,19 @@ public class MemoryAllocator {
         
         @Override
         public long byteCapacity() {
-            return capacityBytes;
+            return byteCapacity;
         }
 
         @Override
-        public MemoryNativeAddressImpl offset(long offset) {
-            return new MemoryNativeAddressImpl(this, offset);
+        public MemoryNativeAddressImpl offset(long byteOffset) {
+            return new MemoryNativeAddressImpl(this, byteOffset);
         }
-        
+                
         @Override
-        public MemoryNativeAddressImpl offset(long offset, long byteAlignment) {
-            return new MemoryNativeAddressImpl(this, offset, byteAlignment);
+        public MemoryNativeAddressImpl offset(long byteOffset, long byteSize) {
+            return new MemoryNativeAddressImpl(this, byteOffset, byteSize);
         }
-        
+                
         @Override
         public void copyFrom(MemoryRegion m, long n) {
             RangeCheckArray.validateRangeSize(0, n,  m.byteCapacity());
@@ -351,26 +350,26 @@ public class MemoryAllocator {
 
         @Override
         public final void fill(byte value) {
-            long remaining = capacityBytes % 8;
+            long remaining = byteCapacity % 8;
             
             // Fill the aligned part efficiently
-            getUnsafe().setMemory(address, capacityBytes - remaining, value);
+            getUnsafe().setMemory(address, byteCapacity - remaining, value);
 
             // Fill the remaining unaligned bytes individually
             for (int i = 0; i < remaining; i++) {
-                getUnsafe().setMemory(address + capacityBytes - remaining + i, 1, value);
+                getUnsafe().setMemory(address + byteCapacity - remaining + i, 1, value);
             }
         }
 
         @Override
         public void swap(MemoryNativeAddressImpl m) {
             long tempAddress = address;
-            long tempCapacityBytes = capacityBytes;
+            long tempCapacityBytes = byteCapacity;
 
             address = m.address;
-            capacityBytes = m.capacityBytes;
+            byteCapacity = m.byteCapacity;
             m.address = tempAddress;
-            m.capacityBytes = tempCapacityBytes;
+            m.byteCapacity = tempCapacityBytes;
         }
 
         @Override
@@ -471,12 +470,13 @@ public class MemoryAllocator {
                 address = 0;
             }
         }  
+
     }
     
     protected static class MemoryNativeImpl implements MemoryRegion<MemoryNativeImpl>  
     {
         private long address;
-        private long capacityBytes; 
+        private long byteCapacity; 
 
         //buffer fields
         protected static final Field addressField, capacityField;
@@ -492,29 +492,28 @@ public class MemoryAllocator {
             }
         }
         
-        private MemoryNativeImpl(long capacityBytes, boolean initialise)
+        private MemoryNativeImpl(long byteCapacity, boolean initialise)
         {         
-            RangeCheckArray.validateIndexSize(capacityBytes, Long.MAX_VALUE);
-            this.address = getUnsafe().allocateMemory(capacityBytes);
-            this.capacityBytes = capacityBytes;
+            RangeCheckArray.validateIndexSize(byteCapacity, Long.MAX_VALUE);
+            this.address = getUnsafe().allocateMemory(byteCapacity);
+            this.byteCapacity = byteCapacity;
             if(initialise)
                 fill((byte)0); //(byte)0 is to initialise to 0
-            initSweeper();
         }
         
-        private MemoryNativeImpl(long capacityBytes)
+        private MemoryNativeImpl(long byteCapacity)
         {         
-            this(capacityBytes, true);
+            this(byteCapacity, true);
         }
                 
-        private MemoryNativeImpl(long capacity, long alignmentBytes)
+        private MemoryNativeImpl(long capacity, long blockBytes)
         {
-            this(capacity * alignmentBytes);
+            this(capacity * blockBytes);
         }
         
-        private MemoryNativeImpl(long capacity, long alignmentBytes, boolean initialise)
+        private MemoryNativeImpl(long capacity, long blockBytes, boolean initialise)
         {
-            this(capacity * alignmentBytes, initialise);
+            this(capacity * blockBytes, initialise);
         }
 
         private MemoryNativeImpl(LayoutMemory layout)
@@ -531,20 +530,19 @@ public class MemoryAllocator {
         {
             RangeCheckArray.validateIndexSize(byteOffset, memory.byteCapacity());
             this.address = memory.address(byteOffset);
-            this.capacityBytes = memory.capacityBytes - byteOffset;
-            initSweeper();
+            this.byteCapacity = memory.byteCapacity - byteOffset;
         }
         
-        private MemoryNativeImpl(MemoryNativeImpl memory, long byteOffset, long byteAlignment)
+        private MemoryNativeImpl(MemoryNativeImpl memory, long byteOffset, long byteSize)
         {
-            RangeCheckArray.validateIndexSize(byteOffset, memory.byteCapacity());
-            RangeCheckArray.validateIndexSize(byteOffset + byteAlignment - 1, memory.byteCapacity());
+            RangeCheckArray.validateIndexSize(byteOffset           , memory.byteCapacity());
+            RangeCheckArray.validateRangeSize(byteOffset, byteOffset + byteSize, memory.byteCapacity());
             this.address = memory.address(byteOffset);
-            this.capacityBytes = byteAlignment;
-            initSweeper();
+            this.byteCapacity = byteSize;
         }
-        
-        private void initSweeper()
+                
+        @Override
+        public void initSweeper()
         {
             //For garbage collection
             Sweeper.getSweeper().register(this, ()->{
@@ -560,19 +558,19 @@ public class MemoryAllocator {
         
         @Override
         public long byteCapacity() {
-            return capacityBytes;
+            return byteCapacity;
         }
 
         @Override
-        public MemoryNativeImpl offset(long offset) {
-            return new MemoryNativeImpl(this, offset);
+        public MemoryNativeImpl offset(long byteOffset) {
+            return new MemoryNativeImpl(this, byteOffset);
         }
         
         @Override
-        public MemoryNativeImpl offset(long offset, long byteAlignment) {
-            return new MemoryNativeImpl(this, offset, byteAlignment);
+        public MemoryNativeImpl offset(long byteOffset, long byteSize) {
+            return new MemoryNativeImpl(this, byteOffset, byteSize);
         }
-
+        
         @Override
         public void copyFrom(MemoryRegion m, long n) {
             RangeCheckArray.validateRangeSize(0, n,  m.byteCapacity());
@@ -597,26 +595,26 @@ public class MemoryAllocator {
 
         @Override
         public void fill(byte value) {
-            long remaining = capacityBytes % 8;
+            long remaining = byteCapacity % 8;
             
             // Fill the aligned part efficiently
-            getUnsafe().setMemory(address, capacityBytes - remaining, value);
+            getUnsafe().setMemory(address, byteCapacity - remaining, value);
 
             // Fill the remaining unaligned bytes individually
             for (int i = 0; i < remaining; i++) {
-                getUnsafe().setMemory(address + capacityBytes - remaining + i, 1, value);
+                getUnsafe().setMemory(address + byteCapacity - remaining + i, 1, value);
             }
         }
 
         @Override
         public void swap(MemoryNativeImpl m) {
             long tempAddress = address;
-            long tempCapacityBytes = capacityBytes;
+            long tempCapacityBytes = byteCapacity;
 
             address = m.address;
-            capacityBytes = m.capacityBytes;
+            byteCapacity = m.byteCapacity;
             m.address = tempAddress;
-            m.capacityBytes = tempCapacityBytes;
+            m.byteCapacity = tempCapacityBytes;
         }
 
         @Override
@@ -708,7 +706,7 @@ public class MemoryAllocator {
         public void set(LayoutValue.OfDouble layout, long offset, double value) {
             getUnsafe().putDouble(address(offset), value);            
         }
-
+        
         @Override
         public void dispose() {
             if(address()!=0)

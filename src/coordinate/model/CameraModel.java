@@ -22,7 +22,7 @@ import coordinate.utility.Value2Df;
  * @param <V>
  * @param <R>
  */
-public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends AbstractRay<S, V>>
+public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends AbstractRay<S, V, R>>
 {
     public S position;
     public S lookat;
@@ -240,7 +240,7 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         return lookat.sub(position).length();
     }
     
-     @Override
+    @Override
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
@@ -249,6 +249,7 @@ public abstract class CameraModel <S extends SCoord, V extends VCoord, R extends
         builder.append("         eye    ").append(String.format("(%.5f, %.5f, %.5f)", position.get('x'), position.get('y'), position.get('z'))).append("\n");
         builder.append("         lookat ").append(String.format("(%.5f, %.5f, %.5f)", lookat.get('x'), lookat.get('y'), lookat.get('z'))).append("\n");
         builder.append("         up     ").append(String.format("(%.5f, %.5f, %.5f)", up.get('x'), up.get('y'), up.get('z'))).append("\n");
+        builder.append("         fov    ").append(String.format("(%.5f)", fov));
         
         return builder.toString(); 
     }

@@ -8,8 +8,10 @@ package coordinate.memory.type.algorithm;
 import static coordinate.memory.type.MemoryRegion.checkSameByteCapacity;
 import coordinate.memory.type.MemoryStruct;
 import coordinate.memory.type.MemoryStructFactory.Int32;
+import coordinate.memory.type.StructBase;
 import coordinate.utility.RangeCheckArray;
 import coordinate.utility.Utility;
+import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.LongStream;
@@ -26,11 +28,16 @@ public class SerialAlgorithmInt32 {
             results.set(i, new Int32(f.applyAsInt(values.get(i).value())));
         return results;
     }
+    
+    public<T extends StructBase> MemoryStruct<Int32> transformT(MemoryStruct<T> values, Function<T, Int32> f) {
+        RangeCheckArray.validateIndexAboveZero(values.size());        
+        MemoryStruct<Int32> results = new MemoryStruct(new Int32(), values.size());
+        for(long i = 0; i<values.size(); i++)
+            results.set(i, f.apply(values.get(i)));
+        return results;
+    }
         
     public int exclusive_scan(MemoryStruct<Int32> values, long n, MemoryStruct<Int32> result, IntBinaryOperator f) {
-        //condition check result.size() > size values.size()
-        if(result.size() <= values.size())
-            throw new UnsupportedOperationException("result array is lesser than values size");
         RangeCheckArray.validateIndexAboveZero(n);        
         RangeCheckArray.validateRangeSize(0, n, values.size());
         RangeCheckArray.validateRangeSize(0, n, result.size());
@@ -47,9 +54,8 @@ public class SerialAlgorithmInt32 {
 
    
     public int reduce(MemoryStruct<Int32> values, long n, MemoryStruct<Int32> result, IntBinaryOperator f) {
-        RangeCheckArray.validateIndexAboveZero(n);
-        RangeCheckArray.validateRangeSize(0, n, values.size());
-        RangeCheckArray.validateRangeSize(0, n, result.size());
+        RangeCheckArray.validateIndexAboveZero(n); 
+        RangeCheckArray.validateRangeSize(0, n, values.size()); 
         
         int res = 0;
         for(long i = 0; i<n; i++)
@@ -123,7 +129,7 @@ public class SerialAlgorithmInt32 {
         RangeCheckArray.validateRangeSize(0, keysOut.size(),    n);
         RangeCheckArray.validateRangeSize(0, valuesOut.size(),  n);
         
-        //transfer copy to memory
+        //transfer copyStruct to memory
         checkSameByteCapacity(keys.getMemory(), keysOut.getMemory());
         keys.copyTo(keysOut);
         checkSameByteCapacity(values.getMemory(), valuesOut.getMemory());
