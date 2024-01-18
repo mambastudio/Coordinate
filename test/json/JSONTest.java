@@ -18,8 +18,10 @@ import java.nio.file.Paths;
 public class JSONTest {
     public static void main(String... args) throws IOException
     {
-        Path path = Paths.get("C:\\Users\\jmburu\\Documents\\File Examples", "JSON-1.json");
-        test(path);
+        Path path = Paths.get("C:\\Users\\user\\Documents\\File Examples", "JSON-2.json");
+        JSONParser parser = new JSONParser(path);
+        JSONObject object = parser.parse();
+        System.out.println(object);
     }
     
     public static void test(Path path) throws IOException

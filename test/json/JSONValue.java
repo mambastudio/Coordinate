@@ -19,5 +19,8 @@ public abstract class JSONValue {
     public abstract boolean isBoolean();
     public abstract boolean isArray();
     public abstract boolean isObject();
+    public abstract boolean isNull();
+    public abstract boolean isTrue();
+    public abstract boolean isFalse();
     
 }

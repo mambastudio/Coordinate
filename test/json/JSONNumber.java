@@ -5,9 +5,6 @@
  */
 package json;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-
 /**
  *
  * @author jmburu
@@ -50,5 +47,20 @@ public class JSONNumber extends JSONValue{
     public String toString()
     {
         return Double.toString(number);
+    }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
+
+    @Override
+    public boolean isTrue() {
+        return false;
+    }
+
+    @Override
+    public boolean isFalse() {
+        return false;
     }
 }

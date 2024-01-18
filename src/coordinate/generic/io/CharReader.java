@@ -180,7 +180,7 @@ public class CharReader {
         
     public void skipSpaceAndBeyond(char c) throws IOException
     {
-        while(hasNext())
+        while(hasNext()) 
         {
             if(isNext(c))
                 skipNext();
@@ -226,6 +226,16 @@ public class CharReader {
         reader.mark(1);
         boolean isNext = false;
         if(hasNext() && isNewLine(nextChar()))
+            isNext = true;
+        reader.reset();
+        return isNext;
+    }
+    
+    public boolean isNextAllSpace() throws IOException
+    {
+        reader.mark(1);
+        boolean isNext = false;
+        if(hasNext() && isAllSpace(nextChar()))
             isNext = true;
         reader.reset();
         return isNext;

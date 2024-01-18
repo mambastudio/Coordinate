@@ -51,6 +51,22 @@ public class JSONArray<T extends JSONValue> extends JSONValue{
         return false;
     }
     
+    
+    @Override
+    public boolean isNull() {
+        return false;
+    }
+
+    @Override
+    public boolean isTrue() {
+        return false;
+    }
+
+    @Override
+    public boolean isFalse() {
+        return false;
+    }
+    
     @Override
     public String toString()
     {

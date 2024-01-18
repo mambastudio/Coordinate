@@ -5,27 +5,23 @@
  */
 package json;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  *
- * @author jmburu
+ * @author user
  */
-public class JSONObject extends JSONValue{
+public class JSONLiteral extends JSONValue {
+    
+    private String string;
+        
+    public JSONLiteral(String string)
+    {
+        if(string.equals("true") || string.equals("false") || string.equals("null"))
+            this.string = string;
+        else
+            throw new UnsupportedOperationException("literal: " +string+ " is neither a boolean or null");
+        
+    }
 
-    Map<String, JSONValue> map;
-    
-    public JSONObject()
-    {
-        map = new LinkedHashMap();
-    }
-    
-    public void put(String key, JSONValue value)
-    {
-        map.put(key, value);
-    }
-    
     @Override
     public boolean isNumber() {
         return false;
@@ -38,7 +34,7 @@ public class JSONObject extends JSONValue{
 
     @Override
     public boolean isBoolean() {
-        return false;
+        return string.equals("true") || string.equals("false");
     }
 
     @Override
@@ -48,13 +44,12 @@ public class JSONObject extends JSONValue{
 
     @Override
     public boolean isObject() {
-        return true;
+        return false;
     }
-    
-    
+        
     @Override
     public boolean isNull() {
-        return false;
+        return string.equals("null");
     }
 
     @Override
@@ -70,12 +65,6 @@ public class JSONObject extends JSONValue{
     @Override
     public String toString()
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append("{").append("\n");
-        map.entrySet().forEach(_item -> {
-            builder.append(_item.getKey()).append(": ").append(_item.getValue()).append("\n");
-        });
-        builder.append("}");
-        return builder.toString();
+        return string;
     }
 }
