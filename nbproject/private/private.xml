@@ -4,7 +4,6 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group/>
         <group/>
-        <group/>
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
         </group>
@@ -32,6 +31,14 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONValue.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONParser.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONNumber.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/json/JSONValue.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/json/JSONTest.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/io/CharReader.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/json/JSONParser.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/json/JSONNumber.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/test/json/JSONLiteral.java</file>
         </group>
     </open-files>
 </project-private>
