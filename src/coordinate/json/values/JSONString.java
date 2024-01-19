@@ -3,29 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package json;
+package coordinate.json.values;
 
 /**
  *
  * @author jmburu
  */
-public class JSONNumber extends JSONValue{
+public class JSONString extends JSONValue{
+    String string;
     
-    double number;
-    
-    public JSONNumber(double value)
+    public JSONString(String string)
     {
-        this.number = value;
+        this.string = string;
     }
 
     @Override
     public boolean isNumber() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isString() {
-        return false;
+        return true;
     }
 
     @Override
@@ -42,13 +41,8 @@ public class JSONNumber extends JSONValue{
     public boolean isObject() {
         return false;
     }
-
-    @Override
-    public String toString()
-    {
-        return Double.toString(number);
-    }
-
+    
+    
     @Override
     public boolean isNull() {
         return false;
@@ -63,4 +57,11 @@ public class JSONNumber extends JSONValue{
     public boolean isFalse() {
         return false;
     }
+    
+    @Override
+    public String toString()
+    {
+        return string;
+    }
+
 }

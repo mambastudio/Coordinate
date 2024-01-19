@@ -3,27 +3,29 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package json;
+package coordinate.json.values;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  *
  * @author jmburu
- * @param <T>
  */
-public class JSONArray<T extends JSONValue> extends JSONValue{
+public class JSONObject extends JSONValue{
+
+    Map<String, JSONValue> map;
     
-    public ArrayList<T> array;
-    
-    public JSONArray()
+    public JSONObject()
     {
-        array = new ArrayList();
+        map = new LinkedHashMap();
     }
     
-    public void add(T t)
+    public void put(String key, JSONValue value)
     {
-        array.add(t);
+        map.put(key, value);
     }
     
     @Override
@@ -43,12 +45,12 @@ public class JSONArray<T extends JSONValue> extends JSONValue{
 
     @Override
     public boolean isArray() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isObject() {
-        return false;
+        return true;
     }
     
     
@@ -70,6 +72,22 @@ public class JSONArray<T extends JSONValue> extends JSONValue{
     @Override
     public String toString()
     {
-        return array.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("{").append("\n");
+        map.entrySet().forEach(_item -> {
+            builder.append(_item.getKey()).append(": ").append(_item.getValue()).append("\n");
+        });
+        builder.append("}");
+        return builder.toString();
+    }
+
+    public Set<Entry<String, JSONValue>> getSet()
+    {
+        return map.entrySet();
+    }
+    
+    public int getSize()
+    {
+        return map.size();
     }
 }

@@ -3,28 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package json;
+package coordinate.json.values;
+
+import coordinate.json.values.JSONValue;
 
 /**
  *
- * @author user
+ * @author jmburu
  */
-public class JSONLiteral extends JSONValue {
+public class JSONNumber extends JSONValue{
     
-    private String string;
-        
-    public JSONLiteral(String string)
+    double number;
+    
+    public JSONNumber(double value)
     {
-        if(string.equals("true") || string.equals("false") || string.equals("null"))
-            this.string = string;
-        else
-            throw new UnsupportedOperationException("literal: " +string+ " is neither a boolean or null");
-        
+        this.number = value;
     }
 
     @Override
     public boolean isNumber() {
-        return false;
+        return true;
     }
 
     @Override
@@ -34,7 +32,7 @@ public class JSONLiteral extends JSONValue {
 
     @Override
     public boolean isBoolean() {
-        return string.equals("true") || string.equals("false");
+        return false;
     }
 
     @Override
@@ -46,10 +44,16 @@ public class JSONLiteral extends JSONValue {
     public boolean isObject() {
         return false;
     }
-        
+
+    @Override
+    public String toString()
+    {
+        return Double.toString(number);
+    }
+
     @Override
     public boolean isNull() {
-        return string.equals("null");
+        return false;
     }
 
     @Override
@@ -60,11 +64,5 @@ public class JSONLiteral extends JSONValue {
     @Override
     public boolean isFalse() {
         return false;
-    }
-    
-    @Override
-    public String toString()
-    {
-        return string;
     }
 }

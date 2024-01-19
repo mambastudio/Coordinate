@@ -177,13 +177,17 @@ public class CharReader {
     {
         reader.read();
     }
-        
-    public void skipSpaceAndBeyond(char c) throws IOException
+            
+    public void skipCharOnceAndSurroundingSpaces(char c) throws IOException
     {
+        int count = 0;
         while(hasNext()) 
         {
-            if(isNext(c))
+            if(isNext(c) && count == 0)
+            {
                 skipNext();
+                count++;
+            }
             else if(isAllSpace(peekNext()))
                 skipNext();
             else

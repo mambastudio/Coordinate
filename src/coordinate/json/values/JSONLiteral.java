@@ -3,21 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package json;
+package coordinate.json.values;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import coordinate.json.values.JSONValue;
 
 /**
  *
- * @author jmburu
+ * @author user
  */
-public class JSONString extends JSONValue{
-    String string;
+public class JSONLiteral extends JSONValue {
     
-    public JSONString(String string)
+    private String string;
+        
+    public JSONLiteral(String string)
     {
-        this.string = string;
+        
+        if(string.equals("true") || string.equals("false") || string.equals("null"))
+            this.string = string;
+        else
+            throw new UnsupportedOperationException("literal: " +string+ " is neither a boolean or null");
+        
     }
 
     @Override
@@ -27,12 +32,12 @@ public class JSONString extends JSONValue{
 
     @Override
     public boolean isString() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isBoolean() {
-        return false;
+        return string.equals("true") || string.equals("false");
     }
 
     @Override
@@ -44,11 +49,10 @@ public class JSONString extends JSONValue{
     public boolean isObject() {
         return false;
     }
-    
-    
+        
     @Override
     public boolean isNull() {
-        return false;
+        return string.equals("null");
     }
 
     @Override

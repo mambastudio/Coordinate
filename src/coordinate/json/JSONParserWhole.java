@@ -3,8 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package json;
+package coordinate.json;
 
+import coordinate.json.values.JSONObject;
+import coordinate.json.values.JSONLiteral;
+import coordinate.json.values.JSONNumber;
+import coordinate.json.values.JSONString;
+import coordinate.json.values.JSONArray;
+import coordinate.json.values.JSONValue;
 import coordinate.generic.io.CharReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -15,51 +21,70 @@ import java.util.logging.Logger;
 /**
  *
  * @author jmburu
+ * 
+ * https://www.json.org/json-en.html
+ * https://jsonformatter.org/
+ * https://github.com/json-iterator/test-data 
+ * 
  */
-public class JSONParser {
+public class JSONParserWhole {
     CharReader reader;
-    public JSONParser(Path path)
+    public JSONParserWhole(Path path)
     {
         reader = new CharReader(path);
         try {
             reader.skipSpace();
         } catch (IOException ex) {
-            Logger.getLogger(JSONParser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JSONParserWhole.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public JSONObject parse()
+    public JSONObject parseObject()
     {
         JSONObject object = null;
         try {
             object = readObject();
         } catch (IOException ex) {
-            Logger.getLogger(JSONParser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JSONParserWhole.class.getName()).log(Level.SEVERE, null, ex);
         }
         Optional<JSONObject> optional = Optional.of(object);
         return optional.get();
     }
     
+    public JSONArray parseArray()
+    {
+        JSONArray object = null;
+        try {
+            object = readArray();
+        } catch (IOException ex) {
+            Logger.getLogger(JSONParserWhole.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Optional<JSONArray> optional = Optional.of(object);
+        return optional.get();
+    }
+    
     private double readNumber() throws IOException
     {
-        reader.skipSpaceAndBeyond(' ');         
+        reader.skipSpace();         
         double value = reader.nextDouble();        
-        reader.skipSpaceAndBeyond(' ');
+        reader.skipSpace();
         return value;
     }
     
-    private String readQuotes() throws IOException
+    //TODO: deal with escape characters according to json specifications
+    private String readString() throws IOException
     {
-        reader.skipSpaceAndBeyond('"');
+        reader.skipCharOnceAndSurroundingSpaces('"');
         StringBuilder builder = new StringBuilder();
         while(reader.hasNext() && !reader.isNext('"'))        
             builder.append(reader.nextChar());   
-        reader.skipSpaceAndBeyond('"');
+        reader.skipCharOnceAndSurroundingSpaces('"');
         return builder.toString();
     }
     
     private String readLiteral() throws IOException
     {                
+        reader.skipSpace();
         StringBuilder builder = new StringBuilder();
         while(reader.hasNext())      
         {
@@ -67,6 +92,7 @@ public class JSONParser {
                 break;
             builder.append(reader.nextChar());
         }  
+        reader.skipSpace();
         return builder.toString();
     }
     
@@ -74,17 +100,17 @@ public class JSONParser {
     {
         JSONObject object = new JSONObject();
         if(reader.isNext('{'))
-            reader.skipSpaceAndBeyond('{');
+            reader.skipCharOnceAndSurroundingSpaces('{');
         while(reader.hasNext() && !reader.isNext('}'))
         {
-            String key = parseKey(); 
-            reader.skipSpaceAndBeyond(':'); //:  
-            JSONValue value = parseValue();                    
+            String key = readKey(); 
+            reader.skipCharOnceAndSurroundingSpaces(':'); //:  
+            JSONValue value = readValue();                    
             object.put(key, value);
             if(reader.isNext(','))
-                reader.skipSpaceAndBeyond(',');
+                reader.skipCharOnceAndSurroundingSpaces(',');
         }
-        reader.skipSpaceAndBeyond('}');
+        reader.skipCharOnceAndSurroundingSpaces('}');
         return object;
     }
         
@@ -92,32 +118,32 @@ public class JSONParser {
     {
         JSONArray array = new JSONArray();
         if(reader.isNext('['))
-            reader.skipSpaceAndBeyond('[');
+            reader.skipCharOnceAndSurroundingSpaces('[');
         while(reader.hasNext() && !reader.isNext(']'))
         {
-            JSONValue value = parseValue();
-            array.add(value);            
+            JSONValue value = readValue();
+            array.add(value); 
             if(reader.isNext(','))
-                reader.skipSpaceAndBeyond(',');
+                reader.skipCharOnceAndSurroundingSpaces(',');                   
         }
-        reader.skipSpaceAndBeyond(']');
+        reader.skipCharOnceAndSurroundingSpaces(']');
         return array;
     }
     
-    private String parseKey() throws IOException
+    private String readKey() throws IOException
     {
         reader.skipSpace();
-        String key = readQuotes();
+        String key = readString();
         reader.skipSpace();
         return key;
     }
     
-    private JSONValue parseValue() throws IOException
+    private JSONValue readValue() throws IOException
     {
         reader.skipSpace();
         JSONValue value;
         if(reader.isNext('"'))
-            value = new JSONString(readQuotes());
+            value = new JSONString(readString());
         else if(reader.isNextDigit())
             value = new JSONNumber(readNumber());
         else if(reader.isNext('{'))
