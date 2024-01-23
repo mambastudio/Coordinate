@@ -46,16 +46,20 @@ public class Timer {
 
     @Override
     public String toString() {
-        long millis = nanos() / (1000 * 1000);
-        if (millis < 1000)
-            return String.format("%dms", millis);
+        long nanos = nanos();
+        long millis = nanos / (1000 * 1000);
+        if (millis < 1000) {
+            return String.format("%dms %dns", millis, nanos % (1000 * 1000));
+        }
+
         long hours = millis / (60 * 60 * 1000);
         millis -= hours * 60 * 60 * 1000;
         long minutes = millis / (60 * 1000);
         millis -= minutes * 60 * 1000;
         long seconds = millis / 1000;
         millis -= seconds * 1000;
-        return String.format("%dhrs : %02dmin : %02d.%1dsec", hours, minutes, seconds, millis / 100);
+
+        return String.format("%dhrs : %02dmin : %02d.%03dsec %dns", hours, minutes, seconds, millis, nanos % 1000);
     }
     
     public static Timer timeThis(TimerCallBack callback)

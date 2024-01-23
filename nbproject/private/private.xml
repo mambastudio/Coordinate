@@ -2,10 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
-        <group>
-            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
-        </group>
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/parser/obj/OBJMappedParser.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
@@ -49,6 +45,13 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONObject.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONLiteral.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONArray.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/JSONFormatString.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructCache.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/generic/g2/AbstractMesh.java</file>
         </group>
     </open-files>
 </project-private>

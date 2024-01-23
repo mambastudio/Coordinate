@@ -39,27 +39,20 @@ public class JSONParserWhole {
         }
     }
     
-    public JSONObject parseObject()
+    public JSONValue parse()
     {
-        JSONObject object = null;
+        JSONValue value = null;
         try {
-            object = readObject();
+            if(reader.isNext('['))
+                value = readArray();
+            else if(reader.isNext('{'))
+                value = readObject();
+            else throw new UnsupportedOperationException("json file starts with " +reader.peekNext());
         } catch (IOException ex) {
             Logger.getLogger(JSONParserWhole.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Optional<JSONObject> optional = Optional.of(object);
-        return optional.get();
-    }
-    
-    public JSONArray parseArray()
-    {
-        JSONArray object = null;
-        try {
-            object = readArray();
-        } catch (IOException ex) {
-            Logger.getLogger(JSONParserWhole.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Optional<JSONArray> optional = Optional.of(object);
+        
+        Optional<JSONValue> optional = Optional.of(value);
         return optional.get();
     }
     
@@ -76,8 +69,13 @@ public class JSONParserWhole {
     {
         reader.skipCharOnceAndSurroundingSpaces('"');
         StringBuilder builder = new StringBuilder();
-        while(reader.hasNext() && !reader.isNext('"'))        
-            builder.append(reader.nextChar());   
+        while(reader.hasNext() && !reader.isNext('"')) 
+        {
+            if(reader.isNext('\\')) //understand why java doesn't like \* as string
+                builder.append(reader.nextString(2));            
+            else
+                builder.append(reader.nextChar());
+        }   
         reader.skipCharOnceAndSurroundingSpaces('"');
         return builder.toString();
     }

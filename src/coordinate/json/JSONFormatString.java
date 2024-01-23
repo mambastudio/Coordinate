@@ -5,10 +5,10 @@
  */
 package coordinate.json;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import coordinate.json.values.JSONArray;
 import coordinate.json.values.JSONObject;
 import coordinate.json.values.JSONValue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -17,6 +17,16 @@ import coordinate.json.values.JSONValue;
 public class JSONFormatString {
     private static int indent = 0;
     public static int increment = 3;
+    
+    public static String getString(JSONValue object)
+    {
+        if(object.isObject())
+            return getString((JSONObject)object);
+        else if(object.isArray())
+            return getString((JSONArray)object);   
+        else
+            throw new UnsupportedOperationException("object to print is not supported");
+    }
     
     public static String getString(JSONObject object)
     {
@@ -42,11 +52,13 @@ public class JSONFormatString {
             JSONValue value = entry.getValue();
             String comma = index.get() >= size-1 ? "" : ",";
             if(value.isObject())
-                builder.append(getIndentSpace()).append(entry.getKey()).append(": ").append(getStringObject((JSONObject) entry.getValue(), true)).append(comma).append("\n");
+                builder.append(getIndentSpace()).append("\"").append(entry.getKey()).append("\"").append(" : ").append(getStringObject((JSONObject) entry.getValue(), true)).append(comma).append("\n");
             else if(value.isArray())
-                builder.append(getIndentSpace()).append(entry.getKey()).append(": ").append(getStringArray((JSONArray) entry.getValue(), true)).append(comma).append("\n");
+                builder.append(getIndentSpace()).append("\"").append(entry.getKey()).append("\"").append(" : ").append(getStringArray((JSONArray) entry.getValue(), true)).append(comma).append("\n");
+            else if(value.isString())
+                builder.append(getIndentSpace()).append("\"").append(entry.getKey()).append("\"").append(" : ").append("\"").append(entry.getValue()).append("\"").append(comma).append("\n");
             else
-                builder.append(getIndentSpace()).append(entry.getKey()).append(": ").append(entry.getValue()).append(comma).append("\n");
+                builder.append(getIndentSpace()).append("\"").append(entry.getKey()).append("\"").append(" : ").append(entry.getValue()).append(comma).append("\n");
             index.incrementAndGet();
             
         });
