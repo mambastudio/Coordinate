@@ -177,6 +177,11 @@ public class StringParser {
         return string.substring(pointer[0]).contains(token);
     }
     
+    public String getRemainder()
+    {
+        return string.substring(pointer[0]);
+    }
+    
     public boolean currentIs(String token)
     {
         if(isNewLine() || token.length() > (string.length() - pointer[0]))
@@ -234,12 +239,17 @@ public class StringParser {
     }
     
     public double getFirstDouble()
-    {
-        if(pointer[0] >= string.length())
+    {       
+        if(pointer[0] >= string.length())        
             throw new IndexOutOfBoundsException("start index: "+pointer[0]+ " out of bound of string length: " +string.length());
         
         while(true)
         {
+            if(currentIs("nan"))
+            {
+                incrementPointer(3);
+                return 0;
+            }
             double[] result = new double[1];
             if(tryParseDouble(result))           
                 return result[0];
