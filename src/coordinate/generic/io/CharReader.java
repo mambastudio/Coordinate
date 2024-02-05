@@ -177,6 +177,12 @@ public class CharReader {
     {
         reader.read();
     }
+    
+    public void skipNext(int steps) throws IOException
+    {
+        for(int i = 0; i<steps; i++)
+            skipNext();
+    }
             
     public void skipCharOnceAndSurroundingSpaces(char c) throws IOException
     {
@@ -211,6 +217,21 @@ public class CharReader {
         boolean isNext = false;
         if(hasNext() && nextChar() == c)
             isNext = true;
+        reader.reset();
+        return isNext;
+    }
+    
+    public boolean isNextString(String str) throws IOException
+    {
+        reader.mark(str.length());
+        boolean isNext;
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i<str.length(); i++)
+        {
+            if(hasNext())
+                builder.append(nextChar());
+        }
+        isNext = builder.toString().equals(str);
         reader.reset();
         return isNext;
     }
@@ -256,6 +277,14 @@ public class CharReader {
     public char nextChar() throws IOException
     {
         return toChar(reader.read());
+    }
+    
+    public String nextString(int steps) throws IOException
+    {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i<steps; i++)
+            builder.append(nextChar());
+        return builder.toString();
     }
     
     public double nextDouble() throws IOException

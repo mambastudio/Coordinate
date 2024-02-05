@@ -144,7 +144,7 @@ public class OBJMappedParser implements AbstractParser {
     
     private void readUV(StringParser parser)
     {
-        float x, y;
+        float x, y;        
         x = parser.getFirstFloat();
         y = parser.getFirstFloat();
         mesh.addTexCoord(x, y);

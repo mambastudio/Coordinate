@@ -12,7 +12,6 @@ import coordinate.parser.attribute.GroupT;
 import coordinate.parser.attribute.MaterialT;
 import coordinate.shapes.AlignedBBoxShape;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
