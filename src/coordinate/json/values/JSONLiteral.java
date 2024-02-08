@@ -5,8 +5,6 @@
  */
 package coordinate.json.values;
 
-import coordinate.json.values.JSONValue;
-
 /**
  *
  * @author user
@@ -23,6 +21,11 @@ public class JSONLiteral extends JSONValue {
         else
             throw new UnsupportedOperationException("literal: " +string+ " is neither a boolean or null");
         
+    }
+    
+    public JSONLiteral(boolean value)
+    {
+        this(Boolean.toString(value));
     }
 
     @Override

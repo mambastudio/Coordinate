@@ -13,17 +13,7 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONLiteral.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONArray.java</file>
         </group>
-        <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/io/CharReader.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/JSONFormatString.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/test/json/JSONTest.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/JSONParserWhole.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONNumber.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/generic/io/StringReader.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONObject.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONLiteral.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONArray.java</file>
-        </group>
+        <group/>
         <group/>
         <group/>
         <group/>
