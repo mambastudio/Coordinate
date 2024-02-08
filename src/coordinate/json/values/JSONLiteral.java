@@ -60,12 +60,12 @@ public class JSONLiteral extends JSONValue {
 
     @Override
     public boolean isTrue() {
-        return false;
+        return string.equals("true");
     }
 
     @Override
     public boolean isFalse() {
-        return false;
+        return string.equals("false");
     }
     
     @Override

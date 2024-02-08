@@ -16,6 +16,11 @@ public class JSONString extends JSONValue{
     {
         this.string = string;
     }
+    
+    public String getString()
+    {
+        return string;
+    }
 
     @Override
     public boolean isNumber() {

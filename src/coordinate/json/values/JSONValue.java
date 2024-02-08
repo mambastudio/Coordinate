@@ -20,4 +20,39 @@ public abstract class JSONValue {
     public abstract boolean isTrue();
     public abstract boolean isFalse();
     
+    public double asDouble()
+    {        
+        if(isNumber())
+            return ((JSONNumber)this).getDouble();
+        else
+            throw new UnsupportedOperationException("cannot be cast to number");
+    }
+    
+    public int asInteger()
+    {
+        return (int)asDouble();
+    }
+    
+    public String asString()
+    {        
+        if(isString())
+            return ((JSONString)this).getString();
+        else
+            throw new UnsupportedOperationException("cannot be cast to string");
+    }
+    
+    public boolean asBoolean()
+    {        
+        if(isBoolean())
+        {            
+            if(isFalse())
+                return false;
+            else if(isTrue())
+                return true;
+            else
+                throw new UnsupportedOperationException("unrecognised boolean");
+        }
+        else
+            throw new UnsupportedOperationException("cannot be cast to boolean");
+    }
 }

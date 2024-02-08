@@ -8,6 +8,7 @@ package coordinate.json.values;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -26,6 +27,12 @@ public class JSONObject extends JSONValue{
     public void put(String key, JSONValue value)
     {
         map.put(key, value);
+    }
+    
+    public JSONValue getValue(String key)
+    {
+        Optional<JSONValue> value = Optional.of(map.get(key));
+        return value.get();
     }
     
     @Override

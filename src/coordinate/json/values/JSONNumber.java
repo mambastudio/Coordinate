@@ -5,8 +5,6 @@
  */
 package coordinate.json.values;
 
-import coordinate.json.values.JSONValue;
-
 /**
  *
  * @author jmburu
@@ -18,6 +16,11 @@ public class JSONNumber extends JSONValue{
     public JSONNumber(double value)
     {
         this.number = value;
+    }
+    
+    public double getDouble()
+    {
+        return number;
     }
 
     @Override
