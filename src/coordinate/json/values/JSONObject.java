@@ -35,6 +35,18 @@ public class JSONObject extends JSONValue{
         return value.get();
     }
     
+    public Optional<JSONValue> getValueOptional(String key)
+    {
+        Optional<JSONValue> value = Optional.of(map.get(key));
+        return value;
+    }
+    
+    public boolean hasValue(String key)
+    {
+        Optional<JSONValue> value = Optional.ofNullable(map.get(key));
+        return value.isPresent();
+    }
+    
     @Override
     public boolean isNumber() {
         return false;
