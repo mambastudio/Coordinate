@@ -6,9 +6,6 @@
         <group/>
         <group/>
         <group/>
-        <group/>
-        <group/>
-        <group/>
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONValue.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONLiteral.java</file>
@@ -16,6 +13,15 @@
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONValue.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONLiteral.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/model/OrientationModel.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/model/OrientationModel.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/model/OrientationModel.java</file>
         </group>
     </open-files>
 </project-private>
