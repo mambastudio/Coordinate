@@ -37,7 +37,7 @@ public class JSONObject extends JSONValue{
     
     public Optional<JSONValue> getValueOptional(String key)
     {
-        Optional<JSONValue> value = Optional.of(map.get(key));
+        Optional<JSONValue> value = Optional.ofNullable(map.get(key));
         return value;
     }
     
