@@ -5,11 +5,6 @@
         <group/>
         <group/>
         <group/>
-        <group/>
-        <group/>
-        <group/>
-        <group/>
-        <group/>
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONValue.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/json/values/JSONLiteral.java</file>
@@ -49,5 +44,38 @@
             <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStructFactory.java</file>
         </group>
         <group/>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructBase.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructCache.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructBase.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructCache.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructBase.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructCache.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/RangeCheckArray.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructCache.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/transform/Transform.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/RangeLong.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/RangeCheck.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/transform/Matrix.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/RangeCheckArray.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/StructCache.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/transform/Transform.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/memory/type/MemoryStruct.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/RangeLong.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/utility/RangeCheck.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/Coordinate/src/coordinate/transform/Matrix.java</file>
+        </group>
     </open-files>
 </project-private>
